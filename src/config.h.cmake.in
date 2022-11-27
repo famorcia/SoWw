@@ -1,7 +1,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 
-#ifndef SOXT_INTERNAL
+#ifndef SOWW_INTERNAL
 #error this is a private header file
 #endif
 
@@ -163,19 +163,19 @@
 #define PACKAGE_VERSION "@PACKAGE_VERSION@"
 
 /* define this to the SoQt beta version letter */
-#define SOXT_BETA_VERSION @SOXT_BETA_VERSION@
+#define SOWW_BETA_VERSION @SOWW_BETA_VERSION@
 
 /* Define to the major version of SoQt */
-#define SOXT_MAJOR_VERSION @SOXT_MAJOR_VERSION@
+#define SOWW_MAJOR_VERSION @SOWW_MAJOR_VERSION@
 
 /* Define to the micro version of SoQt */
-#define SOXT_MICRO_VERSION @SOXT_MICRO_VERSION@
+#define SOWW_MICRO_VERSION @SOWW_MICRO_VERSION@
 
 /* Define to the minor version of SoQt */
-#define SOXT_MINOR_VERSION @SOXT_MINOR_VERSION@
+#define SOWW_MINOR_VERSION @SOWW_MINOR_VERSION@
 
 /* Version string for SoQt */
-#define SOXT_VERSION "@SOXT_VERSION@"
+#define SOWW_VERSION "@SOWW_VERSION@"
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
@@ -184,7 +184,7 @@
 #cmakedefine USE_EXCEPTIONS 1
 
 /* Version number of package */
-#cmakedefine VERSION "@SOXT_VERSION@"
+#cmakedefine VERSION "@SOWW_VERSION@"
 
 /* Define this if you want defaults to be linked into SoXt */
 #cmakedefine WITH_STATIC_DEFAULTS

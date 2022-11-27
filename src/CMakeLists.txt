@@ -135,6 +135,8 @@ elseif(APPLE)
   endif()
 endif()
 
+include(${wxWidgets_USE_FILE})
+add_definitions(-DWXINTL_NO_GETTEXT_MACRO)
 target_include_directories(${PROJECT_NAME}
   PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>

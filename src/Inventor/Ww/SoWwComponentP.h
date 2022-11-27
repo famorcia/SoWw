@@ -5,6 +5,7 @@
 #ifndef SOWW_SOWWCOMPONENTP_H
 #define SOWW_SOWWCOMPONENTP_H
 
+#include "Inventor/Ww/SoGuiComponentP.h"
 
 class SoWwComponentP {
 

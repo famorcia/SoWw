@@ -4,7 +4,7 @@ set(gui ww)
 set(Gui Ww)
 set(GUI WW)
 set(WIDGET wxFrame*)
-set(EVENT QEvent*)
+set(EVENT wxEvent*)
 
 function(dump_variable)
   if (SO${GUI}_VERBOSE)
@@ -386,9 +386,10 @@ endif()
 set(USE_EXCEPTIONS ON)
 set(HAVE_JOYSTICK_LINUX OFF)
 
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  set(HAVE_JOYSTICK_LINUX 1)
-endif()
+# TODO:
+#if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+#  set(HAVE_JOYSTICK_LINUX 1)
+#endif()
 
 set(USE_EXCEPTIONS ON)
 

@@ -5,8 +5,12 @@
 #ifndef SOWW_SOWWGLWIDGETP_H
 #define SOWW_SOWWGLWIDGETP_H
 
+#include "Inventor/Ww/SoGuiGLWidgetP.h"
 
 class SoWwGLWidgetP {
+public:
+
+    static void eventHandler(wxFrame*, void*, wxEvent*, bool*);
 
 };
 

@@ -5,8 +5,11 @@
 #ifndef SOWW_SOWWEXAMINERVIEWERP_H
 #define SOWW_SOWWEXAMINERVIEWERP_H
 
+#include <Inventor/SbBasic.h>
+#include "Inventor/Ww/viewers/SoGuiExaminerViewerP.h"
 
-class SoWwExaminerViewerP {
+class SoWwExaminerViewerP : public SoGuiExaminerViewerP {
+public:
 
 };
 
