@@ -1,0 +1,13 @@
+=====================================================================
+NOTE: see also src/Inventor/Ww/common/BUGS.txt.
+=====================================================================
+This is a list of issues that needs to be investigated and fixed.  The
+number is just the chronological numeric id, and has no bearing on what
+priority the item has.
+=====================================================================
+
+000 Missing implementation.
+
+    The functionality is missing.
+
+    20221127 famorcia.
