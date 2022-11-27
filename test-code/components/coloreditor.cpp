@@ -4,10 +4,10 @@
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoRotationXYZ.h>
 
-#include <Inventor/Xt/SoXt.h>
-#include <Inventor/Xt/SoXtColorEditor.h>
-#include <Inventor/Xt/nodes/SoGuiColorEditor.h>
-#include <Inventor/Xt/viewers/SoXtExaminerViewer.h>
+#include <Inventor/Ww/SoWw.h>
+#include <Inventor/Ww/SoWwColorEditor.h>
+#include <Inventor/Ww/nodes/SoGuiColorEditor.h>
+#include <Inventor/Ww/viewers/SoWwExaminerViewer.h>
 
 static SoMaterial * material;
 
@@ -25,8 +25,8 @@ makescene(void)
 int
 main(int argc, char ** argv)
 {
-  Widget w = SoXt::init(argc, argv, "SoXtColorEditor");
-  SoXtExaminerViewer * viewer = new SoXtExaminerViewer(w);
+  wxFrame* w = SoWw::init(argc, argv, "SoWwColorEditor");
+  SoWwExaminerViewer * viewer = new SoWwExaminerViewer(w);
   SoSeparator * root;
   viewer->setSceneGraph(root = makescene());
   viewer->show();
@@ -52,13 +52,13 @@ main(int argc, char ** argv)
   editorscene->addChild(inscene);
   root->insertChild(editorscene, 0);
 #else
-  SoXtColorEditor * editor = new SoXtColorEditor;
+  SoWwColorEditor * editor = new SoWwColorEditor;
   editor->attach(&(material->diffuseColor));
   editor->show();
 #endif
 
-  SoXt::show(w);
-  SoXt::mainLoop();
+  SoWw::show(w);
+  SoWw::mainLoop();
   return 0;
 }
 

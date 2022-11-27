@@ -117,7 +117,7 @@ elseif(APPLE)
       #PUBLIC_HEADER "${SO${GUI}_MAC_FRAMEWORK_HEADER}"
       #PRIVATE_HEADER "${SO${GUI}_PRIVATE_HEADERS}"
       RESOURCE "${CMAKE_BINARY_DIR}/version.plist"
-      MACOSX_FRAMEWORK_IDENTIFIER org.coin3d.SoXt.framework
+      MACOSX_FRAMEWORK_IDENTIFIER org.coin3d.SoWw.framework
       MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION}
       MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION}
       MACOSX_FRAMEWORK_INFO_PLIST "${CMAKE_BINARY_DIR}/Info.plist"
@@ -140,35 +140,13 @@ target_include_directories(${PROJECT_NAME}
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   PUBLIC
-    ${X11_INCLUDE_DIR}
-    ${MOTIF_INCLUDE_DIR}
+    ${wxWidgets_INCLUDE_DIRS}
 )
 if(NOT SO${GUI}_BUILD_MAC_FRAMEWORK)
   target_include_directories(${PROJECT_NAME} INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 endif()
 
-target_link_libraries(${PROJECT_NAME} Coin::Coin ${SOXT_OPENGL_LIBRARIES} ${MOTIF_LIBRARIES})
-
-if(X11_Xpm_FOUND)
-  target_include_directories(${PROJECT_NAME} PUBLIC ${X11_Xpm_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} ${X11_Xpm_LIB})
-endif()
-if(X11_Xmu_FOUND)
-  target_include_directories(${PROJECT_NAME} PUBLIC ${X11_Xmu_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} ${X11_Xmu_LIB})
-endif()
-if(X11_FOUND)
-  target_include_directories(${PROJECT_NAME} PUBLIC ${X11_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} ${X11_LIBRARIES})
-endif()
-if(X11_Xi_FOUND)
-  target_include_directories(${PROJECT_NAME} PUBLIC ${X11_Xi_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} ${X11_Xi_LIB})
-endif()
-if(X11_Xt_FOUND)
-  target_include_directories(${PROJECT_NAME} PUBLIC ${X11_Xt_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} ${X11_Xt_LIB})
-endif()
+target_link_libraries(${PROJECT_NAME} Coin::Coin ${SOXT_OPENGL_LIBRARIES} ${wxWidgets_LIBRARIES})
 
 # Add a target to generate API documentation with Doxygen
 if(SO${GUI}_BUILD_DOCUMENTATION)
@@ -288,17 +266,15 @@ set(INST_DEVICES_HDRS
   "${CMAKE_CURRENT_BINARY_DIR}/Inventor/${Gui}/devices/So${Gui}Mouse.h"
 )
 
-if (HAVE_SPACENAV_SUPPORT)
-  list(APPEND INST_DEVICES_HDRS "${CMAKE_CURRENT_BINARY_DIR}/Inventor/${Gui}/devices/So${Gui}SpacenavDevice.h")
-endif()
 
 if(HAVE_JOYSTICK_LINUX)
-  list(APPEND INST_DEVICES_HDRS "${CMAKE_CURRENT_SOURCE_DIR}/Inventor/${Gui}/devices/So${Gui}LinuxJoystick.h")
+  list(APPEND INST_DEVICES_HDRS "${CMAKE_CURRENT_BINARY_DIR}/Inventor/${Gui}/devices/So${Gui}LinuxJoystick.h")
 endif()
 
 set(INST_EDITORS_HDRS
   "${CMAKE_CURRENT_BINARY_DIR}/Inventor/${Gui}/editors/So${Gui}ColorEditor.h"
   "${CMAKE_CURRENT_BINARY_DIR}/Inventor/${Gui}/editors/So${Gui}MaterialEditor.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/Inventor/${Gui}/devices/So${Gui}SpacenavDevice.h"
 )
 
 set(INST_NODES_HDRS
@@ -318,7 +294,7 @@ set(INST_VIEWERS_HDRS
 
 set(INST_WIDGETS_HDRS
   "${CMAKE_CURRENT_BINARY_DIR}/Inventor/${Gui}/widgets/So${Gui}PopupMenu.h"
-  Inventor/${Gui}/widgets/So${Gui}ThumbWheel.h
+  "${CMAKE_CURRENT_SOURCE_DIR}/Inventor/${Gui}/widgets/So${Gui}ThumbWheel.h"
 )
 
 # Setting up a framework means adding all the files and links under a framework
@@ -468,7 +444,9 @@ endif()
 
 include(CMakePackageConfigHelpers)
 
-configure_package_config_file("${CMAKE_SOURCE_DIR}/${PROJECT_NAME_LOWER}-config.cmake.in" ${SO${GUI}_CONFIG_PACKAGE_BASENAME}-config.cmake
+configure_package_config_file(
+  "${CMAKE_SOURCE_DIR}/${PROJECT_NAME_LOWER}-config.cmake.in"
+  ${SO${GUI}_CONFIG_PACKAGE_BASENAME}-config.cmake
   INSTALL_DESTINATION ${SO${GUI}_CONFIG_PACKAGE_LOCATION}
   PATH_VARS CMAKE_INSTALL_LIBDIR
 )

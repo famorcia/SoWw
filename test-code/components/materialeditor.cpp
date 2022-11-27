@@ -4,9 +4,9 @@
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoRotationXYZ.h>
 
-#include <Inventor/Xt/SoXt.h>
-#include <Inventor/Xt/SoXtMaterialEditor.h>
-#include <Inventor/Xt/viewers/SoXtExaminerViewer.h>
+#include <Inventor/Ww/SoWw.h>
+#include <Inventor/Ww/SoWwMaterialEditor.h>
+#include <Inventor/Ww/viewers/SoWwExaminerViewer.h>
 
 static SoMaterial * material;
 
@@ -25,8 +25,8 @@ makescene(void)
 int
 main(int argc, char ** argv)
 {
-  Widget w = SoXt::init(argc, argv, "SoXtColorEditor");
-  SoXtExaminerViewer * viewer = new SoXtExaminerViewer(w);
+  wxFrame* w = SoWw::init(argc, argv, "SoWwColorEditor");
+  SoWwExaminerViewer * viewer = new SoWwExaminerViewer(w);
   SoSeparator * root;
   viewer->setSceneGraph(root = makescene());
   viewer->show();
@@ -52,13 +52,13 @@ main(int argc, char ** argv)
   root->insertChild(editorscene, 0);
 
 #else
-  SoXtMaterialEditor * editor = new SoXtMaterialEditor;
+  SoWwMaterialEditor * editor = new SoWwMaterialEditor;
   editor->attach(material);
   editor->show();
 #endif
 
-  SoXt::show(w);
-  SoXt::mainLoop();
+  SoWw::show(w);
+  SoWw::mainLoop();
   return 0;
 }
 
