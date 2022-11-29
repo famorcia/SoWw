@@ -2,8 +2,8 @@
 // Created by fmorciano on 11/27/22.
 //
 
-#ifndef SOWW_EXAMINERVIEWER_H
-#define SOWW_EXAMINERVIEWER_H
+#ifndef EXAMINERVIEWER_H
+#define EXAMINERVIEWER_H
 
 
 class ExaminerViewer {

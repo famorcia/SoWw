@@ -2,4 +2,8 @@
 // Created by fmorciano on 11/27/22.
 //
 
-#include "SoWwDevice.h"
+#include "Inventor/Ww/devices/SoWwDevice.h"
+
+SoWwDevice::~SoWwDevice() {
+
+}

@@ -10,7 +10,7 @@
 
 class SoWwPlaneViewerP : public SoGuiPlaneViewerP {
 public:
-    SoWwPlaneViewerP(SoWwPlaneViewer*);
+    explicit SoWwPlaneViewerP(SoWwPlaneViewer*);
     void constructor(SbBool buildnow);
 };
 

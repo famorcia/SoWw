@@ -29,8 +29,8 @@ target_link_libraries(crash SoWw)
 add_executable(coloreditor components/coloreditor.cpp)
 target_link_libraries(coloreditor SoWw)
 
-add_executable(embeddedexaminer components/embeddedexaminer.cpp)
-target_link_libraries(embeddedexaminer SoWw)
+# add_executable(embeddedexaminer components/embeddedexaminer.cpp)
+# target_link_libraries(embeddedexaminer SoWw)
 
 add_executable(renderarea components/renderarea.cpp)
 target_link_libraries(renderarea SoWw)
