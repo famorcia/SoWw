@@ -4,6 +4,14 @@
 
 #include "Inventor/Ww/SoWw.h"
 
+wxFrame* SoWw::init(int & argc, char ** argv,
+                         const char * appname,
+                         const char * classname) {
+}
+
+void SoWw::init(wxFrame* toplevelwidget) {
+
+}
 
 void SoWw::mainLoop(void) {
 
@@ -13,13 +21,18 @@ void  SoWw::show(wxFrame* const widget) {
 
 }
 
+void    SoWw::createSimpleErrorDialog(wxFrame* widget,
+                                    const char * title,
+                                    const char * string1,
+                                    const char * string2 ) {
+
+}
+
+wxFrame*   SoWw::getShellWidget(const wxFrame* w) {
+
+}
 
 #if 0
-    static wxFrame* SoWw::init(const char * appname, const char * classname = "SoWw") {
-
-    static wxFrame* init(int & argc, char ** argv,
-                         const char * appname, const char * classname = "SoWw");
-    static void init(wxFrame* toplevelwidget);
 
     static void mainLoop(void);
     static void exitMainLoop(void);
@@ -34,10 +47,6 @@ void  SoWw::show(wxFrame* const widget) {
     static void setWidgetSize(wxFrame* const widget, const SbVec2s size);
     static SbVec2s getWidgetSize(const wxFrame* widget);
 
-    static void createSimpleErrorDialog(wxFrame* widget,
-                                        const char * title,
-                                        const char * string1,
-                                        const char * string2 = NULL);
 
     static void getVersionInfo(int * major = NULL,
                                int * minor = NULL,

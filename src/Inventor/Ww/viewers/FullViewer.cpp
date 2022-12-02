@@ -3,8 +3,10 @@
 //
 
 #include <Inventor/Ww/viewers/SoWwFullViewer.h>
+#include "Inventor/Ww/viewers/SoWwFullViewerP.h"
 
 SOWW_OBJECT_ABSTRACT_SOURCE(SoWwFullViewer);
+
 
 
 SoWwFullViewer::SoWwFullViewer(wxFrame* parent,
@@ -68,5 +70,13 @@ void SoWwFullViewer::setRightWheelString(const char * const name){ }
 const char * SoWwFullViewer::getRightWheelString() const{ }
 
 void SoWwFullViewer::sizeChanged(const SbVec2s & size) {
+
+}
+
+void  SoWwFullViewerP::setThumbWheelValue(wxFrame*, float value) {
+
+}
+
+void  SoWwFullViewerP::seekbuttonClicked()  {
 
 }

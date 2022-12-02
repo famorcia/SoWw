@@ -6,6 +6,16 @@
 #include "Inventor/Ww/viewers/SoWwPlaneViewerP.h"
 #include "PlaneViewer.h"
 
+wxFrame* SoWwPlaneViewer::buildWidget(wxFrame* parent) {
+
+}
+
+
+void  SoWwPlaneViewer::createViewerButtons(wxFrame* parent, SbPList * buttons) {
+
+}
+
+
 void  SoWwPlaneViewer::setCamera( SoCamera*) {
 
 }

@@ -3,6 +3,7 @@
 //
 
 #include "Inventor/Ww/SoWwGLWidget.h"
+#include "Inventor/Ww/SoWwGLWidgetP.h"
 
 SOWW_OBJECT_ABSTRACT_SOURCE(SoWwGLWidget);
 
@@ -94,3 +95,8 @@ void SoWwGLWidget::initOverlayGraphic(void){ }
 
 void SoWwGLWidget::sizeChanged(const SbVec2s & size){ }
 void SoWwGLWidget::widgetChanged(wxFrame* w){ }
+
+
+void SoWwGLWidgetP::eventHandler(wxFrame*, void*, wxEvent*, bool*) {
+
+}

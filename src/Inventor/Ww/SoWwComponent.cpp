@@ -10,6 +10,29 @@ SoWwComponent::~SoWwComponent(){
 
 }
 
+SoWwComponent::SoWwComponent(wxFrame* const parent,
+                             const char * const name,
+                             const SbBool embed) {
+
+}
+
+void  SoWwComponent::initClasses(void) {
+
+}
+
+void SoWwComponent::afterRealizeHook(void) {
+
+}
+
+void SoWwComponent::setClassName(const char * const name) {
+
+}
+
+void SoWwComponent::setBaseWidget(wxFrame* widget) {
+
+}
+
+
 void SoWwComponent::show(void) {
 
 }
@@ -87,6 +110,21 @@ const char * SoWwComponent::getClassName(void) const {
 }
 
 void SoWwComponent::setWindowCloseCallback(SoWwComponentCB * const func,
-                            void * const user ) {
+                                           void * const user ) {
+
+}
+
+
+void SoWwComponent::sizeChanged(const SbVec2s & size) {
+
+}
+
+void SoWwComponent::addVisibilityChangeCallback(SoWwComponentVisibilityCB * const func,
+                                                void * const user) {
+
+}
+
+void SoWwComponent::removeVisibilityChangeCallback(SoWwComponentVisibilityCB * const func,
+                                                   void * const user){
 
 }

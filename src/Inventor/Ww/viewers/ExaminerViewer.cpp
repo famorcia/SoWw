@@ -5,7 +5,9 @@
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
 #include "Inventor/Ww/viewers/SoWwViewer.h"
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
-#include "ExaminerViewer.h"
+
+SOWW_OBJECT_SOURCE(SoWwExaminerViewer);
+
 /**
  * wxFrame* parent,
                     const char * name,
@@ -26,5 +28,18 @@ SoWwExaminerViewer::SoWwExaminerViewer(wxFrame* parent,
                                                         BUILD_NONE,
                                                         BROWSER,
                                                         true) {
+
+}
+
+void SoWwExaminerViewer::setCamera(SoCamera * camera) {
+
+}
+
+void SoWwExaminerViewer::createViewerButtons(wxFrame* parent, SbPList * buttonlist) {
+
+}
+
+
+SoWwExaminerViewer::~SoWwExaminerViewer() {
 
 }
