@@ -40,7 +40,9 @@ jobs:
 
     - name: Extract 
       run: tar zxvf coin-4.0.0-src.tar.gz
-                     
+      
+    - name: Compile Coin
+      run: cd coin && ./configure && sudo make install                     
 
 #      run: sudo apt-get install coin
 
