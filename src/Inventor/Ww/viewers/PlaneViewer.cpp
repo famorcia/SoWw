@@ -4,7 +4,6 @@
 
 #include "Inventor/Ww/viewers/SoWwPlaneViewer.h"
 #include "Inventor/Ww/viewers/SoWwPlaneViewerP.h"
-#include "PlaneViewer.h"
 
 wxFrame* SoWwPlaneViewer::buildWidget(wxFrame* parent) {
 

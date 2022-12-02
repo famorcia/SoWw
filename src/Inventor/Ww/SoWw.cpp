@@ -2,11 +2,87 @@
 // Created by fmorciano on 11/27/22.
 //
 
+#include <Inventor/nodekits/SoNodeKit.h>
+#include <Inventor/SoInteraction.h>
 #include "Inventor/Ww/SoWw.h"
+#include "Inventor/Ww/SoWwP.h"
 
-wxFrame* SoWw::init(int & argc, char ** argv,
-                         const char * appname,
-                         const char * classname) {
+#include "wx/wx.h"
+
+//wxIMPLEMENT_APP(SoWwP);
+
+#include <wx/frame.h>
+#include <wx/defs.h>
+
+class MyFrame : public wxFrame
+{
+public:
+    MyFrame(wxFrame *frame,
+            const wxString& title,
+            const wxPoint& pos,
+            const wxSize& size,
+            long style = wxDEFAULT_FRAME_STYLE);
+
+wxDECLARE_EVENT_TABLE();
+};
+
+wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
+wxEND_EVENT_TABLE()
+
+MyFrame::MyFrame(wxFrame *frame,
+                 const wxString& title,
+                 const wxPoint& pos,
+                 const wxSize& size,
+                 long style)
+        : wxFrame(frame, wxID_ANY, title, pos, size, style)
+{
+}
+
+wxFrame* SoWw::init(int & argc,
+                    char ** argv,
+                    const char * appname,
+                    const char * classname) {
+
+    // Must do this here so SoDebugError is initialized before it could
+    // be attempted used.
+    if (!SoDB::isInitialized()) { SoDB::init(); }
+    // these aren't necessary - they are initialized in the SoWw::init method above
+    // which is invoked below
+    SoNodeKit::init();
+    SoInteraction::init();
+
+    /*
+    if (SOWW_DEBUG && (SoWwP::appobject || SoWwP::mainwidget)) {
+        SoDebugError::postWarning("SoWw::init",
+                                  "This method should be called only once.");
+        return SoWwP::mainwidget;
+    }
+     */
+
+    // "qApp" is a global variable from the Qt library, pointing to the
+    // single QApplication instance in a Qt-application.
+    if (wxApp::GetInstance() == NULL) {
+        // Set up the QApplication instance which we have derived into a
+        // subclass to catch spaceball events.
+        // wxApp::SetInstance( new SoWwP );
+        // wxAppInitializer wxTheAppInitializer((wxAppInitializerFunction) wxCreateApp);
+        wxApp::SetInstance( new SoWwP() );
+        wxEntryStart( argc, argv );
+        wxTheApp->CallOnInit();
+    }
+    else {
+        // The user already set one up for us.
+        //
+        // FIXME: should somehow warn about the fact that spaceball events
+        // will not be caught, if a spaceball is attempted used. 20020619 mortene.
+
+    }
+
+    wxFrame* aFrame = new MyFrame(0,
+                                  appname,
+                                  wxDefaultPosition,
+                                  wxDefaultSize);
+    return aFrame;
 }
 
 void SoWw::init(wxFrame* toplevelwidget) {
@@ -14,7 +90,9 @@ void SoWw::init(wxFrame* toplevelwidget) {
 }
 
 void SoWw::mainLoop(void) {
-
+    wxTheApp->OnRun();
+    wxTheApp->OnExit();
+    wxEntryCleanup();
 }
 
 void  SoWw::show(wxFrame* const widget) {
@@ -22,9 +100,9 @@ void  SoWw::show(wxFrame* const widget) {
 }
 
 void    SoWw::createSimpleErrorDialog(wxFrame* widget,
-                                    const char * title,
-                                    const char * string1,
-                                    const char * string2 ) {
+                                      const char * title,
+                                      const char * string1,
+                                      const char * string2 ) {
 
 }
 
@@ -34,7 +112,7 @@ wxFrame*   SoWw::getShellWidget(const wxFrame* w) {
 
 #if 0
 
-    static void mainLoop(void);
+static void mainLoop(void);
     static void exitMainLoop(void);
     static void done(void);
 

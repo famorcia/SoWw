@@ -72,7 +72,7 @@ static SoSeparator * get_scene_graph(void)
 
 int main(int argc, char ** argv)
 {
-  QWidget * window = SoWw::init(argv[0]);
+  wxFrame * window = SoWw::init(argv[0]);
 
   SoSeparator * root = new SoSeparator;
   root->ref();
