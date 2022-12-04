@@ -53,6 +53,8 @@ public:
 
     const wxGLContext *context();
 
+    void makeCurrent();
+
 protected:
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);

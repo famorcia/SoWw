@@ -101,19 +101,6 @@ void SoWwGLArea::OnPaint(wxPaintEvent& event )
     wxPaintDC dc(this);
 
     InitGL();
-
- //   ::wxPostEvent(this->GetParent(), event);
-#if 0
-    // Set the viewport
-    SbViewportRegion myViewport(W, H);
-
-    // Apply the render action for viewing the Coin3D on GL Window
-    SoGLRenderAction myRenderAction(myViewport);
-    myRenderAction.apply(root);
-#endif
-
-    //glFlush();
-    SwapBuffers();
 }
 
 void SoWwGLArea::OnSize(wxSizeEvent& event)
@@ -132,16 +119,23 @@ void SoWwGLArea::OnTimer(wxTimerEvent& event)
 {
     // Very important, Coin need to process internal timer, this need to be performed in the canvas periodically
     SoDB::getSensorManager()->processTimerQueue();
-    // Refresh(false);
 }
 
 void SoWwGLArea::InitGL()
 {
     if(!isGLInitialized) {
         glRealContext = new wxGLContext(this);
+        SetCurrent(*glRealContext);
+        glEnable(GL_DEPTH_TEST);
         isGLInitialized = true;
+    } else {
+        SetCurrent(*glRealContext);
     }
-    SetCurrent(*glRealContext);
+}
+
+void SoWwGLArea::makeCurrent() {
+    if(glRealContext)
+        SetCurrent(*glRealContext);
 }
 
 const wxGLContext *SoWwGLArea::context() {

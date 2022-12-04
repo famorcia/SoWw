@@ -123,10 +123,12 @@ SbBool   SoWwGLWidget::isRGBMode(void){
 }
 
 void   SoWwGLWidget::glLockNormal(void){
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    //std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    PRIVATE(this)->currentglarea->makeCurrent();
 }
+
 void   SoWwGLWidget::glUnlockNormal(void){
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    //std::clog<<__PRETTY_FUNCTION__<<std::endl;
 }
 
 void   SoWwGLWidget::glLockOverlay(void){
@@ -157,8 +159,9 @@ void SoWwGLWidget::setDoubleBuffer(const SbBool enable){
     std::clog<<__PRETTY_FUNCTION__<<std::endl;
 }
 SbBool SoWwGLWidget::isDoubleBuffer(void) const{
-    // std::clog<<__PRETTY_FUNCTION__<<std::endl;
-    return (PRIVATE(this)->currentglwidget->IsDoubleBuffered());
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    // TODO: now force TRUE SbBool res = PRIVATE(this)->currentglarea->IsDoubleBuffered();
+    return (TRUE);
 }
 
 void SoWwGLWidget::setDrawToFrontBufferEnable(const SbBool enable){

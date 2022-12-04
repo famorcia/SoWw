@@ -129,7 +129,7 @@ wxWindow* SoWw::init(int & argc,
     wxFrame* aFrame = new MyFrame(0,
                                   appname,
                                   wxDefaultPosition,
-                                  wxDefaultSize);
+                                  wxSize(400,400));
     return aFrame;
 }
 
