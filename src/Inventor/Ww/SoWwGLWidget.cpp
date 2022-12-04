@@ -90,72 +90,147 @@ SoWwGLWidget::~SoWwGLWidget() {
 
 }
 
-
 void SoWwGLWidget::setBorder(const SbBool enable) {
-
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
 }
 
 void  SoWwGLWidget::setQuadBufferStereo(const SbBool enable) {
-
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
 }
 
 SbBool  SoWwGLWidget::isQuadBufferStereo(void) const {
-
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
 }
 
 
-void   SoWwGLWidget::setGLSize(const SbVec2s size){ }
-SbVec2s   SoWwGLWidget::getGLSize(void) const{ }
-float   SoWwGLWidget::getGLAspectRatio(void) const{ }
+void   SoWwGLWidget::setGLSize(const SbVec2s size){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-SbBool   SoWwGLWidget::isRGBMode(void){ }
+SbVec2s   SoWwGLWidget::getGLSize(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    SbVec2s size;
+    size.setValue(PRIVATE(this)->currentglwidget->GetSize().GetX(),
+                  PRIVATE(this)->currentglwidget->GetSize().GetY());
+    return (size);
+}
+float   SoWwGLWidget::getGLAspectRatio(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-void   SoWwGLWidget::glLockNormal(void){ }
-void   SoWwGLWidget::glUnlockNormal(void){ }
+SbBool   SoWwGLWidget::isRGBMode(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-void   SoWwGLWidget::glLockOverlay(void){ }
-void   SoWwGLWidget::glUnlockOverlay(void){ }
+void   SoWwGLWidget::glLockNormal(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+void   SoWwGLWidget::glUnlockNormal(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-void   SoWwGLWidget::glSwapBuffers(void){ }
-void   SoWwGLWidget::glFlushBuffer(void){ }
+void   SoWwGLWidget::glLockOverlay(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+void   SoWwGLWidget::glUnlockOverlay(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-SbBool   SoWwGLWidget::glScheduleRedraw(void){ }
+void   SoWwGLWidget::glSwapBuffers(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+void   SoWwGLWidget::glFlushBuffer(void){
+    // std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    glFlush();
+}
 
-SbBool SoWwGLWidget::isBorder(void) const{ }
+SbBool   SoWwGLWidget::glScheduleRedraw(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-void SoWwGLWidget::setDoubleBuffer(const SbBool enable){ }
-SbBool SoWwGLWidget::isDoubleBuffer(void) const{ }
+SbBool SoWwGLWidget::isBorder(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    return (FALSE);
+}
 
-void SoWwGLWidget::setDrawToFrontBufferEnable(const SbBool enable){ }
-SbBool SoWwGLWidget::isDrawToFrontBufferEnable(void) const{ }
+void SoWwGLWidget::setDoubleBuffer(const SbBool enable){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+SbBool SoWwGLWidget::isDoubleBuffer(void) const{
+    // std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    return (PRIVATE(this)->currentglwidget->IsDoubleBuffered());
+}
 
-
-void SoWwGLWidget::setAccumulationBuffer(const SbBool enable){ }
-SbBool SoWwGLWidget::getAccumulationBuffer(void) const{ }
-
-void SoWwGLWidget::setStencilBuffer(const SbBool enable){ }
-SbBool SoWwGLWidget::getStencilBuffer(void) const{ }
-
-void SoWwGLWidget::setAlphaChannel(const SbBool enable){ }
-SbBool SoWwGLWidget::getAlphaChannel(void) const{ }
-
-void SoWwGLWidget::setOverlayRender(const SbBool onoff){ }
-SbBool SoWwGLWidget::isOverlayRender(void) const{ }
-
-void SoWwGLWidget::setSampleBuffers(const int numsamples){ }
-int SoWwGLWidget::getSampleBuffers(void) const{ }
+void SoWwGLWidget::setDrawToFrontBufferEnable(const SbBool enable){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+SbBool SoWwGLWidget::isDrawToFrontBufferEnable(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
 
-wxWindow* SoWwGLWidget::getGLWidget(void) const{ }
-wxWindow* SoWwGLWidget::getNormalWidget(void) const{ }
-wxWindow* SoWwGLWidget::getOverlayWidget(void) const{ }
+void SoWwGLWidget::setAccumulationBuffer(const SbBool enable){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+SbBool SoWwGLWidget::getAccumulationBuffer(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-SbBool SoWwGLWidget::hasOverlayGLArea(void) const{ }
-SbBool SoWwGLWidget::hasNormalGLArea(void) const{ }
+void SoWwGLWidget::setStencilBuffer(const SbBool enable){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+SbBool SoWwGLWidget::getStencilBuffer(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-unsigned long SoWwGLWidget::getOverlayTransparentPixel(void){ }
+void SoWwGLWidget::setAlphaChannel(const SbBool enable){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+SbBool SoWwGLWidget::getAlphaChannel(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-void SoWwGLWidget::processEvent(wxEvent* event){ }
+void SoWwGLWidget::setOverlayRender(const SbBool onoff){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+SbBool SoWwGLWidget::isOverlayRender(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+
+void SoWwGLWidget::setSampleBuffers(const int numsamples){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+int SoWwGLWidget::getSampleBuffers(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+
+wxWindow* SoWwGLWidget::getGLWidget(void) const{
+    // std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    return (PRIVATE(this)->currentglwidget);
+}
+
+wxWindow* SoWwGLWidget::getNormalWidget(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+wxWindow* SoWwGLWidget::getOverlayWidget(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+
+SbBool SoWwGLWidget::hasOverlayGLArea(void) const{
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+SbBool SoWwGLWidget::hasNormalGLArea(void) const{
+    return (TRUE);
+    //return (PRIVATE(this)->currentglarea->IsEnabled());
+}
+
+unsigned long SoWwGLWidget::getOverlayTransparentPixel(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+
+void SoWwGLWidget::processEvent(wxEvent* event){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
 wxWindow * SoWwGLWidget::buildWidget(wxWindow* parent){
 
@@ -181,13 +256,23 @@ wxWindow * SoWwGLWidget::buildWidget(wxWindow* parent){
     return PRIVATE(this)->currentglwidget;
 }
 
-void SoWwGLWidget::redrawOverlay(void){ }
+void SoWwGLWidget::redrawOverlay(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-void SoWwGLWidget::initGraphic(void){ }
-void SoWwGLWidget::initOverlayGraphic(void){ }
+void SoWwGLWidget::initGraphic(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+void SoWwGLWidget::initOverlayGraphic(void){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
-void SoWwGLWidget::sizeChanged(const SbVec2s & size){ }
-void SoWwGLWidget::widgetChanged(wxWindow* w){ }
+void SoWwGLWidget::sizeChanged(const SbVec2s & size){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
+void SoWwGLWidget::widgetChanged(wxWindow* w){
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+}
 
 
 // Private data

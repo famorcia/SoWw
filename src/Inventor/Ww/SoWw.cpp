@@ -50,10 +50,30 @@ public:
             const wxSize& size,
             long style = wxDEFAULT_FRAME_STYLE);
 
+    void OnPaint(wxPaintEvent& event) {
+        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
+        event.Skip();
+    }
+    void OnSize(wxSizeEvent& event) {
+        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
+        event.Skip();
+    }
+    void OnEraseBackground(wxEraseEvent& event) {
+        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
+        event.Skip();
+    }
+    void OnTimer(wxTimerEvent& event) {
+        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
+        event.Skip();
+    }
+
 wxDECLARE_EVENT_TABLE();
 };
 
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
+                EVT_SIZE(MyFrame::OnSize)
+                EVT_PAINT(MyFrame::OnPaint)
+                EVT_ERASE_BACKGROUND(MyFrame::OnEraseBackground)
 wxEND_EVENT_TABLE()
 
 MyFrame::MyFrame(wxFrame *frame,
@@ -63,7 +83,7 @@ MyFrame::MyFrame(wxFrame *frame,
                  long style)
         : wxFrame(frame, wxID_ANY, title, pos, size, style)
 {
-    Show(true);
+    //Show(true);
 }
 
 wxWindow* SoWw::init(int & argc,
@@ -124,7 +144,7 @@ void SoWw::mainLoop(void) {
 }
 
 void  SoWw::show(wxWindow* const widget) {
-    // widget->Show();
+    widget->Show();
 }
 
 void    SoWw::createSimpleErrorDialog(wxWindow* widget,

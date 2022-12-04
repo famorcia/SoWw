@@ -451,7 +451,9 @@ SoWwGLWidgetP::buildGLWidget(void)
     // TODO: this->currentglarea->installEventFilter(this);
 
     // Reset to avoid unnecessary scenegraph redraws.
-    PUBLIC(this)->waitForExpose = true;
+    //TODO: set to false for TEST
+    // PUBLIC(this)->waitForExpose = true;
+    PUBLIC(this)->waitForExpose = false;
 
     // We've changed to a new widget, so notify subclasses through this
     // virtual method.

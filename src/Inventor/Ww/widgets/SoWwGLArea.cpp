@@ -95,13 +95,14 @@ SoWwGLArea::~SoWwGLArea() {
     delete glRealContext;
 }
 
-void SoWwGLArea::OnPaint(wxPaintEvent& WXUNUSED(event) )
+void SoWwGLArea::OnPaint(wxPaintEvent& event )
 {
     // must always be here
     wxPaintDC dc(this);
 
     InitGL();
 
+ //   ::wxPostEvent(this->GetParent(), event);
 #if 0
     // Set the viewport
     SbViewportRegion myViewport(W, H);
@@ -111,7 +112,7 @@ void SoWwGLArea::OnPaint(wxPaintEvent& WXUNUSED(event) )
     myRenderAction.apply(root);
 #endif
 
-    glFlush();
+    //glFlush();
     SwapBuffers();
 }
 
@@ -131,22 +132,16 @@ void SoWwGLArea::OnTimer(wxTimerEvent& event)
 {
     // Very important, Coin need to process internal timer, this need to be performed in the canvas periodically
     SoDB::getSensorManager()->processTimerQueue();
-    Refresh(false);
+    // Refresh(false);
 }
 
 void SoWwGLArea::InitGL()
 {
-
     if(!isGLInitialized) {
         glRealContext = new wxGLContext(this);
-        SetCurrent(*glRealContext);
-
-
-        glEnable(GL_DEPTH_TEST);
         isGLInitialized = true;
     }
-    glClearColor( 0.3f, 0.4f, 0.6f, 1.0f );
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    SetCurrent(*glRealContext);
 }
 
 const wxGLContext *SoWwGLArea::context() {

@@ -189,7 +189,8 @@ SbBool SoWwComponent::setFullScreen(const SbBool onoff) {
 }
 
 SbBool SoWwComponent::isVisible(void) {
-
+    return TRUE;
+    // rreturn (PRIVATE(this)->widget->IsVisible());
 }
 
 SbBool SoWwComponent::isTopLevelShell(void) const {
