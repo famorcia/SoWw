@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 set(gui ww)
 set(Gui Ww)
 set(GUI WW)
-set(WIDGET wxFrame*)
+set(WIDGET wxWindow*)
 set(EVENT wxEvent*)
 
 function(dump_variable)

@@ -30,7 +30,6 @@ set(HDRS
   Inventor/${Gui}/viewers/So${Gui}FullViewerP.h
   Inventor/${Gui}/viewers/So${Gui}PlaneViewerP.h
   Inventor/${Gui}/widgets/So${Gui}GLArea.h
-  Inventor/${Gui}/widgets/So${Gui}GLAreaP.h         # added
   Inventor/${Gui}/widgets/${Gui}NativePopupMenu.h
   Inventor/${Gui}/widgets/So${Gui}Slider.h          # added
   Inventor/${Gui}/widgets/So${Gui}ThumbWheel.h

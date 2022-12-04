@@ -1,74 +1,89 @@
-//
-// Created by fmorciano on 11/27/22.
-//
+/**************************************************************************\
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2022, Fabrizio Morciano
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+\**************************************************************************/
 
 #include "Inventor/Ww/SoWwGLWidget.h"
 #include "Inventor/Ww/SoWwGLWidgetP.h"
 
 SOWW_OBJECT_ABSTRACT_SOURCE(SoWwGLWidget);
 
-SoWwGLWidget::SoWwGLWidget(wxFrame* const parent ,
+#define PRIVATE(obj) ((obj)->pimpl)
+#define PUBLIC(obj) ((obj)->pub)
+
+SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
                            const char * const name ,
                            const SbBool embed ,
                            const int glmodes ,
-                           const SbBool build)
-inherited(parent, name, embed),
-waitForExpose(true),
-drawToFrontBuffer(false)
+                           const SbBool build):
+        inherited(parent, name, embed),
+        waitForExpose(true),
+        drawToFrontBuffer(false)
 {
+    PRIVATE(this) = new SoWwGLWidgetP(this);
 
-waitForExpose(true),
-drawToFrontBuffer(false)
-{
-PRIVATE(this) = new SoQtGLWidgetP(this);
+    wxGLAttributes &dispAttrs = PRIVATE(this)->glAttributes;
+    dispAttrs.PlatformDefaults();//.DoubleBuffer().Depth(32).MinRGBA(8,8,8,8).EndList();
+    if(glmodes & SO_GL_DOUBLE)
+        dispAttrs.DoubleBuffer();
+    if(glmodes & SO_GL_ZBUFFER)
+        dispAttrs.Depth(32);
+    if(glmodes & SO_GL_RGB)
+        dispAttrs.MinRGBA(8, 8, 8, 8);
+    dispAttrs.EndList();
 
-PRIVATE(this)->glSize = SbVec2s(0, 0);
-#if QT_VERSION >= 0x050000
-PRIVATE(this)->glSizeUnscaled = SbVec2s(0, 0);
-#endif
-PRIVATE(this)->wasresized = false;
+    PRIVATE(this)->glSize = SbVec2s(0, 0);
+    PRIVATE(this)->glSizeUnscaled = SbVec2s(0, 0);
+    PRIVATE(this)->wasresized = false;
 
-#if QT_VERSION >= 0x060000
-PRIVATE(this)->glformat = new QSurfaceFormat(QSurfaceFormat::defaultFormat());
-  PRIVATE(this)->glformat->setSwapBehavior((glmodes & SO_GL_DOUBLE) ? QSurfaceFormat::DoubleBuffer : QSurfaceFormat::SingleBuffer);
-  PRIVATE(this)->glformat->setDepthBufferSize((glmodes & SO_GL_ZBUFFER) ? 32 : 0);
-  //PRIVATE(this)->glformat->setRgba((glmodes & SO_GL_RGB) ? true : false);
-#else
-PRIVATE(this)->glformat = new QGLFormat(QGLFormat::defaultFormat());
-PRIVATE(this)->glformat->setDoubleBuffer((glmodes & SO_GL_DOUBLE) ? true : false);
-PRIVATE(this)->glformat->setDepth((glmodes & SO_GL_ZBUFFER) ? true : false);
-PRIVATE(this)->glformat->setRgba((glmodes & SO_GL_RGB) ? true : false);
-#endif
-PRIVATE(this)->glformat->setStereo((glmodes & SO_GL_STEREO) ? true : false);
-bool enableoverlay = (glmodes & SO_GL_OVERLAY) ? true : false;
-QGLFormat_setOverlay(PRIVATE(this)->glformat, enableoverlay);
+    //TODO: PRIVATE(this)->glformat = new QSurfaceFormat(QSurfaceFormat::defaultFormat());
+    //TODO: PRIVATE(this)->glformat->setSwapBehavior((glmodes & SO_GL_DOUBLE) ? QSurfaceFormat::DoubleBuffer : QSurfaceFormat::SingleBuffer);
+    //TODO: PRIVATE(this)->glformat->setDepthBufferSize((glmodes & SO_GL_ZBUFFER) ? 32 : 0);
+    //TODO: //PRIVATE(this)->glformat->setRgba((glmodes & SO_GL_RGB) ? true : false);
+    //TODO: PRIVATE(this)->glformat->setStereo((glmodes & SO_GL_STEREO) ? true : false);
+    //TODO: bool enableoverlay = (glmodes & SO_GL_OVERLAY) ? true : false;
+    //TODO: QGLFormat_setOverlay(PRIVATE(this)->glformat, enableoverlay);
 
-PRIVATE(this)->glparent = NULL;
-PRIVATE(this)->currentglwidget = NULL;
-PRIVATE(this)->previousglwidget = NULL;
-PRIVATE(this)->currentglarea = NULL;
-PRIVATE(this)->previousglarea = NULL;
-PRIVATE(this)->borderwidget = NULL;
+    PRIVATE(this)->glparent = NULL;
+    PRIVATE(this)->currentglwidget = NULL;
+    PRIVATE(this)->previousglwidget = NULL;
+    PRIVATE(this)->currentglarea = NULL;
+    PRIVATE(this)->previousglarea = NULL;
+    PRIVATE(this)->borderwidget = NULL;
 
-#if QT_VERSION < 0x060000
-if (! QGLFormat::hasOpenGL()) {
-SoDebugError::post("SoQtGLWidget::SoQtGLWidget",
-"OpenGL not available!");
-// FIXME: this is not the way to handle this -- we should call the
-// fatal error handler. 20011112 mortene.
-return;
-}
-#endif
+    // TODO: if (! build) { return; }
 
-if (! build) { return; }
-
-this->setClassName("SoQtGLWidget");
-QWidget * parentwidget = this->getParentWidget();
-QWidget * widget = this->buildWidget(parentwidget);
-this->setBaseWidget(widget);
-}
-                           {
-
+    this->setClassName("SoWwGLWidget");
+    //wxWindow* parentwidget = this->getParentWidget();
+    //wxFrame* widget = dynamic_cast<wxFrame *>(this->buildWidget(parent));
+    //this->setBaseWidget(widget);
 }
 
 SoWwGLWidget::~SoWwGLWidget() {
@@ -131,9 +146,9 @@ void SoWwGLWidget::setSampleBuffers(const int numsamples){ }
 int SoWwGLWidget::getSampleBuffers(void) const{ }
 
 
-wxFrame* SoWwGLWidget::getGLWidget(void) const{ }
-wxFrame* SoWwGLWidget::getNormalWidget(void) const{ }
-wxFrame* SoWwGLWidget::getOverlayWidget(void) const{ }
+wxWindow* SoWwGLWidget::getGLWidget(void) const{ }
+wxWindow* SoWwGLWidget::getNormalWidget(void) const{ }
+wxWindow* SoWwGLWidget::getOverlayWidget(void) const{ }
 
 SbBool SoWwGLWidget::hasOverlayGLArea(void) const{ }
 SbBool SoWwGLWidget::hasNormalGLArea(void) const{ }
@@ -142,7 +157,29 @@ unsigned long SoWwGLWidget::getOverlayTransparentPixel(void){ }
 
 void SoWwGLWidget::processEvent(wxEvent* event){ }
 
-wxFrame* SoWwGLWidget::buildWidget(wxFrame* parent){ }
+wxWindow * SoWwGLWidget::buildWidget(wxWindow* parent){
+
+    if (parent != NULL && this->isTopLevelShell()) {
+        // TODO: parent->installEventFilter(PRIVATE(this));
+    }
+
+    // TODO:PRIVATE(this)->borderwidget = new QFrame(parent);
+    // TODO:this->registerWidget(PRIVATE(this)->borderwidget);
+
+    // TODO:PRIVATE(this)->borderwidget->setFrameStyle(QFrame::Panel | QFrame::Raised);
+    // TODO:PRIVATE(this)->borderwidget->setLineWidth(PRIVATE(this)->borderthickness);
+    // TODO:PRIVATE(this)->borderwidget->move(0, 0);
+
+    // Remember our parent widget so we can use it in tests in the
+    // eventFilter().
+    PRIVATE(this)->glparent = parent;
+
+    PRIVATE(this)->buildGLWidget();
+
+    //return PRIVATE(this)->currentglwidget;
+    //return PRIVATE(this)->borderwidget;
+    return PRIVATE(this)->currentglwidget;
+}
 
 void SoWwGLWidget::redrawOverlay(void){ }
 
@@ -150,126 +187,12 @@ void SoWwGLWidget::initGraphic(void){ }
 void SoWwGLWidget::initOverlayGraphic(void){ }
 
 void SoWwGLWidget::sizeChanged(const SbVec2s & size){ }
-void SoWwGLWidget::widgetChanged(wxFrame* w){ }
+void SoWwGLWidget::widgetChanged(wxWindow* w){ }
 
 
-void SoWwGLWidgetP::eventHandler(wxFrame*, void*, wxEvent*, bool*) {
+// Private data
 
-}
+#include "SoWwGLWidgetP.cpp"
 
-
-wxBEGIN_EVENT_TABLE(SoWwGLWidgetP, wxGLCanvas)
-                EVT_SIZE(SoWwGLWidgetP::OnSize)
-                EVT_PAINT(SoWwGLWidgetP::OnPaint)
-                EVT_ERASE_BACKGROUND(SoWwGLWidgetP::OnEraseBackground)
-                EVT_TIMER(TIMER_ID, SoWwGLWidgetP::OnTimer)
-wxEND_EVENT_TABLE()
-
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
-
-#include <Inventor/actions/SoGLRenderAction.h>
-#include <Inventor/engines/SoElapsedTime.h>
-#include <Inventor/events/SoMouseButtonEvent.h>
-#include <Inventor/nodes/SoCylinder.h>
-#include <Inventor/nodes/SoDirectionalLight.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoPerspectiveCamera.h>
-#include <Inventor/nodes/SoRotationXYZ.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoTranslation.h>
-#include <Inventor/SbViewportRegion.h>
-#include <Inventor/SoDB.h>
-#include <Inventor/SoInput.h>
-#include <Inventor/nodekits/SoNodeKit.h>
-#include <Inventor/SoInteraction.h>
-
-
-SoWwGLWidgetP::SoWwGLWidgetP(wxWindow *parent,
-                           wxGLAttributes& attributes,
-                           wxWindowID id,
-                           const wxPoint& pos,
-                           const wxSize& size,
-                           long style,
-                           const wxString& name)
-        : wxGLCanvas(parent,
-                     attributes,
-                     id,
-                     pos,
-                     size,
-                     style | wxFULL_REPAINT_ON_RESIZE,
-                     name)
-        , timer(this, TIMER_ID)
-{
-
-    // Explicitly create a new rendering context instance for this canvas.
-    glRealContext = new wxGLContext(this);
-    isGLInitialized = false;
-
-    /*SoDB::init();
-    SoNodeKit::init();
-    SoInteraction::init();
-    */
-    W = size.x;
-    H = size.y;
-    const int timer_fire_interval = 1000/12;  // 1/12 second interval
-    timer.Start(timer_fire_interval);
-}
-
-SoWwGLWidgetP::~SoWwGLWidgetP()
-{
-    delete glRealContext;
-}
-
-void SoWwGLWidgetP::OnPaint(wxPaintEvent& WXUNUSED(event) )
-{
-    // must always be here
-    wxPaintDC dc(this);
-
-    InitGL();
-
-#if 0
-    // Set the viewport
-    SbViewportRegion myViewport(W, H);
-
-    // Apply the render action for viewing the Coin3D on GL Window
-    SoGLRenderAction myRenderAction(myViewport);
-    myRenderAction.apply(root);
-#endif
-    glFlush();
-    SwapBuffers();
-}
-
-void SoWwGLWidgetP::OnSize(wxSizeEvent& event)
-{
-    // on size Coin need to know the new view port
-    W = event.GetSize().x;
-    H = event.GetSize().y;
-}
-
-void SoWwGLWidgetP::OnEraseBackground(wxEraseEvent& WXUNUSED(event))
-{
-    // Do nothing, to avoid flashing on MSW
-}
-
-void SoWwGLWidgetP::OnTimer(wxTimerEvent& event)
-{
-    // Very important, Coin need to process internal timer, this need to be performed in the canvas periodically
-    SoDB::getSensorManager()->processTimerQueue();
-    Refresh(false);
-}
-
-void SoWwGLWidgetP::InitGL()
-{
-    SetCurrent(*glRealContext);
-    if(!isGLInitialized) {
-        glEnable(GL_DEPTH_TEST);
-        isGLInitialized = true;
-    }
-    glClearColor( 0.3f, 0.4f, 0.6f, 1.0f );
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-}
-
+#undef PRIVATE
+#undef PUBLIC
