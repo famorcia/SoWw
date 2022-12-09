@@ -38,7 +38,22 @@
 
 class SoWwFullViewerP : public SoGuiFullViewerP {
 public:
+
+
+    SoWwFullViewerP(SoWwFullViewer *pViewer);
+
     std::string popupmenutitle;
+    //QWidget * viewerwidget, * canvas;
+    //QWidget * interactbutton, * viewbutton;
+    SbBool decorations;
+    SbString menutitle;
+    SbBool menuenabled;
+    //QLayout * mainlayout;
+    //QLayout * appbuttonlayout;
+    //QWidget * appbuttonform;
+    SbPList * appbuttonlist;
+    SbPList * viewerbuttons;
+
     void setLeftWheelValue(const float value);
     static void setThumbWheelValue(wxWindow*, float value);
 
