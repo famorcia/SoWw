@@ -37,17 +37,18 @@
 #include <wx/wx.h>
 #include <wx/timer.h>
 
+class SoWwGLWidgetP;
 class SoWwGLArea : public wxGLCanvas
 {
 public:
-    SoWwGLArea(wxWindow *parent,
+    SoWwGLArea(SoWwGLWidgetP* glWidget,
+               wxWindow *parent,
                wxGLAttributes&,
                wxWindowID id = wxID_ANY,
                const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize,
                long style = 0,
-               const wxString& name = "SoWwGLArea"
-    );
+               const wxString& name = "SoWwGLArea");
 
     virtual ~SoWwGLArea();
 
@@ -59,19 +60,14 @@ protected:
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
-    void OnTimer(wxTimerEvent& event);
 
 private:
-    enum {
-        TIMER_ID = 3000
-    };
     void InitGL();
 
     bool isGLInitialized;
-    wxTimer timer;
     wxGLContext* glRealContext;
-    int W;
-    int H;
+    SoWwGLWidgetP* wwGlWidget;
+
 wxDECLARE_NO_COPY_CLASS(SoWwGLArea);
 wxDECLARE_EVENT_TABLE();
 };

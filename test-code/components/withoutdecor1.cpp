@@ -33,13 +33,12 @@
 #include <Inventor/Ww/SoWw.h>
 #include <Inventor/Ww/viewers/SoWwExaminerViewer.h>
 #include <Inventor/nodes/SoCone.h>
-#include <qwidget.h>
 
 // This makes sure that building a widget with BUILD_NONE, and then
 // calling setDecoration( TRUE ) works.
 int main(int argc, char ** argv)
 {
-  QWidget * window = SoWw::init(argc, argv, argv[0]);
+  wxWindow * window = SoWw::init(argc, argv, argv[0]);
 
   SoWwExaminerViewer * viewer = new SoWwExaminerViewer
     (window, "Examiner Viewer" ,TRUE,
@@ -50,7 +49,7 @@ int main(int argc, char ** argv)
   viewer->show();
   SoWw::show(window);
 
-  window->resize(500, 500);
+  window->SetSize(500, 500);
 
   SoWw::mainLoop();
 

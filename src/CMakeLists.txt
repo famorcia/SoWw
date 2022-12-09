@@ -38,6 +38,7 @@ set(HDRS
 
 set(SRCS
   Inventor/${Gui}/So${Gui}.cpp
+  Inventor/${Gui}/So${Gui}P.cpp #added
   Inventor/${Gui}/So${Gui}Clipboard.cpp #added
   Inventor/${Gui}/So${Gui}Component.cpp
   Inventor/${Gui}/So${Gui}DirectionalLightEditor.cpp #added

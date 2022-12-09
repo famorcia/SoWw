@@ -29,14 +29,14 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
+
 #include <Inventor/nodekits/SoNodeKit.h>
 #include <Inventor/SoInteraction.h>
 #include "Inventor/Ww/SoWw.h"
 #include "Inventor/Ww/SoWwP.h"
 
 #include "wx/wx.h"
-
-//wxIMPLEMENT_APP(SoWwP);
+#include "sowwdefs.h"
 
 #include <wx/frame.h>
 #include <wx/defs.h>
@@ -58,14 +58,6 @@ public:
         std::clog<<__PRETTY_FUNCTION__ <<std::endl;
         event.Skip();
     }
-    void OnEraseBackground(wxEraseEvent& event) {
-        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
-        event.Skip();
-    }
-    void OnTimer(wxTimerEvent& event) {
-        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
-        event.Skip();
-    }
 
 wxDECLARE_EVENT_TABLE();
 };
@@ -73,7 +65,6 @@ wxDECLARE_EVENT_TABLE();
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
                 EVT_SIZE(MyFrame::OnSize)
                 EVT_PAINT(MyFrame::OnPaint)
-                EVT_ERASE_BACKGROUND(MyFrame::OnEraseBackground)
 wxEND_EVENT_TABLE()
 
 MyFrame::MyFrame(wxFrame *frame,
@@ -83,13 +74,12 @@ MyFrame::MyFrame(wxFrame *frame,
                  long style)
         : wxFrame(frame, wxID_ANY, title, pos, size, style)
 {
-    //Show(true);
 }
 
 wxWindow* SoWw::init(int & argc,
-                    char ** argv,
-                    const char * appname,
-                    const char * classname) {
+                     char ** argv,
+                     const char * appname,
+                     const char * classname) {
 
     // Must do this here so SoDebugError is initialized before it could
     // be attempted used.
@@ -112,9 +102,7 @@ wxWindow* SoWw::init(int & argc,
     if (wxApp::GetInstance() == NULL) {
         // Set up the QApplication instance which we have derived into a
         // subclass to catch spaceball events.
-        // wxApp::SetInstance( new SoWwP );
-        // wxAppInitializer wxTheAppInitializer((wxAppInitializerFunction) wxCreateApp);
-        wxApp::SetInstance( new SoWwP() );
+        wxApp::SetInstance( SoWwP::instance()->buildWxApp() );
         wxEntryStart( argc, argv );
         wxTheApp->CallOnInit();
     }
@@ -130,11 +118,14 @@ wxWindow* SoWw::init(int & argc,
                                   appname,
                                   wxDefaultPosition,
                                   wxSize(400,400));
+
+    SoDB::getSensorManager()->setChangedCallback(SoGuiP::sensorQueueChanged, NULL);
+
     return aFrame;
 }
 
 void SoWw::init(wxWindow* toplevelwidget) {
-
+    SOWW_STUB();
 }
 
 void SoWw::mainLoop(void) {
@@ -157,122 +148,3 @@ void    SoWw::createSimpleErrorDialog(wxWindow* widget,
 wxWindow*   SoWw::getShellWidget(const wxWindow* w) {
 
 }
-
-#if 0
-
-static void mainLoop(void);
-    static void exitMainLoop(void);
-    static void done(void);
-
-    static wxFrame* getTopLevelWidget(void);
-    static wxFrame* getShellWidget(const wxFrame* w);
-
-    static void show(wxFrame* const widget);
-    static void hide(wxFrame* const widget);
-
-    static void setWidgetSize(wxFrame* const widget, const SbVec2s size);
-    static SbVec2s getWidgetSize(const wxFrame* widget);
-
-
-    static void getVersionInfo(int * major = NULL,
-                               int * minor = NULL,
-                               int * micro = NULL);
-    static const char * getVersionString(void);
-    static const char * getVersionToolkitString(void);
-
-    enum FatalErrors {
-        UNSPECIFIED_ERROR = 0,
-        NO_OPENGL_CANVAS,
-        INTERNAL_ASSERT
-    };
-    typedef void FatalErrorCB(const SbString errmsg, SoWw::FatalErrors errcode,
-                              void * userdata);
-    static FatalErrorCB * setFatalErrorHandler(SoWw::FatalErrorCB * cb,
-                                               void * userdata);
-
-    static SbBool isDebugLibrary(void);
-    static SbBool isCompatible(unsigned int major, unsigned int minor);
-
-    enum ABIType { DLL, LIB, UNKNOWN };
-    static ABIType getABIType(void);
-
-    static void lockGL(void);
-    static void unlockGL(void);
-
-private:
-    // Since the class consists solely of static functions, hide the
-    // default constructor and the destructor so nobody can instantiate
-    // it.
-    SoWw(void);
-    virtual ~SoWw();
-
-    friend class SoGuiP;
-    friend class SoWwP;
-
-
-    // FIXME!: audit and remove as much as possible of the remaining
-    // toolkit specific parts below. 20020117 mortene.
-
-#ifdef __COIN_SOWIN__
-    public:
-  static void doIdleTasks(void);
-#endif // __COIN_SOWIN__
-
-#ifdef __COIN_SOXT__
-    public:
-  static void nextEvent(XtAppContext, XEvent *);
-  static Boolean dispatchEvent(XEvent * event);
-  static XtAppContext getAppContext(void);
-  static Display * getDisplay(void);
-  static XmString encodeString(const char * const str);
-  static char * decodeString(XmString xstring);
-  static void getPopupArgs(Display * display, int screen,
-                           ArgList args, int * n);
-
-  static void registerColormapLoad(Widget widget, Widget shell);
-  static void addColormapToShell(Widget widget, Widget shell);
-  static void removeColormapFromShell(Widget widget, Widget shell);
-
-  static void addExtensionEventHandler(Widget widget,
-                                       int eventType, XtEventHandler proc,
-                                       XtPointer clientData);
-  static void removeExtensionEventHandler(Widget widget,
-                                          int eventType, XtEventHandler proc,
-                                          XtPointer clientData);
-
-protected:
-  static void getExtensionEventHandler(XEvent * event, Widget & widget,
-                                       XtEventHandler & proc,
-                                       XtPointer & clientData);
-#endif // __COIN_SOXT__
-
-#ifdef __COIN_SOGTK__
-    public:
-  friend class SoGtkComponent;
-  enum SoGtkComponentAction { CREATION, DESTRUCTION, CHANGE };
-  typedef void SoGtkComponentActionCallback(SoGtkComponent *, SoGtk::SoGtkComponentAction, void *);
-
-  static void addComponentActionCallback(SoGtkComponentActionCallback *, void *);
-  static void removeComponentActionCallback(SoGtkComponentActionCallback *, void *);
-
-  static int getComponents(SbPList & components);
-
-protected:
-  static void invokeComponentActionCallbacks(SoGtkComponent * component,
-                                             SoGtkComponentAction action);
-
-  static gint componentCreation(SoGtkComponent * component);
-  static gint componentDestruction(SoGtkComponent * component);
-  static gint componentChange(SoGtkComponent * component);
-
-private:
-  static gint timerSensorCB(gpointer data);
-  static gint idleSensorCB(gpointer data);
-  static gint delaySensorCB(gpointer data);
-
-  static GtkWidget * mainWidget;
-  static SbPList * components;
-  static SbPList * component_callbacks;
-#endif // __COIN_SOGTK__
-};
-#endif

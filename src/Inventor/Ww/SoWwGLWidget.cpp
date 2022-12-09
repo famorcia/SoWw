@@ -32,6 +32,7 @@
 
 #include "Inventor/Ww/SoWwGLWidget.h"
 #include "Inventor/Ww/SoWwGLWidgetP.h"
+#include "Inventor/Ww/widgets/SoWwGLArea.h"
 
 SOWW_OBJECT_ABSTRACT_SOURCE(SoWwGLWidget);
 
@@ -76,7 +77,6 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
     PRIVATE(this)->previousglwidget = NULL;
     PRIVATE(this)->currentglarea = NULL;
     PRIVATE(this)->previousglarea = NULL;
-    PRIVATE(this)->borderwidget = NULL;
 
     // TODO: if (! build) { return; }
 
@@ -140,6 +140,7 @@ void   SoWwGLWidget::glUnlockOverlay(void){
 
 void   SoWwGLWidget::glSwapBuffers(void){
     std::clog<<__PRETTY_FUNCTION__<<std::endl;
+
 }
 void   SoWwGLWidget::glFlushBuffer(void){
     // std::clog<<__PRETTY_FUNCTION__<<std::endl;
@@ -159,7 +160,7 @@ void SoWwGLWidget::setDoubleBuffer(const SbBool enable){
     std::clog<<__PRETTY_FUNCTION__<<std::endl;
 }
 SbBool SoWwGLWidget::isDoubleBuffer(void) const{
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    // std::clog<<__PRETTY_FUNCTION__<<std::endl;
     // TODO: now force TRUE SbBool res = PRIVATE(this)->currentglarea->IsDoubleBuffered();
     return (TRUE);
 }
@@ -168,7 +169,7 @@ void SoWwGLWidget::setDrawToFrontBufferEnable(const SbBool enable){
     std::clog<<__PRETTY_FUNCTION__<<std::endl;
 }
 SbBool SoWwGLWidget::isDrawToFrontBufferEnable(void) const{
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    // std::clog<<__PRETTY_FUNCTION__<<std::endl;
 }
 
 
@@ -220,11 +221,12 @@ wxWindow* SoWwGLWidget::getOverlayWidget(void) const{
 }
 
 SbBool SoWwGLWidget::hasOverlayGLArea(void) const{
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    // std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    return (false);
 }
 SbBool SoWwGLWidget::hasNormalGLArea(void) const{
-    return (TRUE);
-    //return (PRIVATE(this)->currentglarea->IsEnabled());
+    bool res = (PRIVATE(this)->currentglarea->context() != 0);
+    return (res);
 }
 
 unsigned long SoWwGLWidget::getOverlayTransparentPixel(void){
@@ -256,7 +258,7 @@ wxWindow * SoWwGLWidget::buildWidget(wxWindow* parent){
 
     //return PRIVATE(this)->currentglwidget;
     //return PRIVATE(this)->borderwidget;
-    return PRIVATE(this)->currentglwidget;
+    return PRIVATE(this)->glparent;
 }
 
 void SoWwGLWidget::redrawOverlay(void){
@@ -265,6 +267,12 @@ void SoWwGLWidget::redrawOverlay(void){
 
 void SoWwGLWidget::initGraphic(void){
     std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    this->glLockNormal();
+    // Need to set this explicitly when running on top of Open Inventor,
+    // as it seems to have been forgotten there.
+    // This code should be invoked from SoQtRenderArea::initGraphics()
+    glEnable(GL_DEPTH_TEST);
+    this->glUnlockNormal();
 }
 void SoWwGLWidget::initOverlayGraphic(void){
     std::clog<<__PRETTY_FUNCTION__<<std::endl;

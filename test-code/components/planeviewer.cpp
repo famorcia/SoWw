@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#include <Inventor/Gtk/SoGtk.h>
-#include <Inventor/Gtk/viewers/SoGtkPlaneViewer.h>
+#include <Inventor/Ww/SoWw.h>
+#include <Inventor/Ww/viewers/SoWwPlaneViewer.h>
 
 #include "computils.h"
 
@@ -42,17 +42,17 @@ main(
   int argc,
   char ** argv )
 {
-  GtkWidget * window = SoGtk::init( argv[0] );
+  wxWindow * window = SoWw::init( argv[0] );
 
   SoNode * root = get_scene_graph( argc, argv );
   if ( ! root ) return -1;
 
-  SoGtkPlaneViewer * viewer = new SoGtkPlaneViewer();
+  SoWwPlaneViewer * viewer = new SoWwPlaneViewer();
   viewer->setSceneGraph( root );
   viewer->show();
-  // SoGtk::show( window );
+  // SoWw::show( window );
 
-  SoGtk::mainLoop();
+  SoWw::mainLoop();
 
   delete viewer;
   return 0;

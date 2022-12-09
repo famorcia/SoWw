@@ -31,18 +31,16 @@
 \**************************************************************************/
 
 #include <Inventor/Ww/SoWw.h>
-#include <qapplication.h>
 
 #include <Inventor/Ww/SoWw.h>
 #include <Inventor/Ww/viewers/SoWwExaminerViewer.h>
 #include <Inventor/nodes/SoCone.h>
-#include <qwidget.h>
 
 // Demonstrates that a widget built without decorations scales
 // correctly, as we've had some problems with this previously.
 int main(int argc, char ** argv)
 {
-  QWidget * window = SoWw::init(argc, argv, argv[0]);
+  wxWindow * window = SoWw::init(argc, argv, argv[0]);
 
   SoWwExaminerViewer * viewer = new SoWwExaminerViewer
     (window, "Examiner Viewer" ,TRUE,
@@ -53,7 +51,7 @@ int main(int argc, char ** argv)
   viewer->show();
   SoWw::show(window);
 
-  window->resize(500, 500);
+  window->SetSize(500, 500);
 
   SoWw::mainLoop();
 

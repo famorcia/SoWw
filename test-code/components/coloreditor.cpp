@@ -25,7 +25,7 @@ makescene(void)
 int
 main(int argc, char ** argv)
 {
-  wxFrame* w = SoWw::init(argc, argv, "SoWwColorEditor");
+  wxWindow* w = SoWw::init(argc, argv, "SoWwColorEditor");
   SoWwExaminerViewer * viewer = new SoWwExaminerViewer(w);
   SoSeparator * root;
   viewer->setSceneGraph(root = makescene());

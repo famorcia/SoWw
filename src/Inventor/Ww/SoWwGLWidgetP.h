@@ -33,11 +33,13 @@
 #define SOWW_SOWWGLWIDGETP_H
 
 #include "Inventor/Ww/SoGuiGLWidgetP.h"
-#include "Inventor/Ww/widgets/SoWwGLArea.h"
+
 #include <wx/glcanvas.h>
 #include <wx/wx.h>
 #include <wx/timer.h>
+#include <Inventor/SbVec2s.h>
 
+class SoWwGLArea;
 class SoWwGLWidgetP :  public SoGuiGLWidgetP
 {
 public:
@@ -62,7 +64,7 @@ public:
     SoWwGLArea * currentglarea;
     SoWwGLArea * previousglarea;
     wxWindow * glparent;
-    class QFrame * borderwidget;
+
     int borderthickness;
 
     const wxGLContext * oldcontext;

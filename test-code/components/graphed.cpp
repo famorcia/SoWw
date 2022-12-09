@@ -30,9 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#include <Inventor/Gtk/SoGtk.h>
-#include <Inventor/Gtk/SoGtkGraphEditor.h>
-// #include <Inventor/Gtk/SoGtkExaminerViewer.h>
+#include <Inventor/Ww/SoWw.h>
+#include <Inventor/Ww/SoWwGraphEditor.h>
+// #include <Inventor/Ww/SoWwExaminerViewer.h>
 
 #include "computils.h"
 
@@ -43,22 +43,22 @@ main(
   int argc,
   char ** argv )
 {
-  GtkWidget * window = SoGtk::init( argv[0] );
+  wxWidget * window = SoWw::init( argv[0] );
 
   SoNode * root = get_scene_graph( argc, argv );
   if ( ! root )
     return -1;
 
-//  SoGtkExaminerViewer * examinerviewer = new SoGtkExaminerViewer( window );
+//  SoWwExaminerViewer * examinerviewer = new SoWwExaminerViewer( window );
 //  examinerviewer->setSceneGraph( root );
 //  examinerviewer->show();
 
-  SoGtkGraphEditor * grapheditor = new SoGtkGraphEditor;
+  SoWwGraphEditor * grapheditor = new SoWwGraphEditor;
   grapheditor->setSceneGraph( root );
   grapheditor->show();
 
-//  SoGtk::show( window );
-  SoGtk::mainLoop();
+//  SoWw::show( window );
+  SoWw::mainLoop();
 
 //  delete examinerviewer;
   delete grapheditor;

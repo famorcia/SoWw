@@ -109,8 +109,8 @@ void SoWwComponent::setClassName(const char * const name) {
     PRIVATE(this)->classname = name;
 }
 
-void SoWwComponent::setBaseWidget(wxWindow* widget) {
-
+void SoWwComponent::setBaseWidget(wxWindow* w) {
+    PRIVATE(this)->widget = dynamic_cast<wxFrame*>(w);
 }
 
 
@@ -146,7 +146,7 @@ void SoWwComponent::show(void) {
                                PRIVATE(this)->widget->GetSize().GetY());
     }
 
-    PRIVATE(this)->widget->GetGrandParent()->Show();
+    PRIVATE(this)->widget->Show();
 
     if (SOWWCOMP_RESIZE_DEBUG) {  // debug
         SoDebugError::postInfo("SoWwComponent::show-3",
@@ -189,8 +189,11 @@ SbBool SoWwComponent::setFullScreen(const SbBool onoff) {
 }
 
 SbBool SoWwComponent::isVisible(void) {
-    return TRUE;
-    // rreturn (PRIVATE(this)->widget->IsVisible());
+    bool ret = false;
+    if( PRIVATE(this)->widget ) {
+        ret = PRIVATE(this)->widget->IsShownOnScreen();
+    }
+    return (ret);
 }
 
 SbBool SoWwComponent::isTopLevelShell(void) const {

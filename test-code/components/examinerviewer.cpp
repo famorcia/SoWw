@@ -42,7 +42,7 @@ main(
   int argc,
   char ** argv )
 {
-  wxFrame* window = SoWw::init( argv[0] );
+  wxWindow* window = SoWw::init( argv[0] );
 
   SoNode * root = new SoCube;
 

@@ -29,7 +29,9 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
+
 #include "Inventor/Ww/widgets/SoWwGLArea.h"
+#include "Inventor/Ww/SoWwGLWidgetP.h"
 
 #include "wx/wx.h"
 #include "wx/file.h"
@@ -61,11 +63,11 @@ wxBEGIN_EVENT_TABLE(SoWwGLArea, wxGLCanvas)
                 EVT_SIZE(SoWwGLArea::OnSize)
                 EVT_PAINT(SoWwGLArea::OnPaint)
                 EVT_ERASE_BACKGROUND(SoWwGLArea::OnEraseBackground)
-                EVT_TIMER(TIMER_ID, SoWwGLArea::OnTimer)
 wxEND_EVENT_TABLE()
 
 
-SoWwGLArea::SoWwGLArea(wxWindow *parent,
+SoWwGLArea::SoWwGLArea(SoWwGLWidgetP* aGLWidget,
+                       wxWindow *parent,
                        wxGLAttributes& attributes,
                        wxWindowID id,
                        const wxPoint& pos,
@@ -79,16 +81,11 @@ SoWwGLArea::SoWwGLArea(wxWindow *parent,
                      size,
                      style | wxFULL_REPAINT_ON_RESIZE,
                      name)
-        , timer(this, TIMER_ID)
 {
+    wwGlWidget = aGLWidget;
     glRealContext = 0;
     // Explicitly create a new rendering context instance for this canvas.
     isGLInitialized = false;
-
-    W = size.x;
-    H = size.y;
-    const int timer_fire_interval = 1000/12;  // 1/12 second interval
-    timer.Start(timer_fire_interval);
 }
 
 SoWwGLArea::~SoWwGLArea() {
@@ -97,37 +94,39 @@ SoWwGLArea::~SoWwGLArea() {
 
 void SoWwGLArea::OnPaint(wxPaintEvent& event )
 {
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+
     // must always be here
     wxPaintDC dc(this);
 
     InitGL();
+    wwGlWidget->gl_exposed();
 }
 
 void SoWwGLArea::OnSize(wxSizeEvent& event)
 {
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+
     // on size Coin need to know the new view port
-    W = event.GetSize().x;
-    H = event.GetSize().y;
+    wwGlWidget->gl_reshape(event.GetSize().x,
+                           event.GetSize().y);
+    wwGlWidget->gl_changed();
 }
 
 void SoWwGLArea::OnEraseBackground(wxEraseEvent& WXUNUSED(event))
 {
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
     // Do nothing, to avoid flashing on MSW
-}
-
-void SoWwGLArea::OnTimer(wxTimerEvent& event)
-{
-    // Very important, Coin need to process internal timer, this need to be performed in the canvas periodically
-    SoDB::getSensorManager()->processTimerQueue();
 }
 
 void SoWwGLArea::InitGL()
 {
+    std::clog<<__PRETTY_FUNCTION__<<std::endl;
     if(!isGLInitialized) {
         glRealContext = new wxGLContext(this);
         SetCurrent(*glRealContext);
-        glEnable(GL_DEPTH_TEST);
         isGLInitialized = true;
+        wwGlWidget->gl_init();
     } else {
         SetCurrent(*glRealContext);
     }

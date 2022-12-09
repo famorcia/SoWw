@@ -30,11 +30,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#include <Inventor/SbTime.h>
 #include "Inventor/Ww/SoWwGLWidgetP.h"
-#include "Inventor/Ww/SoAny.h"
 #include "Inventor/Ww/widgets/SoWwGLArea.h"
 
+#include "Inventor/Ww/SoAny.h"
+#include <Inventor/SbTime.h>
 
 SoWwGLWidgetP::SoWwGLWidgetP(SoWwGLWidget * o)
         : SoGuiGLWidgetP(o)
@@ -64,19 +64,13 @@ SoWwGLWidgetP::gl_changed(void)
         SoDebugError::postInfo("gl_changed", "invoked");
     }
 
-#if QT_VERSION >= 0x050000
     if (this->currentglwidget) {
-#if QT_VERSION >= 0x050600
-    SbVec2s glSize = this->glSizeUnscaled * this->currentglwidget->devicePixelRatioF();
-#else
-    SbVec2s glSize = this->glSizeUnscaled * this->currentglwidget->devicePixelRatio();
-#endif
+    // SbVec2s glSize = this->glSizeUnscaled * this->currentglwidget->devicePixelRatioF();
     if (glSize != this->glSize) {
       this->glSize = glSize;
       PUBLIC(this)->setSize(PUBLIC(this)->getSize());
     }
   }
-#endif
 }
 
 // slot invoked upon QGLWidget initialization
@@ -94,12 +88,13 @@ SoWwGLWidgetP::gl_init(void)
 void
 SoWwGLWidgetP::gl_reshape(int width, int height)
 {
-    if (SOWW_DEBUG && 0) { // debug
+    if (SOWW_DEBUG) { // debug
         SoDebugError::postInfo("gl_reshape", "<%d, %d>", width, height);
     }
 
     this->glSize = SbVec2s((short) width, (short) height);
     this->wasresized = true;
+    pub->setSize(this->glSize);
 }
 
 // slot invoked upon QGLWidget expose events
@@ -390,7 +385,9 @@ SoWwGLWidgetP::buildGLWidget(void)
 #else
     if (this->currentglwidget) SoAny::si()->unregisterGLContext((void *)PUBLIC(this));
 
-    this->currentglarea = new SoWwGLArea(this->glparent, glAttributes);
+    this->currentglarea = new SoWwGLArea(this,
+                                         this->glparent,
+                                         glAttributes);
 
     this->currentglwidget = this->currentglarea;
     // TODO: this->currentglarea->registerQKeyEventHandler(SoWwGLWidgetP::GLAreaKeyEvent, PUBLIC(this));

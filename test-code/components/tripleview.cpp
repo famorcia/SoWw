@@ -118,14 +118,11 @@ main(int argc, char ** argv)
   // Initialize system.
 
   QApplication app(argc, argv);
-  QWidget * parent = new QWidget;
-#if QT_VERSION < 0x040000 // Ww < 4.0.0
-  app.setMainWidget(parent);
-#endif
+  wxWindow * parent = new wxFrame;
+
   SoWw::init(parent);
 
-  parent->setMinimumSize(300, 200);
-
+  parent->SetMinSize( wxSize(300, 200));
 
   // Set up the Ww widget layout data.
 
