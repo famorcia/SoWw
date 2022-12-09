@@ -38,24 +38,28 @@
   not exported in the SoWw library). 20001125 mortene.
 */
 
-#include <qapplication.h>
+
 #include <Inventor/Ww/widgets/SoWwThumbWheel.h>
+#include "wx/wx.h"
 
-int
-main( int argc, char **argv )
+// Define a new application type
+class MyApp : public wxApp
 {
-  QApplication a(argc,argv);
+public:
+    virtual bool OnInit() wxOVERRIDE {
+        if ( !wxApp::OnInit() )
+            return false;
 
-  SoWwThumbWheel wheel_h(SoWwThumbWheel::Horizontal);
-  wheel_h.resize(200, 30);
+        SoWwThumbWheel *wheel_h = new SoWwThumbWheel(SoWwThumbWheel::Horizontal);
+        wheel_h->SetSize(200, 30);
 
-  SoWwThumbWheel wheel_v(SoWwThumbWheel::Vertical);
-  wheel_v.resize(30, 200);
+        SoWwThumbWheel *wheel_v = new SoWwThumbWheel(SoWwThumbWheel::Vertical);
+        wheel_v->SetSize(30, 200);
 
-#if QT_VERSION < 0x040000 // Ww < 4.0.0
-  a.setMainWidget(&wheel_h);
-#endif
-  wheel_h.show();
-  wheel_v.show();
-  return a.exec();
-}
+        wheel_h->Show();
+        wheel_v->Show();
+        return true;
+    }
+};
+
+wxIMPLEMENT_APP(MyApp);

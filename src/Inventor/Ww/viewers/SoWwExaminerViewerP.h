@@ -36,9 +36,16 @@
 #include "Inventor/Ww/viewers/SoGuiExaminerViewerP.h"
 
 class SoWwExaminerViewerP : public SoGuiExaminerViewerP {
+
 public:
+    explicit SoWwExaminerViewerP(SoWwExaminerViewer *publ);
+    ~SoWwExaminerViewerP();
+
+    void camerabuttonClicked(void);
+    //static void camerabuttonCB(Widget, XtPointer, XtPointer);
+
+    void constructor(const SbBool build);
 
 };
-
 
 #endif //SOWW_SOWWEXAMINERVIEWERP_H

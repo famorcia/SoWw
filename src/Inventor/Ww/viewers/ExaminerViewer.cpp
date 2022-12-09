@@ -29,9 +29,23 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
+
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
+#include "Inventor/Ww/viewers/SoWwExaminerViewerP.h"
 #include "Inventor/Ww/viewers/SoWwViewer.h"
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h> // for HAVE_LIBXPM
+#endif // HAVE_CONFIG_H
+
+#if HAVE_LIBXPM
+#include <Inventor/Ww/common/pixmaps/ortho.xpm>
+#include <Inventor/We/common/pixmaps/perspective.xpm>
+#endif // HAVE_LIBXPM
+
+#define PRIVATE(obj) ((obj)->pimpl)
+#define PUBLIC(obj) ((obj)->pub)
 
 SOWW_OBJECT_SOURCE(SoWwExaminerViewer);
 
@@ -46,17 +60,15 @@ SOWW_OBJECT_SOURCE(SoWwExaminerViewer);
  */
 SoWwExaminerViewer::SoWwExaminerViewer(wxWindow* parent,
                                        char const* name,
-                                       int ,
-                                       SoWwFullViewer::BuildFlag,
-                                       SoWwViewer::Type)
-                                       : SoWwFullViewer(parent,
-                                                        name,
-                                                        false,
-                                                        BUILD_NONE,
-                                                        BROWSER,
-                                                        true) {
-
+                                       int embed,
+                                       SoWwFullViewer::BuildFlag flag,
+                                       SoWwViewer::Type type)
+        : inherited(parent, name, embed, flag, type, FALSE)
+{
+    PRIVATE(this) = new SoWwExaminerViewerP(this);
+    PRIVATE(this)->constructor(TRUE);
 }
+
 
 void SoWwExaminerViewer::setCamera(SoCamera * camera) {
 

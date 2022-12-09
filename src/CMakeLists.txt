@@ -60,6 +60,7 @@ set(SRCS
   Inventor/${Gui}/devices/So${Gui}Mouse.cpp
   Inventor/${Gui}/devices/So${Gui}SpacenavDevice.cpp
   Inventor/${Gui}/viewers/ExaminerViewer.cpp
+  Inventor/${Gui}/viewers/So${Gui}ExaminerViewerP.cpp # added
   Inventor/${Gui}/viewers/FullViewer.cpp
   Inventor/${Gui}/viewers/PlaneViewer.cpp
   #Inventor/${Gui}/viewers/WalkViewer.cpp             # FIXME why not?!

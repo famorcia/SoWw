@@ -32,10 +32,68 @@
 #ifndef SOWW_SOWWTHUMBWHEEL_H
 #define SOWW_SOWWTHUMBWHEEL_H
 
+#include <wx/frame.h>
+#include "Inventor/Ww/SoWwBasic.h"
+#include "Inventor/Ww/widgets/SoAnyThumbWheel.h"
 
-class SoWwThumbWheel {
+class SOWW_DLL_API SoWwThumbWheel : public wxFrame
+{
 
-};
+public:
+    enum Orientation { Horizontal, Vertical };
+
+    SoWwThumbWheel(wxWindow * parent = 0, const char * name = 0);
+    SoWwThumbWheel(Orientation, wxWindow * parent = 0, const char * name = 0);
+    ~SoWwThumbWheel(void);
+
+    void setOrientation(Orientation);
+    Orientation orientation(void) const;
+
+    void setValue(float value);
+    float value(void) const;
+
+    void setEnabled(bool enable);
+    bool isEnabled(void) const;
+
+    enum boundaryHandling {
+        CLAMP,
+        MODULATE,
+        ACCUMULATE
+    };
+    void setRangeBoundaryHandling(boundaryHandling handling);
+    boundaryHandling getRangeBoundaryHandling(void) const;
+
+    wxSize sizeHint(void) const;
+
+    void paintEvent(wxPaintEvent& );
+    void mousePressEvent(wxMouseEvent& );
+    void mouseReleaseEvent(wxMouseEvent& );
+    void mouseMoveEvent(wxMouseEvent& );
+
+private:
+    void constructor(Orientation);
+
+    SoWwThumbWheel(const SoWwThumbWheel & wheel);
+    SoWwThumbWheel & operator = (const SoWwThumbWheel & wheel);
+
+    enum State { Idle, Dragging, Disabled } state;
+
+    Orientation orient;
+    float wheelValue, tempWheelValue;
+    int mouseDownPos, mouseLastPos;
+
+    void initWheel(int diameter, int width);
+
+    SoAnyThumbWheel * wheel;
+    wxBitmap**   pixmaps;
+    int numPixmaps;
+    int currentPixmap;
+
+wxDECLARE_EVENT_TABLE();
+
+}; // class SoWwThumbWheel
+
+// *************************************************************************
 
 
 #endif //SOWW_SOWWTHUMBWHEEL_H
