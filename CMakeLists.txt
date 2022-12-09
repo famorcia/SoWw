@@ -152,7 +152,7 @@ endif()
 
 find_package(Coin REQUIRED)
 
-set(SO${GUI}_PKG_DEPS "Coin Motif X11 Xpm Xmu OpenGL")
+set(SO${GUI}_PKG_DEPS "Coin wxWidgets OpenGL")
 
 # ##########################################################################
 # Setup build environment

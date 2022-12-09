@@ -66,7 +66,7 @@ callback(void * closure, SoAction * action)
 int
 main(int argc, char ** argv)
 {
-  wxFrame * win = SoWw::init("Debug Test");
+  wxWindow * win = SoWw::init("Debug Test");
   SoWwExaminerViewer * viewer = new SoWwExaminerViewer(win);
   viewer->show();
   SoWw::show(win);

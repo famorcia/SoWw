@@ -38,11 +38,11 @@ target_link_libraries(renderarea SoWw)
 add_executable(examinerviewer components/examinerviewer.cpp)
 target_link_libraries(examinerviewer SoWw)
 
-add_executable(scrollview components/scrollview.cpp)
-target_link_libraries(scrollview SoWw)
+#add_executable(scrollview components/scrollview.cpp)
+#target_link_libraries(scrollview SoWw)
 
-add_executable(tripleview components/tripleview.cpp)
-target_link_libraries(tripleview SoWw)
+#add_executable(tripleview components/tripleview.cpp)
+#target_link_libraries(tripleview SoWw)
 
 add_executable(withoutdecor0 components/withoutdecor0.cpp)
 target_link_libraries(withoutdecor0 SoWw)
@@ -53,4 +53,4 @@ target_link_libraries(withoutdecor1 SoWw)
 add_executable(thumbwheel widgets/thumbwheel.cpp)
 target_link_libraries(thumbwheel SoWw)
 
-add_subdirectory(wx)
+add_subdirectory(Mentor)
