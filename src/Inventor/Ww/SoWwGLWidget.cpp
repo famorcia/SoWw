@@ -52,7 +52,7 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
     PRIVATE(this) = new SoWwGLWidgetP(this);
 
     wxGLAttributes &dispAttrs = PRIVATE(this)->glAttributes;
-    dispAttrs.PlatformDefaults();//.DoubleBuffer().Depth(32).MinRGBA(8,8,8,8).EndList();
+    dispAttrs.PlatformDefaults();
     if(glmodes & SO_GL_DOUBLE)
         dispAttrs.DoubleBuffer();
     if(glmodes & SO_GL_ZBUFFER)
@@ -82,9 +82,6 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
     // TODO: if (! build) { return; }
 
     this->setClassName("SoWwGLWidget");
-    //wxWindow* parentwidget = this->getParentWidget();
-    //wxFrame* widget = dynamic_cast<wxFrame *>(this->buildWidget(parent));
-    //this->setBaseWidget(widget);
 }
 
 SoWwGLWidget::~SoWwGLWidget() {
@@ -101,55 +98,58 @@ void  SoWwGLWidget::setQuadBufferStereo(const SbBool enable) {
 
 SbBool  SoWwGLWidget::isQuadBufferStereo(void) const {
     SOWW_STUB();
+    return (FALSE);
 }
-
 
 void   SoWwGLWidget::setGLSize(const SbVec2s size){
     SOWW_STUB();
 }
 
 SbVec2s   SoWwGLWidget::getGLSize(void) const{
-    SOWW_STUB();
     SbVec2s size;
     size.setValue(PRIVATE(this)->currentglwidget->GetSize().GetX(),
                   PRIVATE(this)->currentglwidget->GetSize().GetY());
     return (size);
 }
+
 float   SoWwGLWidget::getGLAspectRatio(void) const{
     SOWW_STUB();
+    return (1.0);
 }
 
 SbBool   SoWwGLWidget::isRGBMode(void){
     SOWW_STUB();
+    return (TRUE);
 }
 
 void   SoWwGLWidget::glLockNormal(void){
-    //SOWW_STUB();
+    SOWW_STUB();
     PRIVATE(this)->currentglarea->makeCurrent();
 }
 
 void   SoWwGLWidget::glUnlockNormal(void){
-    //SOWW_STUB();
+    SOWW_STUB();
 }
 
 void   SoWwGLWidget::glLockOverlay(void){
     SOWW_STUB();
 }
+
 void   SoWwGLWidget::glUnlockOverlay(void){
     SOWW_STUB();
 }
 
 void   SoWwGLWidget::glSwapBuffers(void){
     SOWW_STUB();
-
 }
+
 void   SoWwGLWidget::glFlushBuffer(void){
-    // SOWW_STUB();
     glFlush();
 }
 
 SbBool   SoWwGLWidget::glScheduleRedraw(void){
     SOWW_STUB();
+    return (TRUE);
 }
 
 SbBool SoWwGLWidget::isBorder(void) const{
@@ -160,8 +160,9 @@ SbBool SoWwGLWidget::isBorder(void) const{
 void SoWwGLWidget::setDoubleBuffer(const SbBool enable){
     SOWW_STUB();
 }
+
 SbBool SoWwGLWidget::isDoubleBuffer(void) const{
-    // SOWW_STUB();
+    SOWW_STUB();
     // TODO: now force TRUE SbBool res = PRIVATE(this)->currentglarea->IsDoubleBuffered();
     return (TRUE);
 }
@@ -169,62 +170,76 @@ SbBool SoWwGLWidget::isDoubleBuffer(void) const{
 void SoWwGLWidget::setDrawToFrontBufferEnable(const SbBool enable){
     SOWW_STUB();
 }
-SbBool SoWwGLWidget::isDrawToFrontBufferEnable(void) const{
-    // SOWW_STUB();
-}
 
+SbBool SoWwGLWidget::isDrawToFrontBufferEnable(void) const{
+    SOWW_STUB();
+    return (TRUE);
+}
 
 void SoWwGLWidget::setAccumulationBuffer(const SbBool enable){
     SOWW_STUB();
 }
+
 SbBool SoWwGLWidget::getAccumulationBuffer(void) const{
     SOWW_STUB();
+    return (FALSE);
 }
 
 void SoWwGLWidget::setStencilBuffer(const SbBool enable){
     SOWW_STUB();
 }
+
 SbBool SoWwGLWidget::getStencilBuffer(void) const{
     SOWW_STUB();
+    return (FALSE);
 }
 
 void SoWwGLWidget::setAlphaChannel(const SbBool enable){
     SOWW_STUB();
 }
+
 SbBool SoWwGLWidget::getAlphaChannel(void) const{
     SOWW_STUB();
+    return (FALSE);
 }
 
 void SoWwGLWidget::setOverlayRender(const SbBool onoff){
     SOWW_STUB();
 }
+
 SbBool SoWwGLWidget::isOverlayRender(void) const{
     SOWW_STUB();
+    return (FALSE);
 }
 
 void SoWwGLWidget::setSampleBuffers(const int numsamples){
     SOWW_STUB();
 }
+
 int SoWwGLWidget::getSampleBuffers(void) const{
     SOWW_STUB();
+    return (0);
 }
 
 wxWindow* SoWwGLWidget::getGLWidget(void) const{
-    // SOWW_STUB();
     return (PRIVATE(this)->currentglwidget);
 }
 
 wxWindow* SoWwGLWidget::getNormalWidget(void) const{
     SOWW_STUB();
+    return (0);
 }
+
 wxWindow* SoWwGLWidget::getOverlayWidget(void) const{
     SOWW_STUB();
+    return (0);
 }
 
 SbBool SoWwGLWidget::hasOverlayGLArea(void) const{
-    // SOWW_STUB();
+    SOWW_STUB();
     return (false);
 }
+
 SbBool SoWwGLWidget::hasNormalGLArea(void) const{
     bool res = (PRIVATE(this)->currentglarea->context() != 0);
     return (res);
@@ -232,6 +247,7 @@ SbBool SoWwGLWidget::hasNormalGLArea(void) const{
 
 unsigned long SoWwGLWidget::getOverlayTransparentPixel(void){
     SOWW_STUB();
+    return (0);
 }
 
 void SoWwGLWidget::processEvent(wxEvent* event){
@@ -282,6 +298,7 @@ void SoWwGLWidget::initOverlayGraphic(void){
 void SoWwGLWidget::sizeChanged(const SbVec2s & size){
     SOWW_STUB();
 }
+
 void SoWwGLWidget::widgetChanged(wxWindow* w){
     SOWW_STUB();
 }

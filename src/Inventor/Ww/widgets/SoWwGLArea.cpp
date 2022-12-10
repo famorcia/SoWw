@@ -32,38 +32,20 @@
 
 #include "Inventor/Ww/widgets/SoWwGLArea.h"
 #include "Inventor/Ww/SoWwGLWidgetP.h"
+#include "sowwdefs.h"
 
 #include "wx/wx.h"
 #include "wx/file.h"
 #include "wx/dcclient.h"
-#include "wx/wfstream.h"
 
 #include <GL/gl.h>
-#include <GL/glu.h>
-
-#include <Inventor/actions/SoGLRenderAction.h>
-#include <Inventor/engines/SoElapsedTime.h>
-#include <Inventor/events/SoMouseButtonEvent.h>
-#include <Inventor/nodes/SoCylinder.h>
-#include <Inventor/nodes/SoDirectionalLight.h>
-#include <Inventor/nodes/SoEventCallback.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoPerspectiveCamera.h>
-#include <Inventor/nodes/SoRotationXYZ.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoTranslation.h>
-#include <Inventor/SbViewportRegion.h>
-#include <Inventor/SoDB.h>
-#include <Inventor/SoInput.h>
-#include <Inventor/nodekits/SoNodeKit.h>
-#include <Inventor/SoInteraction.h>
 
 wxBEGIN_EVENT_TABLE(SoWwGLArea, wxGLCanvas)
                 EVT_SIZE(SoWwGLArea::OnSize)
                 EVT_PAINT(SoWwGLArea::OnPaint)
                 EVT_ERASE_BACKGROUND(SoWwGLArea::OnEraseBackground)
                 EVT_LEFT_DOWN(SoWwGLArea::OnLeftMouseDown)
+                EVT_MOTION(SoWwGLArea::OnMouseMove)
 wxEND_EVENT_TABLE()
 
 
@@ -85,7 +67,6 @@ SoWwGLArea::SoWwGLArea(SoWwGLWidgetP* aGLWidget,
 {
     wwGlWidget = aGLWidget;
     glRealContext = 0;
-    // Explicitly create a new rendering context instance for this canvas.
     isGLInitialized = false;
 }
 
@@ -95,8 +76,6 @@ SoWwGLArea::~SoWwGLArea() {
 
 void SoWwGLArea::OnPaint(wxPaintEvent& event )
 {
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
-
     // must always be here
     wxPaintDC dc(this);
 
@@ -106,8 +85,6 @@ void SoWwGLArea::OnPaint(wxPaintEvent& event )
 
 void SoWwGLArea::OnSize(wxSizeEvent& event)
 {
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
-
     // on size Coin need to know the new view port
     wwGlWidget->gl_reshape(event.GetSize().x,
                            event.GetSize().y);
@@ -116,13 +93,12 @@ void SoWwGLArea::OnSize(wxSizeEvent& event)
 
 void SoWwGLArea::OnEraseBackground(wxEraseEvent& WXUNUSED(event))
 {
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
+    SOWW_STUB();
     // Do nothing, to avoid flashing on MSW
 }
 
 void SoWwGLArea::InitGL()
 {
-    std::clog<<__PRETTY_FUNCTION__<<std::endl;
     if(!isGLInitialized) {
         glRealContext = new wxGLContext(this);
         SetCurrent(*glRealContext);
@@ -143,5 +119,9 @@ const wxGLContext *SoWwGLArea::context() {
 }
 
 void SoWwGLArea::OnLeftMouseDown(wxMouseEvent &event) {
+    SoWwGLWidgetP::eventHandler(wwGlWidget->glparent, this, &event, 0);
+}
+
+void SoWwGLArea::OnMouseMove(wxMouseEvent &event) {
     SoWwGLWidgetP::eventHandler(wwGlWidget->glparent, this, &event, 0);
 }

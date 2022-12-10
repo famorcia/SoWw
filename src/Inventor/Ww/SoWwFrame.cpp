@@ -48,11 +48,9 @@ SoWwFrame::SoWwFrame(wxFrame *frame,
 }
 
 void SoWwFrame::OnPaint(wxPaintEvent& event) {
-    SOWW_STUB();
     event.Skip();
 }
 
 void SoWwFrame::OnSize(wxSizeEvent& event) {
-    SOWW_STUB();
     event.Skip();
 }

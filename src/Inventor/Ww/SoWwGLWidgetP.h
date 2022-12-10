@@ -40,6 +40,7 @@
 #include <Inventor/SbVec2s.h>
 
 class SoWwGLArea;
+
 class SoWwGLWidgetP :  public SoGuiGLWidgetP
 {
 public:

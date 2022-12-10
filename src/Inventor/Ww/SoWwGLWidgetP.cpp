@@ -113,16 +113,7 @@ SoWwGLWidgetP::gl_exposed(void)
 
     if (PUBLIC(this)->waitForExpose) {
         PUBLIC(this)->waitForExpose = false; // Gets flipped from TRUE on first expose.
-#if 1 // tmp disabled
-        // The Qt library uses QApplication::sendPostedEvents() for
-        // passing out various delayed events upon show(), among them a
-        // bunch of bl**dy resize events which will overload any size
-        // settings done before we show the SoQt component widgets.
-
-        // FIXME: should probably be an afterRealizeHook() fix. 20001125 mortene.
-
         PUBLIC(this)->setSize(PUBLIC(this)->getSize());
-#endif // tmp disabled
     }
     if (this->wasresized) {
         PUBLIC(this)->sizeChanged(this->glSize);

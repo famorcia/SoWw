@@ -38,6 +38,7 @@
 #include <wx/timer.h>
 
 class SoWwGLWidgetP;
+
 class SoWwGLArea : public wxGLCanvas
 {
 public:
@@ -61,6 +62,7 @@ protected:
     void OnSize(wxSizeEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
     void OnLeftMouseDown(wxMouseEvent& event);
+    void OnMouseMove(wxMouseEvent& event);
 
 private:
     void InitGL();
