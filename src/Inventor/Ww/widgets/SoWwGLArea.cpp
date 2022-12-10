@@ -63,6 +63,7 @@ wxBEGIN_EVENT_TABLE(SoWwGLArea, wxGLCanvas)
                 EVT_SIZE(SoWwGLArea::OnSize)
                 EVT_PAINT(SoWwGLArea::OnPaint)
                 EVT_ERASE_BACKGROUND(SoWwGLArea::OnEraseBackground)
+                EVT_LEFT_DOWN(SoWwGLArea::OnLeftMouseDown)
 wxEND_EVENT_TABLE()
 
 
@@ -139,4 +140,8 @@ void SoWwGLArea::makeCurrent() {
 
 const wxGLContext *SoWwGLArea::context() {
     return glRealContext;
+}
+
+void SoWwGLArea::OnLeftMouseDown(wxMouseEvent &event) {
+    SoWwGLWidgetP::eventHandler(wwGlWidget->glparent, this, &event, 0);
 }

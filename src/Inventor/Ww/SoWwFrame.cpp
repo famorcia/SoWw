@@ -30,48 +30,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#ifndef SOWW_SOWWGLAREA_H
-#define SOWW_SOWWGLAREA_H
+#include "Inventor/Ww/SoWwFrame.h"
+#include "sowwdefs.h"
 
-#include <wx/glcanvas.h>
-#include <wx/wx.h>
-#include <wx/timer.h>
+wxBEGIN_EVENT_TABLE(SoWwFrame, wxFrame)
+                EVT_SIZE(SoWwFrame::OnSize)
+                EVT_PAINT(SoWwFrame::OnPaint)
+wxEND_EVENT_TABLE()
 
-class SoWwGLWidgetP;
-class SoWwGLArea : public wxGLCanvas
+SoWwFrame::SoWwFrame(wxFrame *frame,
+                     const wxString& title,
+                     const wxPoint& pos,
+                     const wxSize& size,
+                     long style)
+        : wxFrame(frame, wxID_ANY, title, pos, size, style)
 {
-public:
-    SoWwGLArea(SoWwGLWidgetP* glWidget,
-               wxWindow *parent,
-               wxGLAttributes&,
-               wxWindowID id = wxID_ANY,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = 0,
-               const wxString& name = "SoWwGLArea");
+}
 
-    virtual ~SoWwGLArea();
+void SoWwFrame::OnPaint(wxPaintEvent& event) {
+    SOWW_STUB();
+    event.Skip();
+}
 
-    const wxGLContext *context();
-
-    void makeCurrent();
-
-protected:
-    void OnPaint(wxPaintEvent& event);
-    void OnSize(wxSizeEvent& event);
-    void OnEraseBackground(wxEraseEvent& event);
-    void OnLeftMouseDown(wxMouseEvent& event);
-
-private:
-    void InitGL();
-
-    bool isGLInitialized;
-    wxGLContext* glRealContext;
-    SoWwGLWidgetP* wwGlWidget;
-
-wxDECLARE_NO_COPY_CLASS(SoWwGLArea);
-wxDECLARE_EVENT_TABLE();
-};
-
-
-#endif //SOWW_SOWWGLAREA_H
+void SoWwFrame::OnSize(wxSizeEvent& event) {
+    SOWW_STUB();
+    event.Skip();
+}

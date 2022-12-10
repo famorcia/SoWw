@@ -31,10 +31,16 @@
 \**************************************************************************/
 
 #include "Inventor/Ww/SoWwGLWidgetP.h"
+#include "Inventor/Ww/SoWwGLWidget.h"
 #include "Inventor/Ww/widgets/SoWwGLArea.h"
-
 #include "Inventor/Ww/SoAny.h"
+
 #include <Inventor/SbTime.h>
+
+#include "sowwdefs.h"
+
+#define PRIVATE(obj) ((obj)->pimpl)
+#define PUBLIC(obj) ((obj)->pub)
 
 SoWwGLWidgetP::SoWwGLWidgetP(SoWwGLWidget * o)
         : SoGuiGLWidgetP(o)
@@ -65,12 +71,12 @@ SoWwGLWidgetP::gl_changed(void)
     }
 
     if (this->currentglwidget) {
-    // SbVec2s glSize = this->glSizeUnscaled * this->currentglwidget->devicePixelRatioF();
-    if (glSize != this->glSize) {
-      this->glSize = glSize;
-      PUBLIC(this)->setSize(PUBLIC(this)->getSize());
+        // SbVec2s glSize = this->glSizeUnscaled * this->currentglwidget->devicePixelRatioF();
+        if (glSize != this->glSize) {
+            this->glSize = glSize;
+            PUBLIC(this)->setSize(PUBLIC(this)->getSize());
+        }
     }
-  }
 }
 
 // slot invoked upon QGLWidget initialization
@@ -317,9 +323,6 @@ SoWwGLWidgetP::eventHandler(wxFrame * widget, void * closure, QEvent * event,
 void
 SoWwGLWidgetP::buildGLWidget(void)
 {
-    // FIXME: use SoQtComponent registerWidget() and unregisterWidget()
-    // as appropriate when setting up new or deleting old
-    // GL-widgets. 20020612 mortene.
 
     if (SOWW_DEBUG && 0) { // debug
         SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
@@ -522,11 +525,17 @@ SoWwGLWidgetP::isDirectRendering(void)
 #endif // ! X11
 }
 
-void SoWwGLWidgetP::eventHandler(wxWindow *, void *, wxEvent *, bool *) {
-
+void SoWwGLWidgetP::eventHandler(wxWindow * closure, void *, wxEvent *event, bool *) {
+    SOWW_STUB();
+    assert(closure != NULL);
+    SoWwGLWidget * component = (SoWwGLWidget *) closure;
+    component->processEvent(event);
 }
 
 // *************************************************************************
+
+#undef PRIVATE
+#undef PUBLIC
 
 
 

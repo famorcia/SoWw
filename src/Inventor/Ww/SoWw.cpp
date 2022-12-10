@@ -34,6 +34,7 @@
 #include <Inventor/SoInteraction.h>
 #include "Inventor/Ww/SoWw.h"
 #include "Inventor/Ww/SoWwP.h"
+#include "Inventor/Ww/SoWwFrame.h"
 
 #include "wx/wx.h"
 #include "sowwdefs.h"
@@ -41,61 +42,20 @@
 #include <wx/frame.h>
 #include <wx/defs.h>
 
-class MyFrame : public wxFrame
-{
-public:
-    MyFrame(wxFrame *frame,
-            const wxString& title,
-            const wxPoint& pos,
-            const wxSize& size,
-            long style = wxDEFAULT_FRAME_STYLE);
-
-    void OnPaint(wxPaintEvent& event) {
-        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
-        event.Skip();
-    }
-    void OnSize(wxSizeEvent& event) {
-        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
-        event.Skip();
-    }
-
-wxDECLARE_EVENT_TABLE();
-};
-
-wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
-                EVT_SIZE(MyFrame::OnSize)
-                EVT_PAINT(MyFrame::OnPaint)
-wxEND_EVENT_TABLE()
-
-MyFrame::MyFrame(wxFrame *frame,
-                 const wxString& title,
-                 const wxPoint& pos,
-                 const wxSize& size,
-                 long style)
-        : wxFrame(frame, wxID_ANY, title, pos, size, style)
-{
-}
-
 wxWindow* SoWw::init(int & argc,
                      char ** argv,
                      const char * appname,
                      const char * classname) {
 
-    // Must do this here so SoDebugError is initialized before it could
-    // be attempted used.
-    if (!SoDB::isInitialized()) { SoDB::init(); }
-    // these aren't necessary - they are initialized in the SoWw::init method above
-    // which is invoked below
-    SoNodeKit::init();
-    SoInteraction::init();
-
-    /*
-    if (SOWW_DEBUG && (SoWwP::appobject || SoWwP::mainwidget)) {
+    if (SOWW_DEBUG && SoWwP::instance()->isInitialized()) {
         SoDebugError::postWarning("SoWw::init",
                                   "This method should be called only once.");
-        return SoWwP::mainwidget;
+        return SoWwP::instance()->getMainFrame();
     }
-     */
+
+    // Call all the code for initializing Coin data
+    SoWwP::commonInit();
+
 
     // "qApp" is a global variable from the Qt library, pointing to the
     // single QApplication instance in a Qt-application.
@@ -114,14 +74,14 @@ wxWindow* SoWw::init(int & argc,
 
     }
 
-    wxFrame* aFrame = new MyFrame(0,
-                                  appname,
-                                  wxDefaultPosition,
-                                  wxSize(400,400));
+    SoWwP::instance()->setMainFrame( new SoWwFrame(0,
+                                    appname,
+                                    wxDefaultPosition,
+                                    wxSize(400,400)));
 
     SoDB::getSensorManager()->setChangedCallback(SoGuiP::sensorQueueChanged, NULL);
 
-    return aFrame;
+    return SoWwP::instance()->getMainFrame();
 }
 
 void SoWw::init(wxWindow* toplevelwidget) {

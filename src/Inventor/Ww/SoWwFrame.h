@@ -30,48 +30,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#ifndef SOWW_SOWWGLAREA_H
-#define SOWW_SOWWGLAREA_H
+#ifndef SOWW_SoWwFrame_H
+#define SOWW_SoWwFrame_H
 
-#include <wx/glcanvas.h>
-#include <wx/wx.h>
-#include <wx/timer.h>
+#include <wx/frame.h>
 
-class SoWwGLWidgetP;
-class SoWwGLArea : public wxGLCanvas
+class SoWwFrame : public wxFrame
 {
 public:
-    SoWwGLArea(SoWwGLWidgetP* glWidget,
-               wxWindow *parent,
-               wxGLAttributes&,
-               wxWindowID id = wxID_ANY,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = 0,
-               const wxString& name = "SoWwGLArea");
+    SoWwFrame(wxFrame *frame,
+              const wxString& title,
+              const wxPoint& pos,
+              const wxSize& size,
+              long style = wxDEFAULT_FRAME_STYLE);
 
-    virtual ~SoWwGLArea();
-
-    const wxGLContext *context();
-
-    void makeCurrent();
-
-protected:
     void OnPaint(wxPaintEvent& event);
+
     void OnSize(wxSizeEvent& event);
-    void OnEraseBackground(wxEraseEvent& event);
-    void OnLeftMouseDown(wxMouseEvent& event);
 
-private:
-    void InitGL();
-
-    bool isGLInitialized;
-    wxGLContext* glRealContext;
-    SoWwGLWidgetP* wwGlWidget;
-
-wxDECLARE_NO_COPY_CLASS(SoWwGLArea);
 wxDECLARE_EVENT_TABLE();
+
 };
 
-
-#endif //SOWW_SOWWGLAREA_H
+#endif //SOWW_SoWwFrame_H

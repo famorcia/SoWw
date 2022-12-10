@@ -53,7 +53,6 @@ public:
     //static void GLAreaKeyEvent(QKeyEvent * e, void * userdata);
     void buildGLWidget();
     //virtual bool eventFilter(QObject * obj, QEvent * e);
-    //static void eventHandler(QWidget *, void *, QEvent *, bool *);
 
     SbVec2s glSize;
     SbVec2s glSizeUnscaled;

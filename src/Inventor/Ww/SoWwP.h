@@ -41,16 +41,26 @@
 #include <wx/timer.h>
 #include <wx/app.h>
 
+class SoWwFrame;
+
 class SoWwP : public SoGuiP {
 
-public:
-
+    bool init;
+    SoWwFrame* main_frame;
+    SoWwP();
     static wxTimer *timerqueuetimer;
     static wxTimer *idletimer;
     static wxTimer *delaytimeouttimer;
+
+public:
+
     static SoWwP* instance();
+    bool isInitialized() const;
+    void setInitialize(bool);
     static void sensorQueueChanged();
     wxApp* buildWxApp();
+    void setMainFrame(SoWwFrame*);
+    SoWwFrame* getMainFrame() const;
 };
 
 #endif //SOWW_SOWWP_H

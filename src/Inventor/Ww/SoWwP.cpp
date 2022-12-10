@@ -48,11 +48,9 @@ public:
     }
 };
 
-
 wxTimer * SoWwP::timerqueuetimer = 0;
 wxTimer * SoWwP::idletimer = 0;
 wxTimer * SoWwP::delaytimeouttimer = 0;
-
 
 wxApp* SoWwP::buildWxApp() {
     return (new SoWxApp);
@@ -61,12 +59,6 @@ wxApp* SoWwP::buildWxApp() {
 void
 SoGuiP::sensorQueueChanged(void *)
 {
-#if defined(__COIN__) && defined(SOQT_SIGNAL_THREAD_ACTIVE)
-    if (SoWwP::signalthread->isRunning() && (cc_thread_id() != SoWwP::original_thread)) {
-    SoWwP::signalthread->trigger();
-    return;
-  }
-#endif // __COIN__ && SOQT_SIGNAL_THREAD_ACTIVE
     SoWwP::instance()->sensorQueueChanged();
 }
 
@@ -224,4 +216,25 @@ SoWwP::sensorQueueChanged(void)
 SoWwP *SoWwP::instance() {
     static SoWwP singleton;
     return (&singleton);
+}
+
+SoWwP::SoWwP() {
+    init = false;
+    main_frame = 0;
+}
+
+bool SoWwP::isInitialized() const {
+    return (init);
+}
+
+void SoWwP::setInitialize(bool i) {
+    init = i;
+}
+
+SoWwFrame *SoWwP::getMainFrame() const {
+    return (main_frame);
+}
+
+void SoWwP::setMainFrame(SoWwFrame * frame) {
+    main_frame = frame;
 }
