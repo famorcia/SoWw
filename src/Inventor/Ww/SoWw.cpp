@@ -64,9 +64,9 @@ wxWindow* SoWw::init(int & argc,
     }
 
     SoWwP::instance()->setMainFrame( new SoWwFrame(0,
-                                    appname,
-                                    wxDefaultPosition,
-                                    wxSize(400,400)));
+                                                   appname,
+                                                   wxDefaultPosition,
+                                                   wxSize(400,400)));
 
     SoDB::getSensorManager()->setChangedCallback(SoGuiP::sensorQueueChanged,
                                                  NULL);
@@ -84,11 +84,9 @@ void SoWw::init(wxWindow* toplevelwidget) {
  * (embedded in already existing window).
  */
 void SoWw::mainLoop(void) {
-    if(SoWwP::instance()->provideSoWxApp() != 0) {
-        wxTheApp->OnRun();
-        wxTheApp->OnExit();
-        wxEntryCleanup();
-    }
+    wxTheApp->OnRun();
+    wxTheApp->OnExit();
+    wxEntryCleanup();
 }
 
 void  SoWw::show(wxWindow* const widget) {

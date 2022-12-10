@@ -84,76 +84,35 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
         return (conv);
     }
 
-#if 1
-#if 0
-    QWheelEvent * wheelevent =
-            (event->type() == QEvent::Wheel) ? (QWheelEvent *)event : NULL;
-
-    QMouseEvent * mouseevent =
-            ((event->type() == QEvent::MouseButtonDblClick) ||
-             (event->type() == QEvent::MouseButtonPress) ||
-             (event->type() == QEvent::MouseButtonRelease) ||
-             (event->type() == QEvent::MouseMove)) ?
-            (QMouseEvent *)event : NULL;
-
-    if (!wheelevent && !mouseevent) return NULL;
-
     // Convert wheel mouse events to Coin SoMouseButtonEvents.
-    //
-    // FIXME: should consider adding an SoMouseWheel event to Coin?
-    // 20020821 mortene. (idea mentioned by Florian Link on
-    // coin-discuss.)
-
 #ifdef HAVE_SOMOUSEBUTTONEVENT_BUTTON5
-    if (wheelevent) {
-#if QT_VERSION >= 0x050700
-        if (wheelevent->angleDelta().y() > 0)
-      PRIVATE(this)->buttonevent->setButton(wheelevent->inverted() ? SoMouseButtonEvent::BUTTON5 : SoMouseButtonEvent::BUTTON4);
-    else if (wheelevent->angleDelta().y() < 0)
-      PRIVATE(this)->buttonevent->setButton(wheelevent->inverted() ? SoMouseButtonEvent::BUTTON4 : SoMouseButtonEvent::BUTTON5);
-#elif QT_VERSION >= 0x050000
-        if (wheelevent->angleDelta().y() > 0)
-      PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON4);
-    else if (wheelevent->angleDelta().y() < 0)
-      PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON5);
-#else
-        if (wheelevent->delta() > 0)
-            PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON4);
-        else if (wheelevent->delta() < 0)
-            PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON5);
-#endif // QT_VERSION
+    if (mouse_event->GetWheelRotation() > 0)
+        PRIVATE(this)->buttonevent->setButton(mouse_event->IsWheelInverted() ?
+                                              SoMouseButtonEvent::BUTTON5 :
+                                              SoMouseButtonEvent::BUTTON4);
+    else if (mouse_event->GetWheelRotation() < 0)
+        PRIVATE(this)->buttonevent->setButton(mouse_event->IsWheelInverted() ?
+                                              SoMouseButtonEvent::BUTTON4 :
+                                              SoMouseButtonEvent::BUTTON5);
 
-#if SoWw_DEBUG
-            else {
-      SoDebugError::postInfo("SoWwMouse::translateEvent",
-                             "event, but no movement");
-    }
-#endif // SoWw_DEBUG
-        PRIVATE(this)->buttonevent->setState(SoButtonEvent::DOWN);
-        conv = PRIVATE(this)->buttonevent;
-    }
+    PRIVATE(this)->buttonevent->setState(SoButtonEvent::DOWN);
+    conv = PRIVATE(this)->buttonevent;
+
 #endif // HAVE_SOMOUSEBUTTONEVENT_BUTTON5
 
-    // Check for mousebutton press/release. Note that mousebutton
-    // doubleclick events are handled by converting them to two
-    // press/release events. In other words: it's the user's
-    // responsibility to translate pairs of singleclicks to
-    // doubleclicks, if doubleclicks have a special meaning in the
-    // application.
+// Check for mousebutton press/release. Note that mousebutton
+// doubleclick events are handled by converting them to two
+// press/release events. In other words: it's the user's
+// responsibility to translate pairs of singleclicks to
+// doubleclicks, if doubleclicks have a special meaning in the
+// application.
 
-    // Qt actually sends this series of events upon dblclick:
-    // QEvent::MouseButtonPress, QEvent::MouseButtonRelease,
-    // QEvent::MouseButtonDblClick, QEvent::MouseButtonRelease.
-    //
-    // This was reported to Troll Tech as a possible bug, but was
-    // confirmed by TT support to be the intended behavior.
-#endif
     if (((mouse_event->ButtonDClick()) ||
          (mouse_event->ButtonDown()) ||
          (mouse_event->ButtonUp())) &&
         (PRIVATE(this)->eventmask & (BUTTON_PRESS | BUTTON_RELEASE))) {
 
-        // Which button?
+// Which button?
         switch (mouse_event->GetButton()) {
             case wxMOUSE_BTN_LEFT:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON1);
@@ -164,14 +123,14 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
             case wxMOUSE_BTN_MIDDLE:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON3);
                 break;
-                // Not sure if this can actually happen.
+// Not sure if this can actually happen.
             case wxMOUSE_BTN_ANY:
             default:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::ANY);
                 break;
         }
 
-        // Press or release?
+// Press or release?
         if (mouse_event->ButtonUp())
             PRIVATE(this)->buttonevent->setState(SoButtonEvent::UP);
         else
@@ -180,36 +139,20 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
         conv = PRIVATE(this)->buttonevent;
     }
 
-    // Check for mouse movement.
+// Check for mouse movement.
     if (mouse_event->Dragging() || mouse_event->Moving()) {
         conv = PRIVATE(this)->locationevent;
     }
 
-    // Common settings for SoEvent superclass.
+// Common settings for SoEvent superclass.
     if (conv) {
-        // Modifiers
-        if (mouse_event) {
-#if 0
-            conv->setShiftDown(mouseevent->state() & Qt::ShiftButton);
-            conv->setCtrlDown(mouseevent->state() & Qt::ControlButton);
-            conv->setAltDown(mouseevent->state() & Qt::AltButton);
-#endif
-
-            this->setEventPosition(conv,
-                                   mouse_event->GetX(),
-                                   mouse_event->GetY());
-        }
-        else { // wheelevent
-#if 0
-            conv->setShiftDown(wheelevent->state() & Qt::ShiftButton);
-            conv->setCtrlDown(wheelevent->state() & Qt::ControlButton);
-            conv->setAltDown(wheelevent->state() & Qt::AltButton);
-            this->setEventPosition(conv, wheelevent->x(), wheelevent->y());
-#endif
-        }
-
+        conv->setShiftDown(mouse_event->ShiftDown());
+        conv->setCtrlDown(mouse_event->ControlDown());
+        conv->setAltDown(mouse_event->AltDown());
+        this->setEventPosition(conv,
+                               mouse_event->GetX(),
+                               mouse_event->GetY());
         conv->setTime(SbTime::getTimeOfDay());
     }
-#endif
     return conv;
 }

@@ -119,5 +119,8 @@ const wxGLContext *SoWwGLArea::context() {
 }
 
 void SoWwGLArea::OnMouse(wxMouseEvent &event) {
-    SoWwGLWidgetP::eventHandler(wwGlWidget->glparent, wwGlWidget, event, 0);
+    SoWwGLWidgetP::eventHandler(wwGlWidget->glparent,
+                                wwGlWidget,
+                                event,
+                                0);
 }
