@@ -44,7 +44,7 @@ class SoWwGLArea;
 class SoWwGLWidgetP :  public SoGuiGLWidgetP
 {
 public:
-    static void eventHandler(wxWindow*, void*, wxEvent*, bool*);
+    static void eventHandler(wxWindow*, void*, wxEvent&, bool*);
 
     explicit SoWwGLWidgetP(SoWwGLWidget * publ);
 

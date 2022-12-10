@@ -42,6 +42,7 @@
 
 #include <Inventor/Ww/devices/SoWwMouse.h>
 #include "Inventor/Ww/devices/SoGuiMouseP.h"
+#include "sowwdefs.h"
 
 #define PRIVATE(p) (p->pimpl)
 #define PUBLIC(p) (p->pub)
@@ -54,25 +55,36 @@ public:
     //SoMouseButtonEvent * makeButtonEvent(XButtonEvent * event, SoButtonEvent::State state);
 };
 
-SoWwMouse::SoWwMouse(int eventmask ) {
+SoWwMouse::SoWwMouse(int mask ) {
     PRIVATE(this) = new SoWwMouseP(this);
+    PRIVATE(this)->eventmask = mask;
 }
 
 SoWwMouse::~SoWwMouse(void) {
 
 }
 
-void SoWwMouse::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
-
+void SoWwMouse::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure)    {
+    SOWW_STUB();
 }
 
 void SoWwMouse::disable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
-
+    SOWW_STUB();
 }
 
-const SoEvent * SoWwMouse::translateEvent(wxEvent* event) {
+const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
 
     SoEvent * conv = NULL;
+
+    wxMouseEvent* mouse_event = dynamic_cast<wxMouseEvent*>(&event);
+    if(!mouse_event) {
+        SoDebugError::postInfo("SoWwMouse::translateEvent",
+                               "is not a mouse event!");
+
+        return (conv);
+    }
+
+#if 1
 #if 0
     QWheelEvent * wheelevent =
             (event->type() == QEvent::Wheel) ? (QWheelEvent *)event : NULL;
@@ -111,12 +123,12 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent* event) {
             PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON5);
 #endif // QT_VERSION
 
-#if SOQT_DEBUG
+#if SoWw_DEBUG
             else {
-      SoDebugError::postInfo("SoQtMouse::translateEvent",
+      SoDebugError::postInfo("SoWwMouse::translateEvent",
                              "event, but no movement");
     }
-#endif // SOQT_DEBUG
+#endif // SoWw_DEBUG
         PRIVATE(this)->buttonevent->setState(SoButtonEvent::DOWN);
         conv = PRIVATE(this)->buttonevent;
     }
@@ -135,148 +147,67 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent* event) {
     //
     // This was reported to Troll Tech as a possible bug, but was
     // confirmed by TT support to be the intended behavior.
-
-    if (((event->type() == QEvent::MouseButtonDblClick) ||
-         (event->type() == QEvent::MouseButtonPress) ||
-         (event->type() == QEvent::MouseButtonRelease)) &&
+#endif
+    if (((mouse_event->ButtonDClick()) ||
+         (mouse_event->ButtonDown()) ||
+         (mouse_event->ButtonUp())) &&
         (PRIVATE(this)->eventmask & (BUTTON_PRESS | BUTTON_RELEASE))) {
 
         // Which button?
-        switch (mouseevent->button()) {
-            case Qt::LeftButton:
-                // We default to setting BUTTON1 for LMB, but this can be
-                // overridden below by another invocation of
-                // SoButtonEvent::setButton() if modifier keys are used.
+        switch (mouse_event->GetButton()) {
+            case wxMOUSE_BTN_LEFT:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON1);
-
-// Emulate right mouse button on Mac OS X platform by ctrl-click.
-
-// In Qt/Mac versions 3.0.x and all Qt/X11 versions (even when
-// compiled on Mac OS X), Qt::ControlButton is mapped to the "Ctrl"
-// key. Since Qt/Mac version 3.1.x, Qt::ControlButton is mapped to the
-// "Apple" key. (According to qt-support, this is intended
-// and not a bug.)
-
-// Since the standard way of emulating right-click in the Mac world is
-// ctrl-click, we have to check for "meta" on Qt/Mac >= 3.1.x
-
-#if (defined(__APPLE__) && defined(Q_WS_X11)) || (defined(Q_OS_MAC) && QT_VERSION < 0x030100)
-                if (mouseevent->state() & Qt::ControlButton)
-        PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON2);
-#elif (defined(Q_OS_MAC) && QT_VERSION >= 0x030100)
-
-                #if QT_VERSION >= 0x040000
-      if (mouseevent->modifiers() & Qt::MetaModifier)
-#else
-      if (mouseevent->state() & Qt::MetaButton)
-#endif
-        PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON2);
-#endif
                 break;
-
-            case Qt::RightButton:
+            case wxMOUSE_BTN_RIGHT:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON2);
                 break;
-
-#if QT_VERSION >= 0x050F00
-                case Qt::MiddleButton:
-#else
-            case Qt::MidButton:
-#endif
+            case wxMOUSE_BTN_MIDDLE:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON3);
                 break;
-
                 // Not sure if this can actually happen.
-            case Qt::NoButton:
-                PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::ANY);
-                break;
-
+            case wxMOUSE_BTN_ANY:
             default:
-                // There used to be an assert here, but in Qt 3.1.1, at least,
-                // QMouseEvent::button() can return with a value 0x0010 or
-                // 0x0020 -- values that are not covered in the Qt::ButtonState
-                // enum. This is reported to happen for an IntelliMouse with a
-                // button 4 and 5 (for up/down navigation).
-                //
-                // Update: according to Troll Tech, the enums will be added to
-                // the official API for the next release.
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::ANY);
                 break;
         }
 
         // Press or release?
-        if (mouseevent->type() == QEvent::MouseButtonRelease)
+        if (mouse_event->ButtonUp())
             PRIVATE(this)->buttonevent->setState(SoButtonEvent::UP);
-        else // QEvent::MouseButtonPress
+        else
             PRIVATE(this)->buttonevent->setState(SoButtonEvent::DOWN);
 
         conv = PRIVATE(this)->buttonevent;
     }
 
-
     // Check for mouse movement.
-    if ((event->type() == QEvent::MouseMove) &&
-        // FIXME: is this correct? BUTTON_MOTION means "motion with
-        // buttons down". 20020625 mortene.
-        (PRIVATE(this)->eventmask & (POINTER_MOTION | BUTTON_MOTION))) {
+    if (mouse_event->Dragging() || mouse_event->Moving()) {
         conv = PRIVATE(this)->locationevent;
     }
-
 
     // Common settings for SoEvent superclass.
     if (conv) {
         // Modifiers
-        if (mouseevent) {
-#if QT_VERSION >= 0x040000
-            conv->setShiftDown(mouseevent->modifiers() & Qt::ShiftModifier);
-      conv->setCtrlDown(mouseevent->modifiers() & Qt::ControlModifier);
-      conv->setAltDown(mouseevent->modifiers() & Qt::AltModifier);
-#else
+        if (mouse_event) {
+#if 0
             conv->setShiftDown(mouseevent->state() & Qt::ShiftButton);
             conv->setCtrlDown(mouseevent->state() & Qt::ControlButton);
             conv->setAltDown(mouseevent->state() & Qt::AltButton);
 #endif
-#if QT_VERSION >= 0x050000
-            #if QT_VERSION >= 0x060000
-      QWidget* widget = QApplication::widgetAt(mouseevent->globalPosition().toPoint());
-#else
-      QWidget* widget = QApplication::widgetAt(mouseevent->globalPos());
-#endif
-#if QT_VERSION >= 0x050600
-      qreal devicePixelRatio = NULL != widget ? widget->devicePixelRatioF() : qreal(1);
-#else
-      qreal devicePixelRatio = NULL != widget ? widget->devicePixelRatio() : qreal(1);
-#endif
-#if QT_VERSION >= 0x060000
-      this->setEventPosition(conv, qRound(mouseevent->position().x()) * devicePixelRatio,
-	                               qRound(mouseevent->position().y()) * devicePixelRatio);
-#else
-      this->setEventPosition(conv, mouseevent->x() * devicePixelRatio,
-                                   mouseevent->y() * devicePixelRatio);
-#endif
-#else
-            this->setEventPosition(conv, mouseevent->x(), mouseevent->y());
-#endif
+
+            this->setEventPosition(conv,
+                                   mouse_event->GetX(),
+                                   mouse_event->GetY());
         }
         else { // wheelevent
-#if QT_VERSION >= 0x040000
-            conv->setShiftDown(wheelevent->modifiers() & Qt::ShiftModifier);
-      conv->setCtrlDown(wheelevent->modifiers() & Qt::ControlModifier);
-      conv->setAltDown(wheelevent->modifiers() & Qt::AltModifier);
-#else
+#if 0
             conv->setShiftDown(wheelevent->state() & Qt::ShiftButton);
             conv->setCtrlDown(wheelevent->state() & Qt::ControlButton);
             conv->setAltDown(wheelevent->state() & Qt::AltButton);
-#endif
-
-#if QT_VERSION >= 0x050E00
-            this->setEventPosition(conv, wheelevent->position().x(), wheelevent->position().y());
-#else
             this->setEventPosition(conv, wheelevent->x(), wheelevent->y());
-#endif // QT_VERSION
+#endif
         }
 
-        // FIXME: should be time of Qt event. 19990211 mortene.
         conv->setTime(SbTime::getTimeOfDay());
     }
 #endif

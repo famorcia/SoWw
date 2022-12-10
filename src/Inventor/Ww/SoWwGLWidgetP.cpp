@@ -380,7 +380,6 @@ SoWwGLWidgetP::buildGLWidget(void)
     if (this->currentglwidget) SoAny::si()->unregisterGLContext((void *)PUBLIC(this));
 
     this->currentglarea = new SoWwGLArea(this,
-                                         this->glparent,
                                          glAttributes);
 
     this->currentglwidget = this->currentglarea;
@@ -516,10 +515,9 @@ SoWwGLWidgetP::isDirectRendering(void)
 #endif // ! X11
 }
 
-void SoWwGLWidgetP::eventHandler(wxWindow * closure, void *, wxEvent *event, bool *) {
-    SOWW_STUB();
+void SoWwGLWidgetP::eventHandler(wxWindow * widget , void *closure, wxEvent &event, bool *) {
     assert(closure != NULL);
-    SoWwGLWidget * component = (SoWwGLWidget *) closure;
+    SoWwGLWidget * component = ((SoWwGLWidgetP *) closure)->pub;
     component->processEvent(event);
 }
 

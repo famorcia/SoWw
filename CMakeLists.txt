@@ -4,7 +4,7 @@ set(gui ww)
 set(Gui Ww)
 set(GUI WW)
 set(WIDGET wxWindow*)
-set(EVENT wxEvent*)
+set(EVENT wxEvent&)
 
 function(dump_variable)
   if (SO${GUI}_VERBOSE)

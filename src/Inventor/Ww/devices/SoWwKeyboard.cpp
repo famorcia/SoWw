@@ -56,6 +56,6 @@ void SoWwKeyboard::disable(wxWindow* widget, SoWwEventHandler * handler, void * 
 
 }
 
-const SoEvent * SoWwKeyboard::translateEvent(wxEvent* event) {
+const SoEvent * SoWwKeyboard::translateEvent(wxEvent& event) {
 
 }

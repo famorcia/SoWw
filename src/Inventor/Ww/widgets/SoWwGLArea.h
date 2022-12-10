@@ -43,7 +43,6 @@ class SoWwGLArea : public wxGLCanvas
 {
 public:
     SoWwGLArea(SoWwGLWidgetP* glWidget,
-               wxWindow *parent,
                wxGLAttributes&,
                wxWindowID id = wxID_ANY,
                const wxPoint& pos = wxDefaultPosition,
@@ -61,8 +60,7 @@ protected:
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
-    void OnLeftMouseDown(wxMouseEvent& event);
-    void OnMouseMove(wxMouseEvent& event);
+    void OnMouse(wxMouseEvent& event);
 
 private:
     void InitGL();

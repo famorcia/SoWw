@@ -30,17 +30,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#include <Inventor/nodekits/SoNodeKit.h>
-#include <Inventor/SoInteraction.h>
 #include "Inventor/Ww/SoWw.h"
 #include "Inventor/Ww/SoWwP.h"
 #include "Inventor/Ww/SoWwFrame.h"
 
-#include "wx/wx.h"
 #include "sowwdefs.h"
-
-#include <wx/frame.h>
-#include <wx/defs.h>
 
 wxWindow* SoWw::init(int & argc,
                      char ** argv,
@@ -56,22 +50,17 @@ wxWindow* SoWw::init(int & argc,
     // Call all the code for initializing Coin data
     SoWwP::commonInit();
 
-
-    // "qApp" is a global variable from the Qt library, pointing to the
-    // single QApplication instance in a Qt-application.
+    // if wxApp is not already created
     if (wxApp::GetInstance() == NULL) {
         // Set up the QApplication instance which we have derived into a
         // subclass to catch spaceball events.
-        wxApp::SetInstance( SoWwP::instance()->buildWxApp() );
+        wxApp::SetInstance(SoWwP::instance()->provideSoWxApp() );
         wxEntryStart( argc, argv );
         wxTheApp->CallOnInit();
     }
     else {
         // The user already set one up for us.
-        //
-        // FIXME: should somehow warn about the fact that spaceball events
-        // will not be caught, if a spaceball is attempted used. 20020619 mortene.
-
+        // so nothing to do
     }
 
     SoWwP::instance()->setMainFrame( new SoWwFrame(0,
@@ -79,8 +68,10 @@ wxWindow* SoWw::init(int & argc,
                                     wxDefaultPosition,
                                     wxSize(400,400)));
 
-    SoDB::getSensorManager()->setChangedCallback(SoGuiP::sensorQueueChanged, NULL);
+    SoDB::getSensorManager()->setChangedCallback(SoGuiP::sensorQueueChanged,
+                                                 NULL);
 
+    SoWwP::instance()->setInitialize(true);
     return SoWwP::instance()->getMainFrame();
 }
 
@@ -88,10 +79,16 @@ void SoWw::init(wxWindow* toplevelwidget) {
     SOWW_STUB();
 }
 
+/**
+ * mainLoop is required only if an external app is not available
+ * (embedded in already existing window).
+ */
 void SoWw::mainLoop(void) {
-    wxTheApp->OnRun();
-    wxTheApp->OnExit();
-    wxEntryCleanup();
+    if(SoWwP::instance()->provideSoWxApp() != 0) {
+        wxTheApp->OnRun();
+        wxTheApp->OnExit();
+        wxEntryCleanup();
+    }
 }
 
 void  SoWw::show(wxWindow* const widget) {
@@ -102,9 +99,10 @@ void    SoWw::createSimpleErrorDialog(wxWindow* widget,
                                       const char * title,
                                       const char * string1,
                                       const char * string2 ) {
-
+    SOWW_STUB();
 }
 
 wxWindow*   SoWw::getShellWidget(const wxWindow* w) {
-
+    SOWW_STUB();
+    return (0);
 }

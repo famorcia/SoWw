@@ -32,11 +32,10 @@
 
 #include "Inventor/Ww/SoWwP.h"
 
-#include <Inventor/errors/SoDebugError.h>
 #include <Inventor/SoDB.h>
-#include <Inventor/SbPList.h>
-#include <Inventor/sensors/SoSensorManager.h>
 #include <Inventor/SbTime.h>
+#include <Inventor/errors/SoDebugError.h>
+#include <Inventor/sensors/SoSensorManager.h>
 
 class SoWxApp : public  wxApp {
 public:
@@ -52,13 +51,25 @@ wxTimer * SoWwP::timerqueuetimer = 0;
 wxTimer * SoWwP::idletimer = 0;
 wxTimer * SoWwP::delaytimeouttimer = 0;
 
-wxApp* SoWwP::buildWxApp() {
-    return (new SoWxApp);
+SoWwP::SoWwP() {
+    init = false;
+    main_frame = 0;
+    main_app = 0;
+}
+
+/**
+ * if an app is not already available build and return
+ */
+wxApp*
+SoWwP::provideSoWxApp() {
+    if(!main_app) {
+        main_app = new SoWxApp;
+    }
+    return (main_app);
 }
 
 void
-SoGuiP::sensorQueueChanged(void *)
-{
+SoGuiP::sensorQueueChanged(void *) {
     SoWwP::instance()->sensorQueueChanged();
 }
 
@@ -216,11 +227,6 @@ SoWwP::sensorQueueChanged(void)
 SoWwP *SoWwP::instance() {
     static SoWwP singleton;
     return (&singleton);
-}
-
-SoWwP::SoWwP() {
-    init = false;
-    main_frame = 0;
 }
 
 bool SoWwP::isInitialized() const {

@@ -44,27 +44,29 @@ wxBEGIN_EVENT_TABLE(SoWwGLArea, wxGLCanvas)
                 EVT_SIZE(SoWwGLArea::OnSize)
                 EVT_PAINT(SoWwGLArea::OnPaint)
                 EVT_ERASE_BACKGROUND(SoWwGLArea::OnEraseBackground)
-                EVT_LEFT_DOWN(SoWwGLArea::OnLeftMouseDown)
-                EVT_MOTION(SoWwGLArea::OnMouseMove)
+                EVT_LEFT_DOWN(SoWwGLArea::OnMouse)
+                EVT_RIGHT_DOWN(SoWwGLArea::OnMouse)
+                EVT_LEFT_UP(SoWwGLArea::OnMouse)
+                EVT_RIGHT_UP(SoWwGLArea::OnMouse)
+                EVT_MOTION(SoWwGLArea::OnMouse)
+                EVT_MOUSEWHEEL(SoWwGLArea::OnMouse)
 wxEND_EVENT_TABLE()
 
 
 SoWwGLArea::SoWwGLArea(SoWwGLWidgetP* aGLWidget,
-                       wxWindow *parent,
                        wxGLAttributes& attributes,
                        wxWindowID id,
                        const wxPoint& pos,
                        const wxSize& size,
                        long style,
                        const wxString& name)
-        : wxGLCanvas(parent,
+        : wxGLCanvas(aGLWidget->glparent,
                      attributes,
                      id,
                      pos,
                      size,
                      style | wxFULL_REPAINT_ON_RESIZE,
-                     name)
-{
+                     name) {
     wwGlWidget = aGLWidget;
     glRealContext = 0;
     isGLInitialized = false;
@@ -74,31 +76,29 @@ SoWwGLArea::~SoWwGLArea() {
     delete glRealContext;
 }
 
-void SoWwGLArea::OnPaint(wxPaintEvent& event )
-{
+void SoWwGLArea::OnPaint(wxPaintEvent& event ) {
     // must always be here
     wxPaintDC dc(this);
 
     InitGL();
     wwGlWidget->gl_exposed();
+    event.Skip();
 }
 
-void SoWwGLArea::OnSize(wxSizeEvent& event)
-{
+void SoWwGLArea::OnSize(wxSizeEvent& event) {
     // on size Coin need to know the new view port
     wwGlWidget->gl_reshape(event.GetSize().x,
                            event.GetSize().y);
     wwGlWidget->gl_changed();
+    event.Skip();
 }
 
-void SoWwGLArea::OnEraseBackground(wxEraseEvent& WXUNUSED(event))
-{
+void SoWwGLArea::OnEraseBackground(wxEraseEvent& WXUNUSED(event)) {
     SOWW_STUB();
     // Do nothing, to avoid flashing on MSW
 }
 
-void SoWwGLArea::InitGL()
-{
+void SoWwGLArea::InitGL() {
     if(!isGLInitialized) {
         glRealContext = new wxGLContext(this);
         SetCurrent(*glRealContext);
@@ -118,10 +118,6 @@ const wxGLContext *SoWwGLArea::context() {
     return glRealContext;
 }
 
-void SoWwGLArea::OnLeftMouseDown(wxMouseEvent &event) {
-    SoWwGLWidgetP::eventHandler(wwGlWidget->glparent, this, &event, 0);
-}
-
-void SoWwGLArea::OnMouseMove(wxMouseEvent &event) {
-    SoWwGLWidgetP::eventHandler(wwGlWidget->glparent, this, &event, 0);
+void SoWwGLArea::OnMouse(wxMouseEvent &event) {
+    SoWwGLWidgetP::eventHandler(wwGlWidget->glparent, wwGlWidget, event, 0);
 }

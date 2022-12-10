@@ -29,8 +29,10 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
+
 #include "Inventor/Ww/devices/SoWwInputFocus.h"
 #include "Inventor/Ww/devices/SoGuiInputFocusP.h"
+#include "sowwdefs.h"
 
 #define PRIVATE(p) (p->pimpl)
 #define PUBLIC(p) (p->pub)
@@ -51,13 +53,13 @@ SoWwInputFocus::~SoWwInputFocus() {
 }
 
 void SoWwInputFocus::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
-
+    SOWW_STUB();
 }
 
 void SoWwInputFocus::disable(wxWindow* widget, SoWwEventHandler * handler, void * closure){
-
+    SOWW_STUB();
 }
 
-const SoEvent * SoWwInputFocus::translateEvent(wxEvent* event) {
-
+const SoEvent * SoWwInputFocus::translateEvent(wxEvent& event) {
+    SOWW_STUB();
 }

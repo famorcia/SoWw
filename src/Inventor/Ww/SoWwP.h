@@ -48,6 +48,7 @@ class SoWwP : public SoGuiP {
     bool init;
     SoWwFrame* main_frame;
     SoWwP();
+    wxApp*  main_app;
     static wxTimer *timerqueuetimer;
     static wxTimer *idletimer;
     static wxTimer *delaytimeouttimer;
@@ -58,7 +59,7 @@ public:
     bool isInitialized() const;
     void setInitialize(bool);
     static void sensorQueueChanged();
-    wxApp* buildWxApp();
+    wxApp* provideSoWxApp();
     void setMainFrame(SoWwFrame*);
     SoWwFrame* getMainFrame() const;
 };

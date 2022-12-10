@@ -250,8 +250,10 @@ unsigned long SoWwGLWidget::getOverlayTransparentPixel(void){
     return (0);
 }
 
-void SoWwGLWidget::processEvent(wxEvent* event){
-    SOWW_STUB();
+void SoWwGLWidget::processEvent(wxEvent& event){
+    // Nothing is done here for the SoWwGLWidget, as realize, resize and
+    // expose events are caught by explicitly attaching signal callbacks
+    // to the widget.
 }
 
 wxWindow * SoWwGLWidget::buildWidget(wxWindow* parent){
