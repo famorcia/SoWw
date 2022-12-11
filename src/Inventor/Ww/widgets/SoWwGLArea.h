@@ -57,6 +57,7 @@ public:
     void makeCurrent();
 
     bool isDoubleBuffer() const;
+
 protected:
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);

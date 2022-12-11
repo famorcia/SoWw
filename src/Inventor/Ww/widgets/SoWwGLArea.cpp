@@ -138,6 +138,9 @@ void SoWwGLArea::OnMouse(wxMouseEvent &event) {
                                 0);
 }
 
-bool SoWwGLArea::isDoubleBuffer() const {
+// TODO: should be used glattributes, otherwise is not related to current glArea attributes
+bool
+SoWwGLArea::isDoubleBuffer() const {
     return (wxIsDoubleBuffer());
 }
+

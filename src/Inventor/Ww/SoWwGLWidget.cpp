@@ -47,8 +47,8 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
                            const SbBool build):
         inherited(parent, name, embed),
         waitForExpose(true),
-        drawToFrontBuffer(false)
-{
+        drawToFrontBuffer(false) {
+
     PRIVATE(this) = new SoWwGLWidgetP(this);
 
     wxGLAttributes &dispAttrs = PRIVATE(this)->glAttributes;
@@ -88,173 +88,213 @@ SoWwGLWidget::~SoWwGLWidget() {
 
 }
 
-void SoWwGLWidget::setBorder(const SbBool enable) {
+void
+SoWwGLWidget::setBorder(const SbBool enable) {
     SOWW_STUB();
 }
 
-void  SoWwGLWidget::setQuadBufferStereo(const SbBool enable) {
+void
+SoWwGLWidget::setQuadBufferStereo(const SbBool enable) {
     SOWW_STUB();
 }
 
-SbBool  SoWwGLWidget::isQuadBufferStereo(void) const {
+SbBool
+SoWwGLWidget::isQuadBufferStereo(void) const {
     SOWW_STUB();
     return (FALSE);
 }
 
-void   SoWwGLWidget::setGLSize(const SbVec2s size){
-    SOWW_STUB();
+void
+SoWwGLWidget::setGLSize(const SbVec2s size){
+    // Do nothing, alredy managed in GLAreal
 }
 
-SbVec2s   SoWwGLWidget::getGLSize(void) const{
-    SbVec2s size;
-    size.setValue(PRIVATE(this)->currentglwidget->GetSize().GetX(),
-                  PRIVATE(this)->currentglwidget->GetSize().GetY());
-    return (size);
+template <typename T>
+T
+toSbVec2(const wxSize& wx_size) {
+    return (T(wx_size.GetX(), wx_size.GetY()));
 }
 
-float   SoWwGLWidget::getGLAspectRatio(void) const{
-    SOWW_STUB();
-    return (1.0);
+SbVec2s
+SoWwGLWidget::getGLSize(void) const{
+    return (toSbVec2<SbVec2s>(PRIVATE(this)->currentglwidget->GetSize()));
 }
 
-SbBool   SoWwGLWidget::isRGBMode(void){
+float
+SoWwGLWidget::getGLAspectRatio(void) const{
+    SbVec2f v2(toSbVec2<SbVec2f>(PRIVATE(this)->currentglwidget->GetSize()));
+    return ( v2[0] /v2[1] );
+}
+
+SbBool
+SoWwGLWidget::isRGBMode(void){
     SOWW_STUB();
     return (TRUE);
 }
 
-void   SoWwGLWidget::glLockNormal(void){
+void
+SoWwGLWidget::glLockNormal(void){
     assert(PRIVATE(this)->currentglarea != NULL);
     PRIVATE(this)->currentglarea->makeCurrent();
 }
 
-void   SoWwGLWidget::glUnlockNormal(void){
+void
+SoWwGLWidget::glUnlockNormal(void){
     // do nothing
 }
 
-void   SoWwGLWidget::glLockOverlay(void){
+void
+SoWwGLWidget::glLockOverlay(void){
     SOWW_STUB();
 }
 
-void   SoWwGLWidget::glUnlockOverlay(void){
+void
+SoWwGLWidget::glUnlockOverlay(void){
     SOWW_STUB();
 }
 
-void   SoWwGLWidget::glSwapBuffers(void){
+void
+SoWwGLWidget::glSwapBuffers(void){
     PRIVATE(this)->currentglarea->SwapBuffers();
 }
 
-void   SoWwGLWidget::glFlushBuffer(void){
+void
+SoWwGLWidget::glFlushBuffer(void){
     glFlush();
 }
 
-SbBool   SoWwGLWidget::glScheduleRedraw(void){
+SbBool
+SoWwGLWidget::glScheduleRedraw(void){
     SOWW_STUB();
     return (TRUE);
 }
 
-SbBool SoWwGLWidget::isBorder(void) const{
+SbBool
+SoWwGLWidget::isBorder(void) const{
     SOWW_STUB();
     return (FALSE);
 }
 
-void SoWwGLWidget::setDoubleBuffer(const SbBool enable){
+void
+SoWwGLWidget::setDoubleBuffer(const SbBool enable){
     SOWW_STUB();
 }
 
-SbBool SoWwGLWidget::isDoubleBuffer(void) const{
+SbBool
+SoWwGLWidget::isDoubleBuffer(void) const{
     SbBool res = PRIVATE(this)->currentglarea->isDoubleBuffer();
     return (res);
 }
 
-void SoWwGLWidget::setDrawToFrontBufferEnable(const SbBool enable){
+void
+SoWwGLWidget::setDrawToFrontBufferEnable(const SbBool enable){
     drawToFrontBuffer = enable;
 }
 
-SbBool SoWwGLWidget::isDrawToFrontBufferEnable(void) const{
+SbBool
+SoWwGLWidget::isDrawToFrontBufferEnable(void) const{
     return (drawToFrontBuffer);
 }
 
-void SoWwGLWidget::setAccumulationBuffer(const SbBool enable){
+void
+SoWwGLWidget::setAccumulationBuffer(const SbBool enable){
     SOWW_STUB();
 }
 
-SbBool SoWwGLWidget::getAccumulationBuffer(void) const{
-    SOWW_STUB();
-    return (FALSE);
-}
-
-void SoWwGLWidget::setStencilBuffer(const SbBool enable){
-    SOWW_STUB();
-}
-
-SbBool SoWwGLWidget::getStencilBuffer(void) const{
+SbBool
+SoWwGLWidget::getAccumulationBuffer(void) const{
     SOWW_STUB();
     return (FALSE);
 }
 
-void SoWwGLWidget::setAlphaChannel(const SbBool enable){
+void
+SoWwGLWidget::setStencilBuffer(const SbBool enable){
     SOWW_STUB();
 }
 
-SbBool SoWwGLWidget::getAlphaChannel(void) const{
-    SOWW_STUB();
-    return (FALSE);
-}
-
-void SoWwGLWidget::setOverlayRender(const SbBool onoff){
-    SOWW_STUB();
-}
-
-SbBool SoWwGLWidget::isOverlayRender(void) const{
+SbBool
+SoWwGLWidget::getStencilBuffer(void) const{
     SOWW_STUB();
     return (FALSE);
 }
 
-void SoWwGLWidget::setSampleBuffers(const int numsamples){
+void
+SoWwGLWidget::setAlphaChannel(const SbBool enable){
     SOWW_STUB();
 }
 
-int SoWwGLWidget::getSampleBuffers(void) const{
+SbBool
+SoWwGLWidget::getAlphaChannel(void) const{
+    SOWW_STUB();
+    return (FALSE);
+}
+
+void
+SoWwGLWidget::setOverlayRender(const SbBool onoff){
+    SOWW_STUB();
+}
+
+SbBool
+SoWwGLWidget::isOverlayRender(void) const{
+    SOWW_STUB();
+    return (FALSE);
+}
+
+void
+SoWwGLWidget::setSampleBuffers(const int numsamples){
+    SOWW_STUB();
+}
+
+int
+SoWwGLWidget::getSampleBuffers(void) const{
     SOWW_STUB();
     return (0);
 }
 
-wxWindow* SoWwGLWidget::getGLWidget(void) const{
+wxWindow*
+SoWwGLWidget::getGLWidget(void) const{
     return (PRIVATE(this)->currentglwidget);
 }
 
-wxWindow* SoWwGLWidget::getNormalWidget(void) const{
+wxWindow*
+SoWwGLWidget::getNormalWidget(void) const{
     SOWW_STUB();
     return (0);
 }
 
-wxWindow* SoWwGLWidget::getOverlayWidget(void) const{
+wxWindow*
+SoWwGLWidget::getOverlayWidget(void) const{
     SOWW_STUB();
     return (0);
 }
 
-SbBool SoWwGLWidget::hasOverlayGLArea(void) const{
+SbBool
+SoWwGLWidget::hasOverlayGLArea(void) const{
     SOWW_STUB();
     return (false);
 }
 
-SbBool SoWwGLWidget::hasNormalGLArea(void) const{
+SbBool
+SoWwGLWidget::hasNormalGLArea(void) const{
     bool res = (PRIVATE(this)->currentglarea->context() != 0);
     return (res);
 }
 
-unsigned long SoWwGLWidget::getOverlayTransparentPixel(void){
+unsigned long
+SoWwGLWidget::getOverlayTransparentPixel(void){
     SOWW_STUB();
     return (0);
 }
 
-void SoWwGLWidget::processEvent(wxEvent& event){
+void
+SoWwGLWidget::processEvent(wxEvent& event){
     // Nothing is done here for the SoWwGLWidget, as realize, resize and
     // expose events are caught by explicitly attaching signal callbacks
     // to the widget.
 }
 
-wxWindow * SoWwGLWidget::buildWidget(wxWindow* parent){
+wxWindow *
+SoWwGLWidget::buildWidget(wxWindow* parent){
 
     if (parent != NULL && this->isTopLevelShell()) {
         // TODO: parent->installEventFilter(PRIVATE(this));
@@ -278,28 +318,32 @@ wxWindow * SoWwGLWidget::buildWidget(wxWindow* parent){
     return PRIVATE(this)->glparent;
 }
 
-void SoWwGLWidget::redrawOverlay(void){
+void
+SoWwGLWidget::redrawOverlay(void){
     SOWW_STUB();
 }
 
-void SoWwGLWidget::initGraphic(void){
-    SOWW_STUB();
+void
+SoWwGLWidget::initGraphic(void){
     this->glLockNormal();
     // Need to set this explicitly when running on top of Open Inventor,
     // as it seems to have been forgotten there.
-    // This code should be invoked from SoQtRenderArea::initGraphics()
+    // This code should be invoked from SoWwRenderArea::initGraphics()
     glEnable(GL_DEPTH_TEST);
     this->glUnlockNormal();
 }
-void SoWwGLWidget::initOverlayGraphic(void){
+void
+SoWwGLWidget::initOverlayGraphic(void){
     SOWW_STUB();
 }
 
-void SoWwGLWidget::sizeChanged(const SbVec2s & size){
-    SOWW_STUB();
+void
+SoWwGLWidget::sizeChanged(const SbVec2s & size){
+    // Do nothing
 }
 
-void SoWwGLWidget::widgetChanged(wxWindow* w){
+void
+SoWwGLWidget::widgetChanged(wxWindow* w){
     SOWW_STUB();
 }
 
