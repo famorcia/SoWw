@@ -42,6 +42,7 @@ set(SRCS
   Inventor/${Gui}/So${Gui}P.cpp #added
   Inventor/${Gui}/So${Gui}Clipboard.cpp #added
   Inventor/${Gui}/So${Gui}Component.cpp
+  Inventor/${Gui}/So${Gui}ComponentP.cpp #added
   Inventor/${Gui}/So${Gui}DirectionalLightEditor.cpp #added
   Inventor/${Gui}/So${Gui}Frame.cpp                  # added
   Inventor/${Gui}/So${Gui}GLWidget.cpp
@@ -65,6 +66,7 @@ set(SRCS
   Inventor/${Gui}/viewers/ExaminerViewer.cpp
   Inventor/${Gui}/viewers/So${Gui}ExaminerViewerP.cpp # added
   Inventor/${Gui}/viewers/FullViewer.cpp
+  Inventor/${Gui}/viewers/So${Gui}FullViewerP.cpp  # added
   Inventor/${Gui}/viewers/PlaneViewer.cpp
   #Inventor/${Gui}/viewers/WalkViewer.cpp             # FIXME why not?!
   Inventor/${Gui}/widgets/So${Gui}GLArea.cpp

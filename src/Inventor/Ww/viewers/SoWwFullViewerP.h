@@ -32,9 +32,9 @@
 #ifndef SOWW_SOWWFULLVIEWERP_H
 #define SOWW_SOWWFULLVIEWERP_H
 
-#include <string>
-
 #include "Inventor/Ww/viewers/SoGuiFullViewerP.h"
+
+#include <string>
 
 class SoWwFullViewerP : public SoGuiFullViewerP {
 public:
@@ -43,19 +43,20 @@ public:
     SoWwFullViewerP(SoWwFullViewer *pViewer);
 
     std::string popupmenutitle;
-    //QWidget * viewerwidget, * canvas;
-    //QWidget * interactbutton, * viewbutton;
+    wxWindow * viewerwidget, * canvas;
+    wxWindow * interactbutton, * viewbutton;
     SbBool decorations;
     SbString menutitle;
     SbBool menuenabled;
-    //QLayout * mainlayout;
-    //QLayout * appbuttonlayout;
-    //QWidget * appbuttonform;
+    wxBoxSizer* mainlayout;
+    wxBoxSizer * appbuttonlayout;
+    wxWindow* appbuttonform;
     SbPList * appbuttonlist;
     SbPList * viewerbuttons;
 
     void setLeftWheelValue(const float value);
     static void setThumbWheelValue(wxWindow*, float value);
+    void showDecorationWidgets(SbBool onOff);
 
     // Thumbwheels.
     void leftWheelPressed(void);
@@ -84,8 +85,6 @@ public:
     // Generic slots.
     void increaseInteractiveCount();
     void decreaseInteractiveCount();
-
-
 };
 
 

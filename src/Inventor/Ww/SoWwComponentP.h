@@ -33,6 +33,9 @@
 #define SOWW_SOWWCOMPONENTP_H
 
 #include "Inventor/Ww/SoGuiComponentP.h"
+#include "Inventor/Ww/SoWwComponent.h"
+#include <wx/window.h>
+#include <wx/frame.h>
 
 class SoWwComponentP : public SoGuiComponentP {
 public:

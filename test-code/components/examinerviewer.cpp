@@ -38,24 +38,23 @@
 // *************************************************************************
 
 int
-main(
-  int argc,
-  char ** argv )
+main(int argc,
+     char ** argv )
 {
-  wxWindow* window = SoWw::init( argv[0] );
+    wxWindow* window = SoWw::init( argv[0] );
 
-  SoNode * root = new SoCube;
+    SoNode * root = new SoCube;
 
-  SoWwExaminerViewer * viewer = new SoWwExaminerViewer( window );
+    SoWwExaminerViewer * viewer = new SoWwExaminerViewer( window );
 
-  viewer->setSceneGraph( root );
-  viewer->show();
-  SoWw::show( window );
+    viewer->setSceneGraph( root );
+    viewer->show();
+    SoWw::show( window );
 
-  SoWw::mainLoop();
+    SoWw::mainLoop();
 
-  delete viewer;
-  return 0;
+    delete viewer;
+    return 0;
 } // main()
 
 // *************************************************************************

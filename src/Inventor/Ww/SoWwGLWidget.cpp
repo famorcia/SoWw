@@ -79,7 +79,7 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
     PRIVATE(this)->currentglarea = NULL;
     PRIVATE(this)->previousglarea = NULL;
 
-    // TODO: if (! build) { return; }
+    if (! build) { return; }
 
     this->setClassName("SoWwGLWidget");
 }
@@ -171,8 +171,7 @@ SoWwGLWidget::glScheduleRedraw(void){
 
 SbBool
 SoWwGLWidget::isBorder(void) const{
-    SOWW_STUB();
-    return (FALSE);
+    return (PRIVATE(this)->borderthickness ? true : false);
 }
 
 void

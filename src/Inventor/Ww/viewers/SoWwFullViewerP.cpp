@@ -30,30 +30,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#ifndef SOWW_SOWWEXAMINERVIEWERP_H
-#define SOWW_SOWWEXAMINERVIEWERP_H
+#include "Inventor/Ww/viewers/SoWwFullViewerP.h"
+#include "sowwdefs.h"
 
-#include <Inventor/SbBasic.h>
-#include "Inventor/Ww/viewers/SoGuiExaminerViewerP.h"
+SoWwFullViewerP::SoWwFullViewerP(SoWwFullViewer *pViewer)
+: SoGuiFullViewerP(pViewer) {
 
-#include "wx/image.h"
-#include "wx/button.h"
-#include "wx/frame.h"
+}
 
-class SoWwExaminerViewerP : public SoGuiExaminerViewerP {
+void
+SoWwFullViewerP::setThumbWheelValue(wxWindow*, float value) {
+    SOWW_STUB();
+}
 
-public:
-    explicit SoWwExaminerViewerP(SoWwExaminerViewer *publ);
-    ~SoWwExaminerViewerP();
+void
+SoWwFullViewerP::seekbuttonClicked()  {
+    SOWW_STUB();
+}
 
-    void camerabuttonClicked(void);
-    //static void camerabuttonCB(Widget, XtPointer, XtPointer);
-
-    void constructor(const SbBool build);
-
-    wxImage * orthopixmap, * perspectivepixmap;
-    wxButton * cameratogglebutton;
-
-};
-
-#endif //SOWW_SOWWEXAMINERVIEWERP_H
+void
+SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
+    SOWW_STUB();
+}
