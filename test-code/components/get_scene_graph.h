@@ -1,22 +1,22 @@
 /**************************************************************************\
  * Copyright (c) Kongsberg Oil & Gas Technologies AS
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
- * 
+ *
  * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 
+ *
  * Neither the name of the copyright holder nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -30,47 +30,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#include <Inventor/Ww/SoWw.h>
-#include <Inventor/Ww/SoWwRenderArea.h>
+#ifndef GET_SCENE_GRAPH_H
+#define GET_SCENE_GRAPH_H
 
-#include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoRotor.h>
 #include <Inventor/nodes/SoArray.h>
-#include <Inventor/nodes/SoDirectionalLight.h>
-#include <Inventor/nodes/SoPerspectiveCamera.h>
-#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoCube.h>
 
-/*
-  This is a simple example, demonstrating proper behaviour for a
-  SoWwRenderArea when built with the 'embed' flag set to TRUE.
-*/
-
-#include "get_scene_graph.h"
-
-int main(int argc, char ** argv)
+static SoSeparator * get_scene_graph(void)
 {
-    wxWindow * window = SoWw::init(argv[0]);
-
     SoSeparator * root = new SoSeparator;
-    root->ref();
-    SoPerspectiveCamera * camera;
-    root->addChild(camera = new SoPerspectiveCamera);
-    root->addChild(new SoDirectionalLight);
-    SoSeparator * userroot = get_scene_graph();
-    root->addChild(userroot);
 
+    SoGroup * group = new SoGroup;
 
-    SoWwRenderArea * renderarea =
-            new SoWwRenderArea(window, "Renderarea demonstration", FALSE);
-    camera->viewAll( userroot, renderarea->getViewportRegion() );
-    renderarea->setSceneGraph(root);
-    renderarea->setBackgroundColor(SbColor(0.0f, 0.2f, 0.3f));
-    renderarea->show();
+    SoRotor * rotor = new SoRotor;
+    rotor->rotation = SbRotation(SbVec3f(0.2f, 0.5f, 0.9f), float(M_PI)/4.0f);
+    group->addChild(rotor);
 
-    SoWw::show(window);
-    SoWw::mainLoop();
+    SoCube * cube = new SoCube;
+    group->addChild(cube);
 
-    delete renderarea;
-    root->unref();
-    return 0;
+    SoArray * array = new SoArray;
+    array->origin = SoArray::CENTER;
+    array->addChild(group);
+    array->numElements1 = 2;
+    array->numElements2 = 2;
+    array->separation1 = SbVec3f(4, 0, 0);
+    array->separation2 = SbVec3f(0, 4, 0);
+
+    root->addChild(array);
+    return root;
 }
+
+#endif //GET_SCENE_GRAPH_H

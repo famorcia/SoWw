@@ -54,7 +54,8 @@ wxWindow* SoWw::init(int & argc,
     if (wxApp::GetInstance() == NULL) {
         // Set up the QApplication instance which we have derived into a
         // subclass to catch spaceball events.
-        wxApp::SetInstance(SoWwP::instance()->provideSoWxApp() );
+        SoWwP::instance()->buildWxApp();
+        wxApp::SetInstance(SoWwP::instance()->getWxApp() );
         wxEntryStart( argc, argv );
         wxTheApp->CallOnInit();
     }
@@ -85,8 +86,17 @@ void SoWw::init(wxWindow* toplevelwidget) {
  */
 void SoWw::mainLoop(void) {
     wxTheApp->OnRun();
-    wxTheApp->OnExit();
-    wxEntryCleanup();
+    // after app is finished remove sensor callback
+    SoDB::getSensorManager()->setChangedCallback(NULL,
+                                                 NULL);
+    // turn off timers
+    SoWwP::instance()->finish();
+
+    // only if app is built by SoWw perform exit and cleanup
+    if(SoWwP::instance()->getWxApp()) {
+        wxTheApp->OnExit();
+        wxEntryCleanup();
+    }
 }
 
 void  SoWw::show(wxWindow* const widget) {

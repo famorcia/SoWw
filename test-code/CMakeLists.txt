@@ -35,6 +35,9 @@ target_link_libraries(coloreditor SoWw)
 add_executable(renderarea components/renderarea.cpp)
 target_link_libraries(renderarea SoWw)
 
+add_executable(wx_renderarea components/wx_renderarea.cpp)
+target_link_libraries(wx_renderarea SoWw)
+
 add_executable(examinerviewer components/examinerviewer.cpp)
 target_link_libraries(examinerviewer SoWw)
 

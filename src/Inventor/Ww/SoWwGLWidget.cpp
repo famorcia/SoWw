@@ -123,12 +123,12 @@ SbBool   SoWwGLWidget::isRGBMode(void){
 }
 
 void   SoWwGLWidget::glLockNormal(void){
-    SOWW_STUB();
+    assert(PRIVATE(this)->currentglarea != NULL);
     PRIVATE(this)->currentglarea->makeCurrent();
 }
 
 void   SoWwGLWidget::glUnlockNormal(void){
-    SOWW_STUB();
+    // do nothing
 }
 
 void   SoWwGLWidget::glLockOverlay(void){
@@ -140,7 +140,7 @@ void   SoWwGLWidget::glUnlockOverlay(void){
 }
 
 void   SoWwGLWidget::glSwapBuffers(void){
-    SOWW_STUB();
+    PRIVATE(this)->currentglarea->SwapBuffers();
 }
 
 void   SoWwGLWidget::glFlushBuffer(void){
@@ -162,18 +162,16 @@ void SoWwGLWidget::setDoubleBuffer(const SbBool enable){
 }
 
 SbBool SoWwGLWidget::isDoubleBuffer(void) const{
-    SOWW_STUB();
-    // TODO: now force TRUE SbBool res = PRIVATE(this)->currentglarea->IsDoubleBuffered();
-    return (TRUE);
+    SbBool res = PRIVATE(this)->currentglarea->isDoubleBuffer();
+    return (res);
 }
 
 void SoWwGLWidget::setDrawToFrontBufferEnable(const SbBool enable){
-    SOWW_STUB();
+    drawToFrontBuffer = enable;
 }
 
 SbBool SoWwGLWidget::isDrawToFrontBufferEnable(void) const{
-    SOWW_STUB();
-    return (TRUE);
+    return (drawToFrontBuffer);
 }
 
 void SoWwGLWidget::setAccumulationBuffer(const SbBool enable){

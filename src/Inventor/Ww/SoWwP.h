@@ -53,15 +53,23 @@ class SoWwP : public SoGuiP {
     static wxTimer *idletimer;
     static wxTimer *delaytimeouttimer;
 
+    static void initTimers();
+    static void stopTimers();
 public:
 
     static SoWwP* instance();
     bool isInitialized() const;
     void setInitialize(bool);
     static void sensorQueueChanged();
-    wxApp* provideSoWxApp();
+
+    void buildWxApp();
+    void setWxApp(wxApp*);
+    wxApp* getWxApp() const;
+
     void setMainFrame(SoWwFrame*);
     SoWwFrame* getMainFrame() const;
+
+    void finish();
 };
 
 #endif //SOWW_SOWWP_H

@@ -56,6 +56,7 @@ public:
 
     void makeCurrent();
 
+    bool isDoubleBuffer() const;
 protected:
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);
@@ -65,9 +66,10 @@ protected:
 private:
     void InitGL();
 
-    bool isGLInitialized;
-    wxGLContext* glRealContext;
-    SoWwGLWidgetP* wwGlWidget;
+    bool is_gl_initialized;
+    wxGLContext* gl_real_context;
+    SoWwGLWidgetP* ww_gl_widget;
+    wxGLAttributes  gl_attributes;
 
 wxDECLARE_NO_COPY_CLASS(SoWwGLArea);
 wxDECLARE_EVENT_TABLE();

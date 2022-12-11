@@ -65,11 +65,11 @@ SoWwMouse::~SoWwMouse(void) {
 }
 
 void SoWwMouse::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure)    {
-    SOWW_STUB();
+    // Nothing to do, already managed by callback in GLArea
 }
 
 void SoWwMouse::disable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
-    SOWW_STUB();
+    // Nothing to do, already managed by callback in GLArea
 }
 
 const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {

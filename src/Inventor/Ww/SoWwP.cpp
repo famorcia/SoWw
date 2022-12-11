@@ -57,14 +57,27 @@ SoWwP::SoWwP() {
     main_app = 0;
 }
 
+void
+SoWwP::buildWxApp() {
+    if(!main_app) {
+        setWxApp( new SoWxApp);
+    } else if (SOWW_DEBUG && 0){
+        SoDebugError::postInfo("SoWwP::buildWxApp",
+                               "wxApp already built");
+
+    }
+}
+
+void
+SoWwP::setWxApp(wxApp* app) {
+    main_app = app;
+}
+
 /**
  * if an app is not already available build and return
  */
 wxApp*
-SoWwP::provideSoWxApp() {
-    if(!main_app) {
-        main_app = new SoWxApp;
-    }
+SoWwP::getWxApp() const {
     return (main_app);
 }
 
@@ -77,9 +90,9 @@ class TimerQueueTimer : public wxTimer {
 public:
     virtual void Notify() {
         if (SOWW_DEBUG && 0) { // debug
-            SoDebugError::postInfo("SoWw::timedOutSensor",
+            SoDebugError::postInfo("TimerQueueTimer::Notify",
                                    "processing timer queue");
-            SoDebugError::postInfo("SoWw::timedOutSensor",
+            SoDebugError::postInfo("TimerQueueTimer::Notify",
                                    "is %s",
                                    this->IsRunning() ?
                                    "active" : "inactive");
@@ -115,9 +128,9 @@ class DelayTimeoutTimer : public wxTimer {
 public:
     virtual void Notify() {
         if (SOWW_DEBUG && 0) { // debug
-            SoDebugError::postInfo("SoWw::delaytimeoutSensor",
+            SoDebugError::postInfo("DelayTimeoutTimer::Notify",
                                    "processing delay queue");
-            SoDebugError::postInfo("SoWwP::delaytimeouttimer", "is %s",
+            SoDebugError::postInfo("DelayTimeoutTimer::Notify", "is %s",
                                    this->IsRunning() ?
                                    "active" : "inactive");
         }
@@ -152,12 +165,7 @@ SoWwP::sensorQueueChanged(void)
 
 
     // Allocate wx timers on first call.
-
-    if (!SoWwP::timerqueuetimer) {
-        SoWwP::timerqueuetimer = new TimerQueueTimer;
-        SoWwP::idletimer = new IdleTimer;
-        SoWwP::delaytimeouttimer = new DelayTimeoutTimer;
-    }
+    SoWwP::initTimers();
 
     SoSensorManager * sm = SoDB::getSensorManager();
 
@@ -175,7 +183,7 @@ SoWwP::sensorQueueChanged(void)
         if (interval.getValue() <= 0.0) { interval.setValue(1.0/5000.0); }
 
         if (SOWW_DEBUG && 0) { // debug
-            SoDebugError::postInfo("SoWw::sensorQueueChanged",
+            SoDebugError::postInfo("SoWwP::sensorQueueChanged",
                                    "timersensor pending, interval %f",
                                    interval.getValue());
         }
@@ -194,7 +202,7 @@ SoWwP::sensorQueueChanged(void)
 
     if (sm->isDelaySensorPending()) {
         if (SOWW_DEBUG && 0) { // debug
-            SoDebugError::postInfo("SoWw::sensorQueueChanged",
+            SoDebugError::postInfo("SoWwP::sensorQueueChanged",
                                    "delaysensor pending");
         }
 
@@ -244,3 +252,37 @@ SoWwFrame *SoWwP::getMainFrame() const {
 void SoWwP::setMainFrame(SoWwFrame * frame) {
     main_frame = frame;
 }
+
+#define INIT_TIMER(timer_name, timer_type)  \
+    if (!timer_name) {                      \
+        timer_name = new timer_type;        \
+    }                                       \
+    assert(timer_name != 0)
+
+void SoWwP::initTimers() {
+    static bool are_initialized = false;
+
+    if(!are_initialized) {
+        INIT_TIMER(SoWwP::timerqueuetimer, TimerQueueTimer);
+        INIT_TIMER(SoWwP::idletimer, IdleTimer);
+        INIT_TIMER(SoWwP::delaytimeouttimer, DelayTimeoutTimer);
+        are_initialized = true;
+    }
+}
+
+#undef INIT_TIMER
+
+#define STOP_TIMER(timer_name) if(timer_name) timer_name->Stop()
+
+void SoWwP::stopTimers() {
+    STOP_TIMER(SoWwP::timerqueuetimer);
+    STOP_TIMER(SoWwP::delaytimeouttimer);
+    STOP_TIMER(SoWwP::idletimer);
+}
+
+#undef STOP_TIMER
+
+void SoWwP::finish() {
+    stopTimers();
+}
+

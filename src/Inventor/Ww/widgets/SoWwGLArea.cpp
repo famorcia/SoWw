@@ -53,6 +53,18 @@ wxBEGIN_EVENT_TABLE(SoWwGLArea, wxGLCanvas)
 wxEND_EVENT_TABLE()
 
 
+static int wxIsDoubleBuffer() {
+    static int is_double_buffer = -1;
+    if(is_double_buffer == -1) {
+        wxGLAttributes attributes;
+        attributes.DoubleBuffer();
+        attributes.EndList();
+        is_double_buffer = wxGLCanvasBase::IsDisplaySupported(attributes) ? 1 : 0;
+    }
+    return (is_double_buffer);
+}
+
+
 SoWwGLArea::SoWwGLArea(SoWwGLWidgetP* aGLWidget,
                        wxGLAttributes& attributes,
                        wxWindowID id,
@@ -67,13 +79,14 @@ SoWwGLArea::SoWwGLArea(SoWwGLWidgetP* aGLWidget,
                      size,
                      style | wxFULL_REPAINT_ON_RESIZE,
                      name) {
-    wwGlWidget = aGLWidget;
-    glRealContext = 0;
-    isGLInitialized = false;
+    ww_gl_widget = aGLWidget;
+    gl_real_context = 0;
+    is_gl_initialized = false;
+    gl_attributes = attributes;
 }
 
 SoWwGLArea::~SoWwGLArea() {
-    delete glRealContext;
+    delete gl_real_context;
 }
 
 void SoWwGLArea::OnPaint(wxPaintEvent& event ) {
@@ -81,15 +94,15 @@ void SoWwGLArea::OnPaint(wxPaintEvent& event ) {
     wxPaintDC dc(this);
 
     InitGL();
-    wwGlWidget->gl_exposed();
+    ww_gl_widget->gl_exposed();
     event.Skip();
 }
 
 void SoWwGLArea::OnSize(wxSizeEvent& event) {
     // on size Coin need to know the new view port
-    wwGlWidget->gl_reshape(event.GetSize().x,
-                           event.GetSize().y);
-    wwGlWidget->gl_changed();
+    ww_gl_widget->gl_reshape(event.GetSize().x,
+                             event.GetSize().y);
+    ww_gl_widget->gl_changed();
     event.Skip();
 }
 
@@ -99,28 +112,32 @@ void SoWwGLArea::OnEraseBackground(wxEraseEvent& WXUNUSED(event)) {
 }
 
 void SoWwGLArea::InitGL() {
-    if(!isGLInitialized) {
-        glRealContext = new wxGLContext(this);
-        SetCurrent(*glRealContext);
-        isGLInitialized = true;
-        wwGlWidget->gl_init();
+    if(!is_gl_initialized) {
+        gl_real_context = new wxGLContext(this);
+        SetCurrent(*gl_real_context);
+        is_gl_initialized = true;
+        ww_gl_widget->gl_init();
     } else {
-        SetCurrent(*glRealContext);
+        SetCurrent(*gl_real_context);
     }
 }
 
 void SoWwGLArea::makeCurrent() {
-    if(glRealContext)
-        SetCurrent(*glRealContext);
+    if(gl_real_context)
+        SetCurrent(*gl_real_context);
 }
 
 const wxGLContext *SoWwGLArea::context() {
-    return glRealContext;
+    return gl_real_context;
 }
 
 void SoWwGLArea::OnMouse(wxMouseEvent &event) {
-    SoWwGLWidgetP::eventHandler(wwGlWidget->glparent,
-                                wwGlWidget,
+    SoWwGLWidgetP::eventHandler(ww_gl_widget->glparent,
+                                ww_gl_widget,
                                 event,
                                 0);
+}
+
+bool SoWwGLArea::isDoubleBuffer() const {
+    return (wxIsDoubleBuffer());
 }
