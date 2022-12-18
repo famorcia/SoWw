@@ -95,7 +95,6 @@ void
 SoWwGLWidgetP::gl_reshape(int width, int height)
 {
 #if SOWW_DEBUG && 0
-    // debug
     SoDebugError::postInfo("gl_reshape", "<%d, %d>", width, height);
 #endif
 

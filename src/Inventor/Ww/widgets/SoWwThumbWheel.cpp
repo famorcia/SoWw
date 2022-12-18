@@ -73,7 +73,7 @@ SoWwThumbWheel::SoWwThumbWheel(wxWindow * parent,
     this->constructor(SoWwThumbWheel::Vertical);
 }
 
-static const wxSize max_horizontal_size(200,30);
+static const wxSize max_horizontal_size(116,14);
 static const wxSize max_vertical_size(30,200);
 
 SoWwThumbWheel::SoWwThumbWheel(Orientation orientation,
@@ -81,11 +81,12 @@ SoWwThumbWheel::SoWwThumbWheel(Orientation orientation,
                                const char * name)
         : wxPanel(parent,
                   wxID_ANY) {
-    this->SetMinSize(wxSize(1,1));
+    /*this->SetMinSize(wxSize(1,1));
     if(orientation == SoWwThumbWheel::Vertical)
         this->SetMaxSize(max_vertical_size);
     else
         this->SetMaxSize(max_horizontal_size);
+        */
     this->constructor(orientation);
 }
 
@@ -122,12 +123,13 @@ SoWwThumbWheel::paintEvent(wxPaintEvent& WXUNUSED(event)) {
     wxPaintDC dc(this);
 
     int w, dval;
+    wxSize size= this->GetSize();
     if (this->orient == SoWwThumbWheel::Vertical) {
-        w = this->GetSize().GetX() - 12;
-        dval = this->GetSize().GetY() - 6;
+        w = size.GetX() - 12;
+        dval = size.GetY() - 6;
     } else {
-        w = this->GetSize().GetY() - 12;
-        dval = this->GetSize().GetX() - 6;
+        w = size.GetY() - 12;
+        dval = size.GetX() - 6;
     }
 
 #if SOWW_DEBUG && 0
@@ -149,9 +151,12 @@ SoWwThumbWheel::paintEvent(wxPaintEvent& WXUNUSED(event)) {
                               "pixmap value is: %d and bitmap pointer is %p",
                               pixmap, this->pixmaps);
 #endif
-    wxBitmap bitmap(*this->pixmaps[pixmap]);
-    dc.DrawBitmap(bitmap, 5, 5, false);
 
+    if(pixmap >= numPixmaps)
+        return;
+    assert(pixmap < numPixmaps);
+    wxBitmap bitmap(*this->pixmaps[pixmap]);
+    dc.DrawBitmap(bitmap, 0, 0, false);
     this->currentPixmap = pixmap;
 }
 

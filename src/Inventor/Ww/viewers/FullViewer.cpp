@@ -117,25 +117,35 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
     SoDebugError::postInfo("SoWwFullViewer::buildWidget", "[invoked]");
 #endif
 
+    wxBoxSizer *main_sizer = new wxBoxSizer(wxHORIZONTAL);
     PRIVATE(this)->viewerwidget = new wxPanel(parent,
                                               wxID_ANY);
-
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwFullViewer::buildWidget",
+                           "parent size:%d %d",
+                           parent->GetSize().GetWidth(),
+                           parent->GetSize().GetHeight());
+#endif
+    main_sizer->Add(PRIVATE(this)->viewerwidget,1,wxEXPAND|wxALL,5);
+    parent->SetSizer(main_sizer);
+    parent->Layout();
     this->registerWidget(PRIVATE(this)->viewerwidget);
-
-    PRIVATE(this)->viewerwidget->SetPosition( wxPoint(0, 0));
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwFullViewer::buildWidget",
+                           "viewerwidget size:%d %d",
+                           PRIVATE(this)->viewerwidget->GetSize().GetWidth(),
+                           PRIVATE(this)->viewerwidget->GetSize().GetHeight());
+#endif
 
 #if SOWW_DEBUG
     PRIVATE(this)->viewerwidget->SetBackgroundColour(wxColour(250, 0, 0));
 #endif
 
     PRIVATE(this)->canvas = inherited::buildWidget(PRIVATE(this)->viewerwidget);
+
 #if SOWW_DEBUG
     PRIVATE(this)->canvas->SetBackgroundColour(wxColour(250, 0, 0));
 #endif
-
-    wxSize s(PRIVATE(this)->viewerwidget->GetSize());
-
-    PRIVATE(this)->canvas->SetSize(s);
 
     this->buildDecoration( PRIVATE(this)->viewerwidget );
     PRIVATE(this)->showDecorationWidgets( PRIVATE(this)->decorations );
@@ -383,7 +393,6 @@ height(const wxWindow* w) {
 
 void
 SoWwFullViewer::sizeChanged(const SbVec2s & size) {
-
 #if SOWW_DEBUG
     SoDebugError::postInfo("SoWwFullViewer::sizeChanged", "(%d, %d)",
                          size[0], size[1]);

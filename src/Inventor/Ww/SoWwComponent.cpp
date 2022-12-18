@@ -40,7 +40,7 @@
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
 
-#define SOWWCOMP_RESIZE_DEBUG 0
+#define SOWWCOMP_RESIZE_DEBUG 1
 
 #define PRIVATE(obj) ((obj)->pimpl)
 #define PUBLIC(obj) ((obj)->pub)
@@ -115,7 +115,12 @@ SoWwComponent::setClassName(const char * const name) {
 
 void
 SoWwComponent::setBaseWidget(wxWindow* w) {
-    PRIVATE(this)->widget = dynamic_cast<wxPanel*>(w);
+    PRIVATE(this)->widget = dynamic_cast<wxFrame*>(w);
+#if SOWW_DEBUG
+    if(!w) {
+        assert(PRIVATE(this)->widget);
+    }
+#endif
 }
 
 void
@@ -238,7 +243,7 @@ void
 SoWwComponent::setSize(const SbVec2s size) {
 #if SOWW_DEBUG
     if((size[0] <= 0) || (size[1] <= 0)) {
-    SoDebugError::postWarning("SoQtComponent::setSize",
+    SoDebugError::postWarning("SoWwComponent::setSize",
                               "Invalid size setting: <%d, %d>.",
                               size[0], size[1]);
     return;
@@ -246,7 +251,7 @@ SoWwComponent::setSize(const SbVec2s size) {
 #endif // SOWW_DEBUG
 
 #if SOWWCOMP_RESIZE_DEBUG  // debug
-    SoDebugError::postInfo("SoQtComponent::setSize",
+    SoDebugError::postInfo("SoWwComponent::setSize",
                          "resize %p: (%d, %d)",
                          PRIVATE(this)->widget,
                          size[0], size[1]);
@@ -258,7 +263,6 @@ SoWwComponent::setSize(const SbVec2s size) {
     }
     PRIVATE(this)->storesize = size;
     this->sizeChanged(size);
-
 }
 
 SbVec2s
