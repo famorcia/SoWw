@@ -40,7 +40,7 @@
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
 
-#define SOWWCOMP_RESIZE_DEBUG 0
+#define SOWWCOMP_RESIZE_DEBUG 1
 
 #define PRIVATE(obj) ((obj)->pimpl)
 #define PUBLIC(obj) ((obj)->pub)
@@ -116,6 +116,11 @@ SoWwComponent::setClassName(const char * const name) {
 void
 SoWwComponent::setBaseWidget(wxWindow* w) {
     PRIVATE(this)->widget = dynamic_cast<wxFrame*>(w);
+#if SOWW_DEBUG
+    if(!w) {
+        assert(PRIVATE(this)->widget);
+    }
+#endif
 }
 
 void
@@ -236,7 +241,28 @@ SoWwComponent::getParentWidget(void) const {
 
 void
 SoWwComponent::setSize(const SbVec2s size) {
-    SOWW_STUB();
+#if SOWW_DEBUG
+    if((size[0] <= 0) || (size[1] <= 0)) {
+    SoDebugError::postWarning("SoQtComponent::setSize",
+                              "Invalid size setting: <%d, %d>.",
+                              size[0], size[1]);
+    return;
+  }
+#endif // SOWW_DEBUG
+
+#if SOWWCOMP_RESIZE_DEBUG  // debug
+    SoDebugError::postInfo("SoQtComponent::setSize",
+                         "resize %p: (%d, %d)",
+                         PRIVATE(this)->widget,
+                         size[0], size[1]);
+#endif // debug
+    const SbBool yetbuilt = (this->getWidget() != NULL);
+    if (yetbuilt) {
+        wxWindow * shell = this->getShellWidget();
+        if (shell) { shell->SetSize(size[0], size[1]); }
+    }
+    PRIVATE(this)->storesize = size;
+    this->sizeChanged(size);
 }
 
 SbVec2s

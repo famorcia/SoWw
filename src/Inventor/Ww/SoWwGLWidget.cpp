@@ -59,6 +59,8 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
         dispAttrs.Depth(32);
     if(glmodes & SO_GL_RGB)
         dispAttrs.MinRGBA(8, 8, 8, 8);
+    if(glmodes & SO_GL_STEREO)
+        dispAttrs.Stereo();
     dispAttrs.EndList();
 
     PRIVATE(this)->glSize = SbVec2s(0, 0);
@@ -79,7 +81,9 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
     PRIVATE(this)->currentglarea = NULL;
     PRIVATE(this)->previousglarea = NULL;
 
-    if (! build) { return; }
+    if (! build) {
+        return;
+    }
 
     this->setClassName("SoWwGLWidget");
 }
@@ -106,7 +110,18 @@ SoWwGLWidget::isQuadBufferStereo(void) const {
 
 void
 SoWwGLWidget::setGLSize(const SbVec2s size){
+    if (size == PRIVATE(this)->glSize) return;
+#if SOWW_DEBUG
+        SoDebugError::postInfo("SoWwGLWidget::setGLSize",
+                         "[invoked (%d, %d)]", size[0], size[1]);
+#endif // debug
+    PRIVATE(this)->glSize = size;
+    PRIVATE(this)->glSizeUnscaled = size;
+    if (PRIVATE(this)->currentglwidget) {
     // Do nothing, alredy managed in GLAreal
+        int frame = this->isBorder() ? PRIVATE(this)->borderthickness : 0;
+        PRIVATE(this)->currentglwidget->SetSize( size[0], size[1] );
+    }
 }
 
 template <typename T>
@@ -117,7 +132,7 @@ toSbVec2(const wxSize& wx_size) {
 
 SbVec2s
 SoWwGLWidget::getGLSize(void) const{
-    return (toSbVec2<SbVec2s>(PRIVATE(this)->currentglwidget->GetSize()));
+    return (PRIVATE(this)->glSize);
 }
 
 float

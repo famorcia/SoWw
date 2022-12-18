@@ -46,7 +46,6 @@ public:
 
     static void fatalerrorHandler(void * userdata);
     static void atexit_cleanup();
-    void cleanupQtReferences(void);
 
     // Variables.
 

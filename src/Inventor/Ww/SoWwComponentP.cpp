@@ -31,6 +31,7 @@
 \**************************************************************************/
 
 #include "Inventor/Ww/SoWwComponentP.h"
+#include "sowwdefs.h"
 
 SoWwComponentP::SoWwComponentP(SoWwComponent *o)
         : SoGuiComponentP(o), classname(""), widgetname(""){
@@ -42,17 +43,13 @@ SoWwComponentP::~SoWwComponentP() {
 }
 
 void SoWwComponentP::atexit_cleanup() {
-
+    SOWW_STUB();
 }
 
 void SoWwComponentP::fatalerrorHandler(void *userdata) {
-
-}
-
-void SoWwComponentP::cleanupQtReferences(void) {
-
+    SOWW_STUB();
 }
 
 void SoWwComponentP::widgetClosed(void) {
-
+    SOWW_STUB();
 }

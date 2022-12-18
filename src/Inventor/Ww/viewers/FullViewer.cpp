@@ -48,7 +48,12 @@ SoWwFullViewer::SoWwFullViewer(wxWindow* parent,
                                SbBool embed,
                                BuildFlag buildFlag,
                                Type type,
-                               SbBool build): inherited(parent, name, embed, type, FALSE)
+                               SbBool build)
+        : inherited(parent,
+                    name,
+                    embed,
+                    type,
+                    FALSE)
 {
     PRIVATE(this) = new SoWwFullViewerP(this);
 
@@ -108,23 +113,25 @@ wxWindow*
 SoWwFullViewer::buildWidget(wxWindow* parent) {
     // This will build the main view widgets, along with the decorations
     // widgets and popup menu if they are enabled.
-#if SOWW_DEBUG && 0
+#if SOWW_DEBUG
     SoDebugError::postInfo("SoWwFullViewer::buildWidget", "[invoked]");
 #endif
 
-    PRIVATE(this)->viewerwidget = new wxFrame(parent,
-                                              wxID_ANY,
-                                              "SoWwFullViewer");
+    PRIVATE(this)->viewerwidget = new wxPanel(parent,
+                                              wxID_ANY);
 
     this->registerWidget(PRIVATE(this)->viewerwidget);
 
     PRIVATE(this)->viewerwidget->SetPosition( wxPoint(0, 0));
 
-#if SOWW_DEBUG && 0
-    PRIVATE(this)->viewerwidget->setBackgroundColor(QColor(250, 0, 0));
+#if SOWW_DEBUG
+    PRIVATE(this)->viewerwidget->SetBackgroundColour(wxColour(250, 0, 0));
 #endif
 
     PRIVATE(this)->canvas = inherited::buildWidget(PRIVATE(this)->viewerwidget);
+#if SOWW_DEBUG
+    PRIVATE(this)->canvas->SetBackgroundColour(wxColour(250, 0, 0));
+#endif
 
     wxSize s(PRIVATE(this)->viewerwidget->GetSize());
 
@@ -143,22 +150,23 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
 void SoWwFullViewer::setDecoration(const SbBool enable){
 #if SOWW_DEBUG
     if ((enable  && this->isDecoration()) ||
-       (!enable && !this->isDecoration())) {
-    SoDebugError::postWarning("SoWwFullViewer::setDecoration",
-                              "decorations already turned %s",
-                              enable ? "on" : "off");
-    return;
-  }
+        (!enable && !this->isDecoration())) {
+        SoDebugError::postWarning("SoWwFullViewer::setDecoration",
+                                  "decorations already turned %s",
+                                  enable ? "on" : "off");
+        return;
+    }
 #endif // SOWW_DEBUG
 
     PRIVATE(this)->decorations = enable;
     if (PRIVATE(this)->viewerwidget)
         PRIVATE(this)->showDecorationWidgets(enable);
-
 }
+
 SbBool
 SoWwFullViewer::isDecoration(void) const{
     SOWW_STUB();
+    return (FALSE);
 }
 
 void SoWwFullViewer::setPopupMenuEnabled(const SbBool on){
@@ -168,11 +176,13 @@ void SoWwFullViewer::setPopupMenuEnabled(const SbBool on){
 SbBool
 SoWwFullViewer::isPopupMenuEnabled(void) const{
     SOWW_STUB();
+    return (FALSE);
 }
 
 wxWindow*
 SoWwFullViewer::getAppPushButtonParent(void) const {
     SOWW_STUB();
+    return (0);
 }
 
 void
@@ -193,16 +203,19 @@ SoWwFullViewer::removeAppPushButton(wxWindow* oldButton) {
 int
 SoWwFullViewer::findAppPushButton(wxWindow* oldButton) const {
     SOWW_STUB();
+    return (0);
 }
 
 int
 SoWwFullViewer::lengthAppPushButton(void) const {
     SOWW_STUB();
+    return (0);
 }
 
 wxWindow*
 SoWwFullViewer::getRenderAreaWidget(void) const {
     SOWW_STUB();
+    return (0);
 }
 
 void
@@ -217,13 +230,23 @@ SoWwFullViewer::~SoWwFullViewer() {
 void
 SoWwFullViewer::buildDecoration(wxWindow* parent) {
     this->leftDecoration = this->buildLeftTrim(parent);
+#if SOWW_DEBUG && 0
+    this->leftDecoration->SetBackgroundColour(wxColour(255, 0, 0));
+#endif
     this->bottomDecoration = this->buildBottomTrim(parent);
+#if SOWW_DEBUG  && 0
+    this->bottomDecoration->SetBackgroundColour(wxColour(0, 0, 0));
+#endif
     this->rightDecoration = this->buildRightTrim(parent);
+#if SOWW_DEBUG  && 0
+    this->rightDecoration->SetBackgroundColour(wxColour(0, 0, 255));
+#endif
 }
 
 wxWindow*
 SoWwFullViewer::buildLeftTrim(wxWindow* parent){
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, parent);
+    t->SetSize(40,100);
     this->leftWheel = t;
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
     this->leftWheelVal = t->value();
@@ -232,38 +255,32 @@ SoWwFullViewer::buildLeftTrim(wxWindow* parent){
 
 wxWindow*
 SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
-    wxFrame * w = new wxFrame(parent, wxID_ANY,"");
-    //w->setFixedHeight(30);
+    wxWindow * w = new wxPanel(parent);
 
     wxStaticText* label = new wxStaticText( w, wxID_ANY, this->leftWheelStr);
     this->leftWheelLabel = label;
 
-    label = new wxStaticText( w, wxID_ANY, this->bottomWheelStr);
+    label = new wxStaticText( w, wxID_ANY, this->bottomWheelStr ,wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
     this->bottomWheelLabel = label;
 
-    label = new wxStaticText( w, wxID_ANY, this->rightWheelStr);
+    label = new wxStaticText( w, wxID_ANY, this->rightWheelStr, wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
     this->rightWheelLabel = label;
 
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Horizontal, w);
     this->bottomWheel = t;
+    t->SetSize(200, 30);
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
 
-    /*
-    QObject::connect(t, SIGNAL(wheelMoved(float)),
-                     PRIVATE(this), SLOT(bottomWheelChanged(float)));
-    QObject::connect(t, SIGNAL(wheelPressed()),
-                     PRIVATE(this), SLOT(bottomWheelPressed()));
-    QObject::connect(t, SIGNAL(wheelReleased()),
-                     PRIVATE(this), SLOT(bottomWheelReleased()));
-*/
     this->bottomWheelVal = t->value();
 
-    wxGridSizer* layout = new wxGridSizer(2,2,0,0);
+    wxBoxSizer* layout = new wxBoxSizer(wxHORIZONTAL);
 
-    layout->Add( this->leftWheelLabel, 0, wxALL, 5 );
-    layout->Add( this->bottomWheelLabel, 0, wxALL, 5 );
-    layout->Add( t, 0, wxALL, 5 );
-    layout->Add( this->rightWheelLabel, 0, wxALL, 5 );
+    layout->Add( this->leftWheelLabel, 0, wxALL, 1 );
+    layout->Add(0,0,1, wxEXPAND, 1);
+    layout->Add( this->bottomWheelLabel, 0, wxALL, 1 );
+    layout->Add( this->bottomWheel, 1, wxEXPAND | wxALL, 1 );
+    layout->Add(0,0,1, wxEXPAND, 1);
+    layout->Add( this->rightWheelLabel, 1, wxALL, 1 );
 
     w->SetSizer( layout );
     w->Layout();
@@ -273,8 +290,12 @@ SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
 
 wxWindow*
 SoWwFullViewer::buildRightTrim(wxWindow* parent) {
-    SOWW_STUB();
-    return (0);
+    SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, parent);
+    t->SetSize(40,100);
+    this->rightWheel = t;
+    t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
+    this->rightWheelVal = t->value();
+    return t;
 }
 
 wxWindow*
@@ -339,9 +360,46 @@ SoWwFullViewer::setRightWheelString(const char * const name) {
         this->leftWheelLabel->SetName(name ? name : "");
 }
 
+short
+width(const wxWindow* w) {
+    short ret = 0;
+    if(w) {
+        wxSize size = w->GetSize();
+        ret = size.GetX();
+    }
+    return (ret);
+}
+
+short
+height(const wxWindow* w) {
+    short ret = 0;
+    if(w) {
+        wxSize size = w->GetSize();
+        ret = size.GetY();
+    }
+    return (ret);
+}
+
+
 void
 SoWwFullViewer::sizeChanged(const SbVec2s & size) {
-    SOWW_STUB();
+
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwFullViewer::sizeChanged", "(%d, %d)",
+                         size[0], size[1]);
+#endif
+
+    SbVec2s newsize(size);
+    if (PRIVATE(this)->decorations) {
+        newsize[0] -= width(this->leftDecoration);
+        newsize[0] -= width(this->rightDecoration);
+        newsize[1] -= height(this->bottomDecoration);
+    }
+
+    newsize = SbVec2s(SoWwMax(newsize[0], (short)1),
+                      SoWwMax(newsize[1], (short)1));
+
+    inherited::sizeChanged(newsize);
 }
 
 #undef PUBLIC

@@ -94,9 +94,9 @@ SoWwGLWidgetP::gl_init(void)
 void
 SoWwGLWidgetP::gl_reshape(int width, int height)
 {
-    if (SOWW_DEBUG && 0) { // debug
-        SoDebugError::postInfo("gl_reshape", "<%d, %d>", width, height);
-    }
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("gl_reshape", "<%d, %d>", width, height);
+#endif
 
     this->glSize = SbVec2s((short) width, (short) height);
     this->wasresized = true;
