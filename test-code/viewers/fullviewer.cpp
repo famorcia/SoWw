@@ -20,6 +20,11 @@
 
 #include <Inventor/Ww/SoWw.h>
 #include <Inventor/Ww/SoWwRenderArea.h>
+
+#define protected public
+#include <Inventor/Ww/viewers/SoWwFullViewer.h>
+#undef protected
+
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -27,6 +32,7 @@
 #include "wx/wx.h"
 
 #include "common/get_scene_graph.h"
+
 
 // Define a new application type
 class MyApp : public wxApp
@@ -46,8 +52,13 @@ public:
         SoSeparator * userroot = get_scene_graph();
         root->addChild(userroot);
 
-        SoWwRenderArea * renderarea =
-                new SoWwRenderArea(window, "Renderarea demonstration", FALSE);
+        SoWwFullViewer * renderarea =
+                new SoWwFullViewer(window,
+                                   "Renderarea demonstration",
+                                   FALSE,
+                                   SoWwFullViewer::BUILD_ALL,
+                                   SoWwViewer::BROWSER,
+                                   TRUE);
         camera->viewAll( userroot, renderarea->getViewportRegion() );
         renderarea->setSceneGraph(root);
         renderarea->setBackgroundColor(SbColor(0.0f, 0.2f, 0.3f));

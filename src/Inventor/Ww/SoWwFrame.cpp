@@ -43,8 +43,7 @@ SoWwFrame::SoWwFrame(wxFrame *frame,
                      const wxPoint& pos,
                      const wxSize& size,
                      long style)
-        : wxFrame(frame, wxID_ANY, title, pos, size, style)
-{
+        : wxFrame(frame, wxID_ANY, title, pos, size, style) {
 }
 
 void SoWwFrame::OnPaint(wxPaintEvent& event) {

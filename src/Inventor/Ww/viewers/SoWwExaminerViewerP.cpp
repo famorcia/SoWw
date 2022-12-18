@@ -52,7 +52,7 @@ void SoWwExaminerViewerP::constructor(const SbBool build) {
     this->perspectivepixmap = new wxImage((const char **) perspective_xpm);
     assert(this->orthopixmap->GetSize() == this->perspectivepixmap->GetSize());
 
-    PUBLIC(this)->setClassName("SoQtExaminerViewer");
+    PUBLIC(this)->setClassName("SoWwExaminerViewer");
 
     PUBLIC(this)->setPopupMenuString("Examiner Viewer");
     PUBLIC(this)->setLeftWheelString("RotX");

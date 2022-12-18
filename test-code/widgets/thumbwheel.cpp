@@ -42,6 +42,8 @@
 #include <Inventor/Ww/widgets/SoWwThumbWheel.h>
 #include "wx/wx.h"
 
+#include "common/SimpleFrame.h"
+
 // Define a new application type
 class MyApp : public wxApp
 {
@@ -50,11 +52,19 @@ public:
         if ( !wxApp::OnInit() )
             return false;
 
-        SoWwThumbWheel *wheel_h = new SoWwThumbWheel(SoWwThumbWheel::Horizontal);
+        SimpleFrame *aFrame = new SimpleFrame(NULL,
+                                              "thumb wheel",
+                                              wxDefaultPosition,
+                                              wxSize(300,300));
+
+        SoWwThumbWheel *wheel_h = new SoWwThumbWheel(SoWwThumbWheel::Horizontal,
+                                                     aFrame);
         wheel_h->SetSize(200, 30);
 
-        SoWwThumbWheel *wheel_v = new SoWwThumbWheel(SoWwThumbWheel::Vertical);
+        SoWwThumbWheel *wheel_v = new SoWwThumbWheel(SoWwThumbWheel::Vertical,
+                                                     aFrame);
         wheel_v->SetSize(30, 200);
+        wheel_h->SetPosition(wxPoint(40, 100));
 
         wheel_h->Show();
         wheel_v->Show();

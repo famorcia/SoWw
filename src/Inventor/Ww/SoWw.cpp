@@ -36,10 +36,11 @@
 
 #include "sowwdefs.h"
 
-wxWindow* SoWw::init(int & argc,
-                     char ** argv,
-                     const char * appname,
-                     const char * classname) {
+wxWindow*
+SoWw::init(int & argc,
+           char ** argv,
+           const char * appname,
+           const char * classname) {
 
     if (SOWW_DEBUG && SoWwP::instance()->isInitialized()) {
         SoDebugError::postWarning("SoWw::init",
@@ -76,7 +77,8 @@ wxWindow* SoWw::init(int & argc,
     return SoWwP::instance()->getMainFrame();
 }
 
-void SoWw::init(wxWindow* toplevelwidget) {
+void
+SoWw::init(wxWindow* toplevelwidget) {
     SOWW_STUB();
 }
 
@@ -84,7 +86,8 @@ void SoWw::init(wxWindow* toplevelwidget) {
  * mainLoop is required only if an external app is not available
  * (embedded in already existing window).
  */
-void SoWw::mainLoop(void) {
+void
+SoWw::mainLoop(void) {
     wxTheApp->OnRun();
     // after app is finished remove sensor callback
     SoDB::getSensorManager()->setChangedCallback(NULL,
@@ -99,18 +102,21 @@ void SoWw::mainLoop(void) {
     }
 }
 
-void  SoWw::show(wxWindow* const widget) {
+void
+SoWw::show(wxWindow* const widget) {
     widget->Show();
 }
 
-void    SoWw::createSimpleErrorDialog(wxWindow* widget,
-                                      const char * title,
-                                      const char * string1,
-                                      const char * string2 ) {
+void
+SoWw::createSimpleErrorDialog(wxWindow* widget,
+                              const char * title,
+                              const char * string1,
+                              const char * string2 ) {
     SOWW_STUB();
 }
 
-wxWindow*   SoWw::getShellWidget(const wxWindow* w) {
+wxWindow*
+SoWw::getShellWidget(const wxWindow* w) {
     SOWW_STUB();
     return (0);
 }

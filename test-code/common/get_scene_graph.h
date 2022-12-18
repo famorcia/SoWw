@@ -37,7 +37,7 @@
 #include <Inventor/nodes/SoArray.h>
 #include <Inventor/nodes/SoCube.h>
 
-static SoSeparator * get_scene_graph(void)
+static SoSeparator * get_scene_graph()
 {
     SoSeparator * root = new SoSeparator;
 

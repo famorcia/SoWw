@@ -32,7 +32,6 @@
 #ifndef SOWW_SOWWDIRECTIONALLIGHTEDITOR_H
 #define SOWW_SOWWDIRECTIONALLIGHTEDITOR_H
 
-
 class SoWwDirectionalLightEditor {
 
 };

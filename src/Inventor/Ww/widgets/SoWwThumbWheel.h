@@ -32,28 +32,29 @@
 #ifndef SOWW_SOWWTHUMBWHEEL_H
 #define SOWW_SOWWTHUMBWHEEL_H
 
-#include <wx/frame.h>
 #include "Inventor/Ww/SoWwBasic.h"
 #include "Inventor/Ww/widgets/SoAnyThumbWheel.h"
 
-class SOWW_DLL_API SoWwThumbWheel : public wxFrame
+#include <wx/panel.h>
+
+class SOWW_DLL_API SoWwThumbWheel : public wxPanel
 {
 
 public:
     enum Orientation { Horizontal, Vertical };
 
-    SoWwThumbWheel(wxWindow * parent = 0, const char * name = 0);
-    SoWwThumbWheel(Orientation, wxWindow * parent = 0, const char * name = 0);
-    ~SoWwThumbWheel(void);
+    explicit SoWwThumbWheel(wxWindow * parent = 0, const char * name = 0);
+    explicit SoWwThumbWheel(Orientation, wxWindow * parent = 0, const char * name = 0);
+    ~SoWwThumbWheel();
 
     void setOrientation(Orientation);
-    Orientation orientation(void) const;
+    Orientation orientation() const;
 
     void setValue(float value);
-    float value(void) const;
+    float value() const;
 
     void setEnabled(bool enable);
-    bool isEnabled(void) const;
+    bool isEnabled() const;
 
     enum boundaryHandling {
         CLAMP,
@@ -61,14 +62,15 @@ public:
         ACCUMULATE
     };
     void setRangeBoundaryHandling(boundaryHandling handling);
-    boundaryHandling getRangeBoundaryHandling(void) const;
+    boundaryHandling getRangeBoundaryHandling() const;
 
-    wxSize sizeHint(void) const;
+    wxSize sizeHint() const;
 
     void paintEvent(wxPaintEvent& );
     void mousePressEvent(wxMouseEvent& );
     void mouseReleaseEvent(wxMouseEvent& );
     void mouseMoveEvent(wxMouseEvent& );
+    void mouseWheel(wxMouseEvent& );
 
 private:
     void constructor(Orientation);

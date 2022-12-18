@@ -46,12 +46,11 @@ public:
 
     static void fatalerrorHandler(void * userdata);
     static void atexit_cleanup();
-    void cleanupQtReferences(void);
 
     // Variables.
 
     wxWindow * parent;
-    wxFrame * widget;
+    wxPanel * widget;
     SbBool embedded, shelled;
     std::string classname, widgetname;
     SoWwComponentCB * closeCB;
