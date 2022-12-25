@@ -43,14 +43,12 @@
 #define PUBLIC(obj) ((obj)->pub)
 
 SoWwGLWidgetP::SoWwGLWidgetP(SoWwGLWidget * o)
-        : SoGuiGLWidgetP(o)
-{
+        : SoGuiGLWidgetP(o) {
     this->borderthickness = 0;
     this->oldcontext = NULL;
 }
 
-SoWwGLWidgetP::~SoWwGLWidgetP()
-{
+SoWwGLWidgetP::~SoWwGLWidgetP() {
 }
 
 /*// Gets called by the SoWwGLArea instance upon keyboard presses. These
@@ -64,9 +62,8 @@ SoWwGLWidgetP::GLAreaKeyEvent(QKeyEvent * e, void * userdata)
 
 // slot invoked upon QScreen change
 void
-SoWwGLWidgetP::gl_changed(void)
-{
-    if (SOWW_DEBUG && 0) { // debug
+SoWwGLWidgetP::gl_changed(void) {
+    if (SOWW_DEBUG) { // debug
         SoDebugError::postInfo("gl_changed", "invoked");
     }
 
@@ -83,31 +80,27 @@ SoWwGLWidgetP::gl_changed(void)
 void
 SoWwGLWidgetP::gl_init(void)
 {
-    if (SOWW_DEBUG && 0) { // debug
+    if (SOWW_DEBUG) { // debug
         SoDebugError::postInfo("gl_init", "invoked");
     }
 
     PUBLIC(this)->initGraphic();
 }
 
-// slot invoked upon QGLWidget resizes
 void
-SoWwGLWidgetP::gl_reshape(int width, int height)
-{
-#if SOWW_DEBUG && 0
-    SoDebugError::postInfo("gl_reshape", "<%d, %d>", width, height);
+SoWwGLWidgetP::gl_reshape(int width, int height) {
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwGLWidgetP::gl_reshape", "<%d, %d>", width, height);
 #endif
 
     this->glSize = SbVec2s((short) width, (short) height);
     this->wasresized = true;
-    pub->setSize(this->glSize);
+    // pub->setSize(this->glSize);
 }
 
-// slot invoked upon QGLWidget expose events
 void
-SoWwGLWidgetP::gl_exposed(void)
-{
-    if (SOWW_DEBUG && 0) { // debug
+SoWwGLWidgetP::gl_exposed(void) {
+    if (SOWW_DEBUG) { // debug
         SoDebugError::postInfo("gl_exposed", "%f", SbTime::getTimeOfDay().getValue());
     }
 
@@ -124,7 +117,6 @@ SoWwGLWidgetP::gl_exposed(void)
         PUBLIC(this)->redraw();
     }
 }
-
 
 static const char eventnaming[][50] = {
         "None", // 0
@@ -180,7 +172,7 @@ static const char eventnaming[][50] = {
 bool
 SoWwGLWidgetP::eventFilter(QObject * obj, QEvent * e)
 {
-    if (SOWW_DEBUG && 0) { // debug
+    if (SOWW_DEBUG) { // debug
 #if QT_VERSION >= 0x040000
         SbString w = obj->objectName().toLatin1().constData();
 #else
@@ -231,7 +223,7 @@ SoWwGLWidgetP::eventFilter(QObject * obj, QEvent * e)
         // we resize the GL widget along with it.
         if (e->type() == QEvent::Resize) {
             QResizeEvent * r = (QResizeEvent *)e;
-            if (SOWW_DEBUG && 0) {  // debug
+            if (SOWW_DEBUG) {  // debug
                 SoDebugError::postInfo("SoWwGLWidgetP::eventFilter",
                                        "resize parent %p: (%d, %d)",
                                        this->glparent,
@@ -312,10 +304,9 @@ SoWwGLWidgetP::eventHandler(wxFrame * widget, void * closure, QEvent * event,
 //  below has nasty sideeffects (like "random" coredumps), since the
 //  Qt event loop might be using it
 void
-SoWwGLWidgetP::buildGLWidget(void)
-{
+SoWwGLWidgetP::buildGLWidget(void) {
 
-    if (SOWW_DEBUG && 0) { // debug
+    if (SOWW_DEBUG) { // debug
         SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
                 // TODO "%s, %s, %s, %s, %s",
                                "%s, %s, %s",
@@ -357,7 +348,7 @@ SoWwGLWidgetP::buildGLWidget(void)
         this->currentglwidget = wasprevious;
         this->currentglarea = waspreviousarea;
         SoAny::si()->registerGLContext((void *)PUBLIC(this), display, screen);
-        if (SOWW_DEBUG && 0) { // debug
+        if (SOWW_DEBUG) { // debug
             SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
                                    "reused previously used GL widget");
         }
@@ -463,8 +454,7 @@ SoWwGLWidgetP::buildGLWidget(void)
 
 // Returns the normal GL context.
 const wxGLContext *
-SoWwGLWidgetP::getNormalContext(void)
-{
+SoWwGLWidgetP::getNormalContext(void) {
     SoWwGLArea * w = this->currentglarea;
     if (w) return w->context();
     return NULL;
@@ -472,8 +462,7 @@ SoWwGLWidgetP::getNormalContext(void)
 
 // Returns the overlay GL context.
 const wxGLContext *
-SoWwGLWidgetP::getOverlayContext(void)
-{
+SoWwGLWidgetP::getOverlayContext(void) {
     SoWwGLArea * w = this->currentglarea;
     // TODO: if (w) { return QGLWidget_overlayContext(w); }
     return NULL;
@@ -491,8 +480,7 @@ SoWwGLWidgetP::getOverlayContext(void)
 // happening directly from the CPU(s) to the GPU(s), ie on a local
 // display. With GLX on X11, it is possible to do remote rendering.
 SbBool
-SoWwGLWidgetP::isDirectRendering(void)
-{
+SoWwGLWidgetP::isDirectRendering(void) {
 #if defined(Q_WS_X11)
     PUBLIC(this)->glLockNormal();
   GLXContext ctx = glXGetCurrentContext();
@@ -520,8 +508,6 @@ void SoWwGLWidgetP::eventHandler(wxWindow * widget , void *closure, wxEvent &eve
     SoWwGLWidget * component = ((SoWwGLWidgetP *) closure)->pub;
     component->processEvent(event);
 }
-
-// *************************************************************************
 
 #undef PRIVATE
 #undef PUBLIC

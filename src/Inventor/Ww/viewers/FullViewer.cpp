@@ -34,6 +34,7 @@
 #include "Inventor/Ww/viewers/SoWwFullViewerP.h"
 #include "Inventor/Ww/widgets/SoWwThumbWheel.h"
 #include "sowwdefs.h"
+#include "Inventor/Ww/SoWwP.h"
 
 #include <wx/stattext.h>
 #include <wx/sizer.h>
@@ -100,8 +101,6 @@ SoWwFullViewer::SoWwFullViewer(wxWindow* parent,
     PRIVATE(this)->appbuttonlist = new SbPList;
     PRIVATE(this)->appbuttonform = NULL;
 
-    this->setSize(SbVec2s(500, 390));
-
     if (! build) return;
 
     this->setClassName("SoWwFullViewer");
@@ -115,20 +114,25 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
     // widgets and popup menu if they are enabled.
 #if SOWW_DEBUG
     SoDebugError::postInfo("SoWwFullViewer::buildWidget", "[invoked]");
+    parent->SetName("MainWindow");
+    SoDebugError::postInfo("SoWwFullViewer::buildWidget", "Step-1");
+    SoWwP::dumpWindowData(parent);
 #endif
 
-    wxBoxSizer *main_sizer = new wxBoxSizer(wxHORIZONTAL);
     PRIVATE(this)->viewerwidget = new wxPanel(parent,
-                                              wxID_ANY);
+                                              wxID_ANY,
+                                              wxDefaultPosition,
+                                              parent->GetSize());
+    if(parent->GetSizer())
+        parent->GetSizer()->Add(PRIVATE(this)->viewerwidget, 1 , wxEXPAND | wxALL, 0 );
+    PRIVATE(this)->viewerwidget->SetName("viewerwidget");
 #if SOWW_DEBUG
     SoDebugError::postInfo("SoWwFullViewer::buildWidget",
                            "parent size:%d %d",
                            parent->GetSize().GetWidth(),
                            parent->GetSize().GetHeight());
 #endif
-    main_sizer->Add(PRIVATE(this)->viewerwidget,1,wxEXPAND|wxALL,5);
-    parent->SetSizer(main_sizer);
-    parent->Layout();
+
     this->registerWidget(PRIVATE(this)->viewerwidget);
 #if SOWW_DEBUG
     SoDebugError::postInfo("SoWwFullViewer::buildWidget",
@@ -152,6 +156,11 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
 
     if (PRIVATE(this)->menuenabled)
         this->buildPopupMenu();
+
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwFullViewer::buildWidget", "Step-2");
+    SoWwP::dumpWindowData(parent);
+#endif
 
     return PRIVATE(this)->viewerwidget;
 }
@@ -257,6 +266,7 @@ wxWindow*
 SoWwFullViewer::buildLeftTrim(wxWindow* parent){
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, parent);
     t->SetSize(40,100);
+    t->SetName("buildLeftTrim");
     this->leftWheel = t;
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
     this->leftWheelVal = t->value();
@@ -266,7 +276,7 @@ SoWwFullViewer::buildLeftTrim(wxWindow* parent){
 wxWindow*
 SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
     wxWindow * w = new wxPanel(parent);
-
+    w->SetName("buildBottomTrim");
     wxStaticText* label = new wxStaticText( w, wxID_ANY, this->leftWheelStr);
     this->leftWheelLabel = label;
 
@@ -301,6 +311,7 @@ SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
 wxWindow*
 SoWwFullViewer::buildRightTrim(wxWindow* parent) {
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, parent);
+    t->SetName("buildRightTrim");
     t->SetSize(40,100);
     this->rightWheel = t;
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
@@ -389,7 +400,6 @@ height(const wxWindow* w) {
     }
     return (ret);
 }
-
 
 void
 SoWwFullViewer::sizeChanged(const SbVec2s & size) {

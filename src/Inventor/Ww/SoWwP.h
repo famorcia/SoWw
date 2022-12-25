@@ -40,6 +40,7 @@
 #include <Inventor/Ww/SoGuiP.h>
 #include <wx/timer.h>
 #include <wx/app.h>
+#include <wx/window.h>
 
 class SoWwFrame;
 
@@ -70,6 +71,9 @@ public:
     SoWwFrame* getMainFrame() const;
 
     void finish();
+
+    static void dumpWindowData(const wxWindow* window,
+                               int level=0);
 };
 
 #endif //SOWW_SOWWP_H

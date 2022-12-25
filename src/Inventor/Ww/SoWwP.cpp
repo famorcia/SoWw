@@ -37,10 +37,14 @@
 #include <Inventor/errors/SoDebugError.h>
 #include <Inventor/sensors/SoSensorManager.h>
 
+#include <iostream>
+#include <wx/sizer.h>
+
 class SoWxApp : public  wxApp {
 public:
 
-    virtual bool OnInit() wxOVERRIDE {
+    virtual bool
+    OnInit() wxOVERRIDE {
         if ( !wxApp::OnInit() )
             return false;
         return true;
@@ -88,7 +92,8 @@ SoGuiP::sensorQueueChanged(void *) {
 
 class TimerQueueTimer : public wxTimer {
 public:
-    virtual void Notify() {
+    virtual void
+    Notify() {
         if (SOWW_DEBUG && 0) { // debug
             SoDebugError::postInfo("TimerQueueTimer::Notify",
                                    "processing timer queue");
@@ -109,7 +114,8 @@ public:
 
 class IdleTimer : public wxTimer {
 public:
-    virtual void Notify() {
+    virtual void
+    Notify() {
 
         SoDB::getSensorManager()->processTimerQueue();
         SoDB::getSensorManager()->processDelayQueue(true);
@@ -126,7 +132,8 @@ public:
 // starvation).
 class DelayTimeoutTimer : public wxTimer {
 public:
-    virtual void Notify() {
+    virtual void
+    Notify() {
         if (SOWW_DEBUG && 0) { // debug
             SoDebugError::postInfo("DelayTimeoutTimer::Notify",
                                    "processing delay queue");
@@ -146,8 +153,7 @@ public:
 };
 
 void
-SoWwP::sensorQueueChanged(void)
-{
+SoWwP::sensorQueueChanged(void) {
     // We need three different mechanisms to interface Coin sensor
     // handling with Qt event handling, which are:
     //
@@ -232,24 +238,29 @@ SoWwP::sensorQueueChanged(void)
     }
 }
 
-SoWwP *SoWwP::instance() {
+SoWwP *
+SoWwP::instance() {
     static SoWwP singleton;
     return (&singleton);
 }
 
-bool SoWwP::isInitialized() const {
+bool
+SoWwP::isInitialized() const {
     return (init);
 }
 
-void SoWwP::setInitialize(bool i) {
+void
+SoWwP::setInitialize(bool i) {
     init = i;
 }
 
-SoWwFrame *SoWwP::getMainFrame() const {
+SoWwFrame *
+SoWwP::getMainFrame() const {
     return (main_frame);
 }
 
-void SoWwP::setMainFrame(SoWwFrame * frame) {
+void
+SoWwP::setMainFrame(SoWwFrame * frame) {
     main_frame = frame;
 }
 
@@ -259,7 +270,8 @@ void SoWwP::setMainFrame(SoWwFrame * frame) {
     }                                       \
     assert(timer_name != 0)
 
-void SoWwP::initTimers() {
+void
+SoWwP::initTimers() {
     static bool are_initialized = false;
 
     if(!are_initialized) {
@@ -274,7 +286,8 @@ void SoWwP::initTimers() {
 
 #define STOP_TIMER(timer_name) if(timer_name) timer_name->Stop()
 
-void SoWwP::stopTimers() {
+void
+SoWwP::stopTimers() {
     STOP_TIMER(SoWwP::timerqueuetimer);
     STOP_TIMER(SoWwP::delaytimeouttimer);
     STOP_TIMER(SoWwP::idletimer);
@@ -282,7 +295,50 @@ void SoWwP::stopTimers() {
 
 #undef STOP_TIMER
 
-void SoWwP::finish() {
+void
+SoWwP::finish() {
     stopTimers();
 }
 
+void
+dumpData(const wxWindow* w,
+         const std::string& prefix="") {
+    std::clog<<prefix<<w->GetName()<<" has sizer:" << (w->GetSizer() != 0 ? "yes":"no") <<std::endl;
+    if(w->GetSizer()) {
+        wxSizerItemList list = w->GetSizer()->GetChildren();
+        wxSizerItemList::compatibility_iterator node = list.GetFirst();
+        while(node) {
+            wxSize size = node->GetData()->GetSize();
+            std::clog<<"x/y:"<<size.GetX() <<" "<<size.GetY();
+            std::clog<<" sizer window name:";
+            if(node->GetData() && node->GetData()->GetWindow())
+                std::clog<<node->GetData()->GetWindow()->GetName();
+            else
+                std::clog<<"";
+            std::clog<<std::endl;
+            node = node->GetNext();
+        }
+    }
+}
+
+void
+SoWwP::dumpWindowData(const wxWindow* window, int level) {
+    const wxWindowList& windows_list =  window->GetWindowChildren();
+    wxWindowList::compatibility_iterator node = windows_list.GetFirst();
+    if(level == 0)
+        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
+    std::string tabs;
+    for(int i=0;i<level;++i)
+        tabs+="\t";
+    if(level == 0)
+        dumpData(window, tabs+"Parent is:");
+    while (node)
+    {
+        wxWindow *win = node->GetData();
+        dumpData(win);
+        dumpWindowData(win, level+1);
+        node = node->GetNext();
+    }
+    if(level == 0)
+        std::clog<<__PRETTY_FUNCTION__ <<"--END--"<<std::endl;
+}

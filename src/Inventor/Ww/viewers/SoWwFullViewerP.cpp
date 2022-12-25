@@ -33,6 +33,7 @@
 #include "Inventor/Ww/viewers/SoWwFullViewerP.h"
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
 #include "sowwdefs.h"
+#include "Inventor/Ww/SoWwP.h"
 
 #define PUBLIC(o) (o->pub)
 #define PRIVATE(o) (o->pimpl)
@@ -69,17 +70,17 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
         PUBLIC(this)->bottomDecoration->Show();
         PUBLIC(this)->rightDecoration->Show();
 
-        wxBoxSizer * g = new wxBoxSizer(wxVERTICAL); // VIEWERBORDER);
+        wxBoxSizer * g = new wxBoxSizer(wxHORIZONTAL); // VIEWERBORDER);
 
-        g->Add(PUBLIC(this)->leftDecoration);
+        g->Add(PUBLIC(this)->leftDecoration,1 , wxALL, 5);
 
         wxBoxSizer * subLayout = new wxBoxSizer(wxVERTICAL);
 
-        // subLayout->Add(this->canvas);
-        subLayout->Add(PUBLIC(this)->bottomDecoration);
+        //subLayout->Add(this->canvas,1 , wxALL, 5);
+        subLayout->Add(PUBLIC(this)->bottomDecoration,1 , wxALL, 5);
         g->Add(subLayout);
 
-        g->Add(PUBLIC(this)->rightDecoration);
+        g->Add(PUBLIC(this)->rightDecoration,1 , wxALL, 5);
 
         this->mainlayout = g;
     } else {
@@ -93,6 +94,12 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
 
     this->viewerwidget->SetSizer(this->mainlayout);
     this->viewerwidget->Layout();
+
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwFullViewerP::showDecorationWidgets", "dumpWindowData");
+    SoWwP::dumpWindowData(this->viewerwidget->GetParent());
+#endif // SOWW_DEBUG
+
 
     wxSize size = this->viewerwidget->GetSize();
     SbVec2s resize = SbVec2s(size.GetX(), size.GetY());

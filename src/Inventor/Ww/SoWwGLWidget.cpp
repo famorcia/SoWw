@@ -118,9 +118,9 @@ SoWwGLWidget::setGLSize(const SbVec2s size){
     PRIVATE(this)->glSize = size;
     PRIVATE(this)->glSizeUnscaled = size;
     if (PRIVATE(this)->currentglwidget) {
-    // Do nothing, alredy managed in GLAreal
+    // Do nothing, already managed in GLAreal
         int frame = this->isBorder() ? PRIVATE(this)->borderthickness : 0;
-        PRIVATE(this)->currentglwidget->SetSize( size[0], size[1] );
+        //PRIVATE(this)->currentglwidget->SetSize( size[0], size[1] );
     }
 }
 
@@ -321,11 +321,14 @@ SoWwGLWidget::buildWidget(wxWindow* parent){
     // TODO:PRIVATE(this)->borderwidget->setLineWidth(PRIVATE(this)->borderthickness);
     // TODO:PRIVATE(this)->borderwidget->move(0, 0);
 
-    // Remember our parent widget so we can use it in tests in the
+    // Remember our parent widget, so we can use it in tests in the
     // eventFilter().
     PRIVATE(this)->glparent = parent;
 
     PRIVATE(this)->buildGLWidget();
+
+    if(parent->GetSizer())
+        parent->GetSizer()->Add(PRIVATE(this)->currentglarea, 1, wxEXPAND, 0);
 
     //return PRIVATE(this)->currentglwidget;
     //return PRIVATE(this)->borderwidget;

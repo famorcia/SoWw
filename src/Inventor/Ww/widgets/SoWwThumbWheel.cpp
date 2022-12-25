@@ -87,6 +87,7 @@ SoWwThumbWheel::SoWwThumbWheel(Orientation orientation,
     else
         this->SetMaxSize(max_horizontal_size);
         */
+    this->SetName("SoWwThumbWheel");
     this->constructor(orientation);
 }
 
