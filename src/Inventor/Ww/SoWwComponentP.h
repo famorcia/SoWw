@@ -50,7 +50,7 @@ public:
     // Variables.
 
     wxWindow * parent;
-    wxFrame * widget;
+    wxWindow * widget;
     SbBool embedded, shelled;
     std::string classname, widgetname;
     SoWwComponentCB * closeCB;

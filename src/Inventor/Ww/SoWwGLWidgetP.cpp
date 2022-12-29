@@ -468,39 +468,39 @@ SoWwGLWidgetP::getOverlayContext(void) {
     return NULL;
 }
 
-#if HAVE_GLX
-// There is something in this header file that fools the g++ 2.95.4
-// compiler to run into problems with some of the code in
-// SoWwGLWidgetP::eventFilter() (it gives a completely non-sensical
-// error message), so we just include it at the bottom like this.
-#include <GL/glx.h> // For glXIsDirect().
-#endif // HAVE_GLX
-
-// Return a flag indicating whether or not OpenGL rendering is
-// happening directly from the CPU(s) to the GPU(s), ie on a local
-// display. With GLX on X11, it is possible to do remote rendering.
 SbBool
 SoWwGLWidgetP::isDirectRendering(void) {
-#if defined(Q_WS_X11)
-    PUBLIC(this)->glLockNormal();
-  GLXContext ctx = glXGetCurrentContext();
-  if (!ctx) {
-    SoDebugError::postWarning("SoWwGLWidgetP::isDirectRendering",
-                              "Could not get hold of current context.");
-    return true;
-  }
-  Display * d;
-#if QT_VERSION < 0x040000 // pre Qt 4
-  d = qt_xdisplay();
-#else // Qt 4.0.0+
-  d = QX11Info::display();
-#endif
-  Bool isdirect = glXIsDirect(d, ctx);
-  PUBLIC(this)->glUnlockNormal();
-  return isdirect ? true : false;
-#else // ! X11
-    return true; // Neither MSWindows nor Mac OS X is capable of remote display.
-#endif // ! X11
+    SbBool res = FALSE;
+    if(this->currentglarea && this->currentglarea->GetGLCTXAttrs().x11Direct)
+        res = TRUE;
+    return (res);
+}
+
+void SoWwGLWidgetP::initGLModes(int glmodes) {
+
+    glAttributes.PlatformDefaults();
+    if(glmodes & SO_GL_DOUBLE) {
+        glAttributes.DoubleBuffer();
+        supported_gl_modes.insert(WX_GL_DOUBLEBUFFER);
+    }
+    if(glmodes & SO_GL_ZBUFFER) {
+        glAttributes.Depth(32);
+        supported_gl_modes.insert(WX_GL_DEPTH_SIZE);
+    }
+    if(glmodes & SO_GL_RGB) {
+        glAttributes.MinRGBA(8, 8, 8, 8);
+        supported_gl_modes.insert(WX_GL_RGBA);
+    }
+    if(glmodes & SO_GL_STEREO) {
+        glAttributes.Stereo();
+        supported_gl_modes.insert(WX_GL_STEREO);
+    }
+    glAttributes.EndList();
+
+    if(!SoWwGLArea::IsDisplaySupported(glAttributes)) {
+        SoDebugError::postInfo("SoWwGLWidget::SoWwGLWidget",
+                               "required GL modes are not supported!");
+    }
 }
 
 void SoWwGLWidgetP::eventHandler(wxWindow * widget , void *closure, wxEvent &event, bool *) {

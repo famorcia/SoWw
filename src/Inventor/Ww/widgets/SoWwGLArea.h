@@ -57,6 +57,7 @@ public:
     void makeCurrent();
 
     bool isDoubleBuffer() const;
+    bool isStereo() const;
 
 protected:
     void OnPaint(wxPaintEvent& event);

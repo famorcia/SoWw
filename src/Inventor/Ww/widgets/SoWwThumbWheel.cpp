@@ -81,13 +81,10 @@ SoWwThumbWheel::SoWwThumbWheel(Orientation orientation,
                                const char * name)
         : wxPanel(parent,
                   wxID_ANY) {
-    /*this->SetMinSize(wxSize(1,1));
-    if(orientation == SoWwThumbWheel::Vertical)
-        this->SetMaxSize(max_vertical_size);
+    if(!name)
+        this->SetName("SoWwThumbWheel");
     else
-        this->SetMaxSize(max_horizontal_size);
-        */
-    this->SetName("SoWwThumbWheel");
+        this->SetName(name);
     this->constructor(orientation);
 }
 
@@ -102,6 +99,8 @@ SoWwThumbWheel::constructor(Orientation orientation) {
     this->pixmaps = NULL;
     this->numPixmaps = 0;
     this->currentPixmap = -1;
+    this->SetMinSize(sizeHint());
+    this->SetMaxSize(sizeHint());
 }
 
 SoWwThumbWheel::~SoWwThumbWheel() {

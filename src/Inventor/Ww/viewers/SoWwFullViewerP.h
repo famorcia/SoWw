@@ -48,7 +48,7 @@ public:
     SbBool decorations;
     SbString menutitle;
     SbBool menuenabled;
-    wxBoxSizer* mainlayout;
+    wxSizer* mainlayout;
     wxBoxSizer * appbuttonlayout;
     wxWindow* appbuttonform;
     SbPList * appbuttonlist;

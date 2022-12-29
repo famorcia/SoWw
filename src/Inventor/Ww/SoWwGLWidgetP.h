@@ -33,27 +33,30 @@
 #define SOWW_SOWWGLWIDGETP_H
 
 #include "Inventor/Ww/SoGuiGLWidgetP.h"
+#include "Inventor/Ww/SoWwGLWidget.h"
+
+#include <Inventor/SbVec2s.h>
 
 #include <wx/glcanvas.h>
 #include <wx/wx.h>
 #include <wx/timer.h>
-#include <Inventor/SbVec2s.h>
+
+#include <set>
 
 class SoWwGLArea;
 
 class SoWwGLWidgetP :  public SoGuiGLWidgetP
 {
 public:
-    static void eventHandler(wxWindow*, void*, wxEvent&, bool*);
 
     explicit SoWwGLWidgetP(SoWwGLWidget * publ);
 
     virtual ~SoWwGLWidgetP();
 
+    void initGLModes(int);
+
     wxGLAttributes  glAttributes;
-    //static void GLAreaKeyEvent(QKeyEvent * e, void * userdata);
     void buildGLWidget();
-    //virtual bool eventFilter(QObject * obj, QEvent * e);
 
     SbVec2s glSize;
     SbVec2s glSizeUnscaled;
@@ -70,10 +73,14 @@ public:
     const wxGLContext * oldcontext;
     wxGLAttributes glformat;
 
+    std::set<long> supported_gl_modes;
+
     void gl_changed(void);
     void gl_init(void);
     void gl_reshape(int, int);
     void gl_exposed(void);
+
+    static void eventHandler(wxWindow*, void*, wxEvent&, bool*);
 
 protected:
     virtual SbBool isDirectRendering(void);

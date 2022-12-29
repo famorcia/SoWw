@@ -34,6 +34,7 @@
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
 #include "sowwdefs.h"
 #include "Inventor/Ww/SoWwP.h"
+#include <wx/gbsizer.h>
 
 #define PUBLIC(o) (o->pub)
 #define PRIVATE(o) (o->pimpl)
@@ -70,18 +71,17 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
         PUBLIC(this)->bottomDecoration->Show();
         PUBLIC(this)->rightDecoration->Show();
 
-        wxBoxSizer * g = new wxBoxSizer(wxHORIZONTAL); // VIEWERBORDER);
+        wxGridBagSizer * g = new wxGridBagSizer(); // VIEWERBORDER);
 
-        g->Add(PUBLIC(this)->leftDecoration,1 , wxALL, 5);
-
-        wxBoxSizer * subLayout = new wxBoxSizer(wxVERTICAL);
-
-        //subLayout->Add(this->canvas,1 , wxALL, 5);
-        subLayout->Add(PUBLIC(this)->bottomDecoration,1 , wxALL, 5);
-        g->Add(subLayout);
-
-        g->Add(PUBLIC(this)->rightDecoration,1 , wxALL, 5);
-
+        wxSize w = PUBLIC(this)->leftDecoration->GetSize();
+        w = PUBLIC(this)->rightDecoration->GetSize();
+        g->Add(PUBLIC(this)->leftDecoration, wxGBPosition(0,0));
+        g->Add(PUBLIC(this)->rightDecoration, wxGBPosition(0,2));
+        // g->Add(this->canvas,wxGBPosition(1,1), wxGBSpan(1,3), wxGROW);
+        g->Add(PUBLIC(this)->bottomDecoration,wxGBPosition(1,0), wxGBSpan(1,3), wxGROW);
+        g->AddGrowableRow(1);
+        g->Fit(this->viewerwidget);
+        g->SetSizeHints(this->viewerwidget);
         this->mainlayout = g;
     } else {
         wxBoxSizer * g = new wxBoxSizer(wxVERTICAL);

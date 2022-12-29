@@ -115,12 +115,42 @@ SoWwComponent::setClassName(const char * const name) {
 
 void
 SoWwComponent::setBaseWidget(wxWindow* w) {
-    PRIVATE(this)->widget = dynamic_cast<wxFrame*>(w);
-#if SOWW_DEBUG
-    if(!w) {
-        assert(PRIVATE(this)->widget);
+
+    std::string iconText = this->getDefaultIconTitle();
+    std::string widgetName = PRIVATE(this)->widgetname;
+
+    assert(w);
+
+    if (PRIVATE(this)->widget) {
+        /* TODO: iconText = (PRIVATE(this)->widget-windowIconText().isEmpty() ?
+		iconText :
+		PRIVATE(this)->widget->windowIconText());
+         */
+        widgetName = (PRIVATE(this)->widget->GetName().IsEmpty() ?
+                      widgetName :
+                      PRIVATE(this)->widget->GetName());
+
+        this->unregisterWidget(PRIVATE(this)->widget);
     }
-#endif
+
+    PRIVATE(this)->widget = w;
+
+    this->registerWidget(PRIVATE(this)->widget);
+
+#if SOWW_DEBUG // debug
+    SoDebugError::postInfo("SoQtComponent::setBaseWidget",
+                           "widget: %p, parent: %p", w, PRIVATE(this)->parent);
+#endif // debug
+
+    if (!PRIVATE(this)->parent || PRIVATE(this)->parent->IsTopLevel()) {
+
+        if (PRIVATE(this)->widget->GetName() == "") {
+            this->setTitle(this->getDefaultTitle());
+        }
+
+        // TODO: SoWw::getShellWidget(this->getWidget())-setWindowIconText(iconText);
+    }
+    PRIVATE(this)->widget->SetName(widgetName);
 }
 
 void
@@ -243,18 +273,18 @@ void
 SoWwComponent::setSize(const SbVec2s size) {
 #if SOWW_DEBUG
     if((size[0] <= 0) || (size[1] <= 0)) {
-    SoDebugError::postWarning("SoWwComponent::setSize",
-                              "Invalid size setting: <%d, %d>.",
-                              size[0], size[1]);
-    return;
-  }
+        SoDebugError::postWarning("SoWwComponent::setSize",
+                                  "Invalid size setting: <%d, %d>.",
+                                  size[0], size[1]);
+        return;
+    }
 #endif // SOWW_DEBUG
 
 #if SOWWCOMP_RESIZE_DEBUG  // debug
     SoDebugError::postInfo("SoWwComponent::setSize",
-                         "resize %p: (%d, %d)",
-                         PRIVATE(this)->widget,
-                         size[0], size[1]);
+                           "resize %p: (%d, %d)",
+                           PRIVATE(this)->widget,
+                           size[0], size[1]);
 #endif // debug
     const SbBool yetbuilt = (this->getWidget() != NULL);
     if (yetbuilt) {

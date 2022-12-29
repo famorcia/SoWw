@@ -142,13 +142,13 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
 #endif
 
 #if SOWW_DEBUG
-    PRIVATE(this)->viewerwidget->SetBackgroundColour(wxColour(250, 0, 0));
+    PRIVATE(this)->viewerwidget->SetBackgroundColour(wxColour(250, 250, 0));
 #endif
 
     PRIVATE(this)->canvas = inherited::buildWidget(PRIVATE(this)->viewerwidget);
 
 #if SOWW_DEBUG
-    PRIVATE(this)->canvas->SetBackgroundColour(wxColour(250, 0, 0));
+    PRIVATE(this)->canvas->SetBackgroundColour(wxColour(250, 0, 255));
 #endif
 
     this->buildDecoration( PRIVATE(this)->viewerwidget );
@@ -249,15 +249,15 @@ SoWwFullViewer::~SoWwFullViewer() {
 void
 SoWwFullViewer::buildDecoration(wxWindow* parent) {
     this->leftDecoration = this->buildLeftTrim(parent);
-#if SOWW_DEBUG && 0
+#if SOWW_DEBUG
     this->leftDecoration->SetBackgroundColour(wxColour(255, 0, 0));
 #endif
     this->bottomDecoration = this->buildBottomTrim(parent);
-#if SOWW_DEBUG  && 0
-    this->bottomDecoration->SetBackgroundColour(wxColour(0, 0, 0));
+#if SOWW_DEBUG 
+    this->bottomDecoration->SetBackgroundColour(wxColour(0, 255, 0));
 #endif
     this->rightDecoration = this->buildRightTrim(parent);
-#if SOWW_DEBUG  && 0
+#if SOWW_DEBUG 
     this->rightDecoration->SetBackgroundColour(wxColour(0, 0, 255));
 #endif
 }
@@ -265,7 +265,6 @@ SoWwFullViewer::buildDecoration(wxWindow* parent) {
 wxWindow*
 SoWwFullViewer::buildLeftTrim(wxWindow* parent){
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, parent);
-    t->SetSize(40,100);
     t->SetName("buildLeftTrim");
     this->leftWheel = t;
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
@@ -277,6 +276,7 @@ wxWindow*
 SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
     wxWindow * w = new wxPanel(parent);
     w->SetName("buildBottomTrim");
+    w->SetMinSize(wxSize(100,100));
     wxStaticText* label = new wxStaticText( w, wxID_ANY, this->leftWheelStr);
     this->leftWheelLabel = label;
 
@@ -288,7 +288,6 @@ SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
 
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Horizontal, w);
     this->bottomWheel = t;
-    t->SetSize(200, 30);
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
 
     this->bottomWheelVal = t->value();
@@ -312,7 +311,6 @@ wxWindow*
 SoWwFullViewer::buildRightTrim(wxWindow* parent) {
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, parent);
     t->SetName("buildRightTrim");
-    t->SetSize(40,100);
     this->rightWheel = t;
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
     this->rightWheelVal = t->value();

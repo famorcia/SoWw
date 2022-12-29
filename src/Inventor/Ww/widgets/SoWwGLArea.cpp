@@ -144,3 +144,8 @@ SoWwGLArea::isDoubleBuffer() const {
     return (wxIsDoubleBuffer());
 }
 
+bool
+SoWwGLArea::isStereo() const {
+    SOWW_STUB();
+    return (false);
+}

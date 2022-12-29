@@ -50,30 +50,11 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
         drawToFrontBuffer(false) {
 
     PRIVATE(this) = new SoWwGLWidgetP(this);
-
-    wxGLAttributes &dispAttrs = PRIVATE(this)->glAttributes;
-    dispAttrs.PlatformDefaults();
-    if(glmodes & SO_GL_DOUBLE)
-        dispAttrs.DoubleBuffer();
-    if(glmodes & SO_GL_ZBUFFER)
-        dispAttrs.Depth(32);
-    if(glmodes & SO_GL_RGB)
-        dispAttrs.MinRGBA(8, 8, 8, 8);
-    if(glmodes & SO_GL_STEREO)
-        dispAttrs.Stereo();
-    dispAttrs.EndList();
+    PRIVATE(this)->initGLModes(glmodes);
 
     PRIVATE(this)->glSize = SbVec2s(0, 0);
     PRIVATE(this)->glSizeUnscaled = SbVec2s(0, 0);
     PRIVATE(this)->wasresized = false;
-
-    //TODO: PRIVATE(this)->glformat = new QSurfaceFormat(QSurfaceFormat::defaultFormat());
-    //TODO: PRIVATE(this)->glformat->setSwapBehavior((glmodes & SO_GL_DOUBLE) ? QSurfaceFormat::DoubleBuffer : QSurfaceFormat::SingleBuffer);
-    //TODO: PRIVATE(this)->glformat->setDepthBufferSize((glmodes & SO_GL_ZBUFFER) ? 32 : 0);
-    //TODO: //PRIVATE(this)->glformat->setRgba((glmodes & SO_GL_RGB) ? true : false);
-    //TODO: PRIVATE(this)->glformat->setStereo((glmodes & SO_GL_STEREO) ? true : false);
-    //TODO: bool enableoverlay = (glmodes & SO_GL_OVERLAY) ? true : false;
-    //TODO: QGLFormat_setOverlay(PRIVATE(this)->glformat, enableoverlay);
 
     PRIVATE(this)->glparent = NULL;
     PRIVATE(this)->currentglwidget = NULL;
@@ -86,6 +67,9 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
     }
 
     this->setClassName("SoWwGLWidget");
+    wxWindow* parent_widget = this->getParentWidget();
+    wxWindow* widget = this->buildWidget(parent_widget);
+    this->setBaseWidget(widget);
 }
 
 SoWwGLWidget::~SoWwGLWidget() {
@@ -104,7 +88,6 @@ SoWwGLWidget::setQuadBufferStereo(const SbBool enable) {
 
 SbBool
 SoWwGLWidget::isQuadBufferStereo(void) const {
-    SOWW_STUB();
     return (FALSE);
 }
 
@@ -112,13 +95,13 @@ void
 SoWwGLWidget::setGLSize(const SbVec2s size){
     if (size == PRIVATE(this)->glSize) return;
 #if SOWW_DEBUG
-        SoDebugError::postInfo("SoWwGLWidget::setGLSize",
-                         "[invoked (%d, %d)]", size[0], size[1]);
+    SoDebugError::postInfo("SoWwGLWidget::setGLSize",
+                           "[invoked (%d, %d)]", size[0], size[1]);
 #endif // debug
     PRIVATE(this)->glSize = size;
     PRIVATE(this)->glSizeUnscaled = size;
     if (PRIVATE(this)->currentglwidget) {
-    // Do nothing, already managed in GLAreal
+        // Do nothing, already managed in GLAreal
         int frame = this->isBorder() ? PRIVATE(this)->borderthickness : 0;
         //PRIVATE(this)->currentglwidget->SetSize( size[0], size[1] );
     }
@@ -329,10 +312,11 @@ SoWwGLWidget::buildWidget(wxWindow* parent){
 
     if(parent->GetSizer())
         parent->GetSizer()->Add(PRIVATE(this)->currentglarea, 1, wxEXPAND, 0);
-
-    //return PRIVATE(this)->currentglwidget;
-    //return PRIVATE(this)->borderwidget;
+#if 1
+    return PRIVATE(this)->currentglarea;
+#else
     return PRIVATE(this)->glparent;
+#endif
 }
 
 void
