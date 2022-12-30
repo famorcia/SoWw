@@ -70,7 +70,7 @@ SoWw::init(int & argc,
                                                    wxDefaultPosition,
                                                    wxSize(400,400)));
 
-    SoWwP::instance()->getMainFrame()->SetSizer(new wxBoxSizer(wxVERTICAL));
+    // SoWwP::instance()->getMainFrame()->SetSizer(new wxBoxSizer(wxVERTICAL));
 
     SoDB::getSensorManager()->setChangedCallback(SoGuiP::sensorQueueChanged,
                                                  NULL);

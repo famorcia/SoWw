@@ -310,13 +310,7 @@ SoWwGLWidget::buildWidget(wxWindow* parent){
 
     PRIVATE(this)->buildGLWidget();
 
-    if(parent->GetSizer())
-        parent->GetSizer()->Add(PRIVATE(this)->currentglarea, 1, wxEXPAND, 0);
-#if 1
     return PRIVATE(this)->currentglarea;
-#else
-    return PRIVATE(this)->glparent;
-#endif
 }
 
 void

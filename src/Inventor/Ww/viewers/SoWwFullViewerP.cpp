@@ -71,17 +71,18 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
         PUBLIC(this)->bottomDecoration->Show();
         PUBLIC(this)->rightDecoration->Show();
 
-        wxGridBagSizer * g = new wxGridBagSizer(); // VIEWERBORDER);
+        wxGridBagSizer* g = new wxGridBagSizer( 0, 0 );
+        g->SetFlexibleDirection( wxBOTH );
+        g->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
+        
+        g->Add( PUBLIC(this)->leftDecoration, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
+        g->Add( this->canvas, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
+        g->Add( PUBLIC(this)->rightDecoration, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
+        g->Add( PUBLIC(this)->bottomDecoration, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
 
-        wxSize w = PUBLIC(this)->leftDecoration->GetSize();
-        w = PUBLIC(this)->rightDecoration->GetSize();
-        g->Add(PUBLIC(this)->leftDecoration, wxGBPosition(0,0));
-        g->Add(PUBLIC(this)->rightDecoration, wxGBPosition(0,2));
-        // g->Add(this->canvas,wxGBPosition(1,1), wxGBSpan(1,3), wxGROW);
-        g->Add(PUBLIC(this)->bottomDecoration,wxGBPosition(1,0), wxGBSpan(1,3), wxGROW);
-        g->AddGrowableRow(1);
-        g->Fit(this->viewerwidget);
-        g->SetSizeHints(this->viewerwidget);
+        g->AddGrowableCol( 1 );
+        g->AddGrowableRow( 0 );
+
         this->mainlayout = g;
     } else {
         wxBoxSizer * g = new wxBoxSizer(wxVERTICAL);

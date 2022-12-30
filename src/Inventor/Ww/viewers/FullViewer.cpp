@@ -146,6 +146,7 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
 #endif
 
     PRIVATE(this)->canvas = inherited::buildWidget(PRIVATE(this)->viewerwidget);
+    PRIVATE(this)->canvas->SetSize(400,400);
 
 #if SOWW_DEBUG
     PRIVATE(this)->canvas->SetBackgroundColour(wxColour(250, 0, 255));
