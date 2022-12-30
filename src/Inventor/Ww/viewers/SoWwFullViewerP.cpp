@@ -77,8 +77,15 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
         
         g->Add( PUBLIC(this)->leftDecoration, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
         g->Add( this->canvas, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
+
         g->Add( PUBLIC(this)->rightDecoration, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
         g->Add( PUBLIC(this)->bottomDecoration, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
+
+#if SOWW_DEBUG
+        SoWwP::dumpWindowData(PUBLIC(this)->leftDecoration);
+        SoWwP::dumpWindowData(PUBLIC(this)->rightDecoration);
+        SoWwP::dumpWindowData(PUBLIC(this)->bottomDecoration);
+#endif
 
         g->AddGrowableCol( 1 );
         g->AddGrowableRow( 0 );

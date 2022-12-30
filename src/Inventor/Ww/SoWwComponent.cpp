@@ -40,7 +40,7 @@
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
 
-#define SOWWCOMP_RESIZE_DEBUG 1
+#define SOWWCOMP_RESIZE_DEBUG 0
 
 #define PRIVATE(obj) ((obj)->pimpl)
 #define PUBLIC(obj) ((obj)->pub)

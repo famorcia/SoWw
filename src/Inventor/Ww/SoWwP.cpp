@@ -304,6 +304,8 @@ void
 dumpData(const wxWindow* w,
          const std::string& prefix="") {
     std::clog<<prefix<<w->GetName()<<" has sizer:" << (w->GetSizer() != 0 ? "yes":"no") <<std::endl;
+    std::clog<<"Size is (width,height):"<<w->GetSize().GetWidth() <<','<<w->GetSize().GetHeight()<<std::endl;
+    return;
     if(w->GetSizer()) {
         wxSizerItemList list = w->GetSizer()->GetChildren();
         wxSizerItemList::compatibility_iterator node = list.GetFirst();
@@ -332,6 +334,7 @@ SoWwP::dumpWindowData(const wxWindow* window, int level) {
         tabs+="\t";
     if(level == 0)
         dumpData(window, tabs+"Parent is:");
+    return;
     while (node)
     {
         wxWindow *win = node->GetData();

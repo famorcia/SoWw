@@ -261,11 +261,21 @@ SoWwFullViewer::buildDecoration(wxWindow* parent) {
 #if SOWW_DEBUG && 0
     this->rightDecoration->SetBackgroundColour(wxColour(0, 0, 255));
 #endif
+
+#if SOWW_DEBUG
+    SoWwP::dumpWindowData(this->leftDecoration);
+    SoWwP::dumpWindowData(this->rightDecoration);
+    SoWwP::dumpWindowData(this->bottomDecoration);
+#endif
+
 }
 
 wxWindow*
 SoWwFullViewer::buildLeftTrim(wxWindow* parent){
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, parent);
+    wxSize s = t->sizeHint();
+    t->SetMinSize(s);
+    t->SetMaxSize(s);
     t->SetName("buildLeftTrim");
     this->leftWheel = t;
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
@@ -277,7 +287,8 @@ wxWindow*
 SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
     wxWindow * w = new wxPanel(parent);
     w->SetName("buildBottomTrim");
-    w->SetMinSize(wxSize(100,100));
+    w->SetMinSize(wxSize(100,24));
+    w->SetMaxSize(wxSize(-1,24));
     wxStaticText* label = new wxStaticText( w, wxID_ANY, this->leftWheelStr);
     this->leftWheelLabel = label;
 
