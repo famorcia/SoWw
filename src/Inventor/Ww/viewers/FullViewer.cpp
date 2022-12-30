@@ -112,7 +112,7 @@ wxWindow*
 SoWwFullViewer::buildWidget(wxWindow* parent) {
     // This will build the main view widgets, along with the decorations
     // widgets and popup menu if they are enabled.
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     SoDebugError::postInfo("SoWwFullViewer::buildWidget", "[invoked]");
     parent->SetName("MainWindow");
     SoDebugError::postInfo("SoWwFullViewer::buildWidget", "Step-1");
@@ -126,7 +126,7 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
     if(parent->GetSizer())
         parent->GetSizer()->Add(PRIVATE(this)->viewerwidget, 1 , wxEXPAND | wxALL, 0 );
     PRIVATE(this)->viewerwidget->SetName("viewerwidget");
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     SoDebugError::postInfo("SoWwFullViewer::buildWidget",
                            "parent size:%d %d",
                            parent->GetSize().GetWidth(),
@@ -134,21 +134,21 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
 #endif
 
     this->registerWidget(PRIVATE(this)->viewerwidget);
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     SoDebugError::postInfo("SoWwFullViewer::buildWidget",
                            "viewerwidget size:%d %d",
                            PRIVATE(this)->viewerwidget->GetSize().GetWidth(),
                            PRIVATE(this)->viewerwidget->GetSize().GetHeight());
 #endif
 
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     PRIVATE(this)->viewerwidget->SetBackgroundColour(wxColour(250, 250, 0));
 #endif
 
     PRIVATE(this)->canvas = inherited::buildWidget(PRIVATE(this)->viewerwidget);
     PRIVATE(this)->canvas->SetSize(400,400);
 
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     PRIVATE(this)->canvas->SetBackgroundColour(wxColour(250, 0, 255));
 #endif
 
@@ -158,7 +158,7 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
     if (PRIVATE(this)->menuenabled)
         this->buildPopupMenu();
 
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     SoDebugError::postInfo("SoWwFullViewer::buildWidget", "Step-2");
     SoWwP::dumpWindowData(parent);
 #endif
@@ -168,7 +168,7 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
 
 
 void SoWwFullViewer::setDecoration(const SbBool enable){
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     if ((enable  && this->isDecoration()) ||
         (!enable && !this->isDecoration())) {
         SoDebugError::postWarning("SoWwFullViewer::setDecoration",
@@ -176,7 +176,7 @@ void SoWwFullViewer::setDecoration(const SbBool enable){
                                   enable ? "on" : "off");
         return;
     }
-#endif // SOWW_DEBUG
+#endif
 
     PRIVATE(this)->decorations = enable;
     if (PRIVATE(this)->viewerwidget)
@@ -250,15 +250,15 @@ SoWwFullViewer::~SoWwFullViewer() {
 void
 SoWwFullViewer::buildDecoration(wxWindow* parent) {
     this->leftDecoration = this->buildLeftTrim(parent);
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     this->leftDecoration->SetBackgroundColour(wxColour(255, 0, 0));
 #endif
     this->bottomDecoration = this->buildBottomTrim(parent);
-#if SOWW_DEBUG 
+#if SOWW_DEBUG && 0
     this->bottomDecoration->SetBackgroundColour(wxColour(0, 255, 0));
 #endif
     this->rightDecoration = this->buildRightTrim(parent);
-#if SOWW_DEBUG 
+#if SOWW_DEBUG && 0
     this->rightDecoration->SetBackgroundColour(wxColour(0, 0, 255));
 #endif
 }
@@ -402,7 +402,7 @@ height(const wxWindow* w) {
 
 void
 SoWwFullViewer::sizeChanged(const SbVec2s & size) {
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     SoDebugError::postInfo("SoWwFullViewer::sizeChanged", "(%d, %d)",
                          size[0], size[1]);
 #endif

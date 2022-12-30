@@ -99,8 +99,9 @@ SoWwThumbWheel::constructor(Orientation orientation) {
     this->pixmaps = NULL;
     this->numPixmaps = 0;
     this->currentPixmap = -1;
-    this->SetMinSize(sizeHint());
-    this->SetMaxSize(sizeHint());
+    wxSize s = sizeHint();
+    this->SetMinSize(s);
+    this->SetMaxSize(s);
 }
 
 SoWwThumbWheel::~SoWwThumbWheel() {

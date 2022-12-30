@@ -94,7 +94,7 @@ SoWwGLWidget::isQuadBufferStereo(void) const {
 void
 SoWwGLWidget::setGLSize(const SbVec2s size){
     if (size == PRIVATE(this)->glSize) return;
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     SoDebugError::postInfo("SoWwGLWidget::setGLSize",
                            "[invoked (%d, %d)]", size[0], size[1]);
 #endif // debug

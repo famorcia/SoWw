@@ -39,6 +39,8 @@
 
 #include "sowwdefs.h"
 
+#define SOWW_DEBUG 0
+
 #define PRIVATE(obj) ((obj)->pimpl)
 #define PUBLIC(obj) ((obj)->pub)
 
