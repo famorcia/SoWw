@@ -32,19 +32,26 @@
 #ifndef SOWW_SOWWFULLVIEWERP_H
 #define SOWW_SOWWFULLVIEWERP_H
 
+#ifndef SOWW_INTERNAL
+#error this is a private header file
+#endif
+
 #include "Inventor/Ww/viewers/SoGuiFullViewerP.h"
-
+#include "Inventor/Ww/viewers/SoWwFullViewer.h"
+#include <wx/tglbtn.h>
 #include <string>
+#include <map>
 
-class SoWwFullViewerP : public SoGuiFullViewerP {
+class SoWwFullViewerP : public SoGuiFullViewerP, public wxPanel {
 public:
-
 
     SoWwFullViewerP(SoWwFullViewer *pViewer);
 
     std::string popupmenutitle;
-    wxWindow * viewerwidget, * canvas;
-    wxWindow * interactbutton, * viewbutton;
+    wxWindow * viewerwidget;
+    wxWindow * canvas;
+    wxToggleButton * interactbutton;
+    wxToggleButton * viewbutton;
     SbBool decorations;
     SbString menutitle;
     SbBool menuenabled;
@@ -54,28 +61,47 @@ public:
     SbPList * appbuttonlist;
     SbPList * viewerbuttons;
 
+    typedef void(SoWwFullViewer:: *VoidFuncNoPar)() ;
+    typedef void(SoWwFullViewer:: *VoidFuncOnePar)(float) ;
+    struct WheelFunctions {
+        WheelFunctions() {
+
+        }
+        WheelFunctions(VoidFuncNoPar o_p, VoidFuncNoPar o_r, VoidFuncOnePar o_m)
+        :onPress(o_p)
+        ,onRelease(o_r)
+        ,onMove(o_m) {
+
+        }
+
+        VoidFuncNoPar onPress;
+        VoidFuncNoPar onRelease;
+        VoidFuncOnePar onMove;
+    };
+
+    typedef std::map<wxWindow*, WheelFunctions> MapEvent;
+    MapEvent objectMap;
+    void initThumbWheelEventMap();
+
     void setLeftWheelValue(const float value);
     static void setThumbWheelValue(wxWindow*, float value);
     void showDecorationWidgets(SbBool onOff);
 
     // Thumbwheels.
-    void leftWheelPressed(void);
-    void leftWheelChanged(float value);
-    void leftWheelReleased(void);
-    void rightWheelPressed(void);
-    void rightWheelChanged(float value);
-    void rightWheelReleased(void);
-    void bottomWheelPressed(void);
-    void bottomWheelChanged(float value);
-    void bottomWheelReleased(void);
+    void wheelPressed(wxCommandEvent&);
+    void wheelReleased(wxCommandEvent&);
+    void wheelMoved(wxCommandEvent&);
+
 
     // Button row.
-    void interactbuttonClicked();
-    void viewbuttonClicked();
-    void homebuttonClicked();
-    void sethomebuttonClicked();
-    void viewallbuttonClicked();
+    void interactbuttonClicked(wxCommandEvent & );
+    void viewbuttonClicked(wxCommandEvent & );
+    void homebuttonClicked(wxCommandEvent & );
+    void sethomebuttonClicked(wxCommandEvent & );
+    void viewallbuttonClicked(wxCommandEvent & );
+    void seekbuttonClicked(wxCommandEvent & );
     void seekbuttonClicked();
+    void cameratoggleClicked(wxCommandEvent & );
 
     // Menu items.
     void selectedViewing();
@@ -85,6 +111,15 @@ public:
     // Generic slots.
     void increaseInteractiveCount();
     void decreaseInteractiveCount();
+
+    // Return pointer to pushbutton in right-side decoration bar.
+    wxAnyButton * getViewerbutton(const int idx)
+    {
+        return (wxAnyButton *)this->viewerbuttons->get(idx);
+    }
+
+
+wxDECLARE_EVENT_TABLE();
 };
 
 

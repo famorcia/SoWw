@@ -29,13 +29,16 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
-#ifndef SOWW_SOWWTHUMBWHEELP_H
-#define SOWW_SOWWTHUMBWHEELP_H
 
+#ifndef SOWW_VIEWERSWXIDS_H
+#define SOWW_VIEWERSWXIDS_H
 
-class SoWwThumbWheelP {
+#ifndef SOWW_INTERNAL
+#error this is a private header file
+#endif
 
-};
+#include "wx/windowid.h"
 
+extern const wxWindowID FULL_VIEWER_P;
 
-#endif //SOWW_SOWWTHUMBWHEELP_H
+#endif //SOWW_VIEWERSWXIDS_H

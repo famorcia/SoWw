@@ -137,10 +137,10 @@ SoWwComponent::setBaseWidget(wxWindow* w) {
 
     this->registerWidget(PRIVATE(this)->widget);
 
-#if SOWW_DEBUG // debug
-    SoDebugError::postInfo("SoQtComponent::setBaseWidget",
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("SoWwComponent::setBaseWidget",
                            "widget: %p, parent: %p", w, PRIVATE(this)->parent);
-#endif // debug
+#endif
 
     if (!PRIVATE(this)->parent || PRIVATE(this)->parent->IsTopLevel()) {
 
@@ -252,7 +252,8 @@ SoWwComponent::isTopLevelShell(void) const {
         return false;
     }
 #endif // SOWW_DEBUG
-    return PRIVATE(this)->embedded ? false : true;}
+    return PRIVATE(this)->embedded ? false : true;
+}
 
 wxWindow*
 SoWwComponent::getWidget(void) const {

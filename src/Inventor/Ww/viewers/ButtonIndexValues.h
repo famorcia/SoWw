@@ -29,4 +29,23 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
-#include "SoWwThumbWheelP.h"
+
+#ifndef SOWW_BUTTONINDEXVALUES_H
+#define SOWW_BUTTONINDEXVALUES_H
+
+#ifndef SOWW_INTERNAL
+#error this is a private header file
+#endif
+
+// Button index values.
+enum {
+    INTERACT_BUTTON = 0,
+    EXAMINE_BUTTON,
+    HOME_BUTTON,
+    SET_HOME_BUTTON,
+    VIEW_ALL_BUTTON,
+    SEEK_BUTTON,
+    CAMERA_BUTTON
+};
+
+#endif //SOWW_BUTTONINDEXVALUES_H

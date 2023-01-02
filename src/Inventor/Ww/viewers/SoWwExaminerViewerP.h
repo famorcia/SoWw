@@ -45,13 +45,10 @@ class SoWwExaminerViewerP : public SoGuiExaminerViewerP {
 public:
     explicit SoWwExaminerViewerP(SoWwExaminerViewer *publ);
     ~SoWwExaminerViewerP();
-
-    void camerabuttonClicked(void);
-    //static void camerabuttonCB(Widget, XtPointer, XtPointer);
-
     void constructor(const SbBool build);
 
-    wxImage * orthopixmap, * perspectivepixmap;
+    wxImage * orthopixmap;
+    wxImage* perspectivepixmap;
     wxButton * cameratogglebutton;
 
 };

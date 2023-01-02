@@ -62,75 +62,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#ifndef SOWW_SOWWTHUMBWHEEL_H
-#define SOWW_SOWWTHUMBWHEEL_H
+#ifndef SOWW_WHEELEVENTS_H
+#define SOWW_WHEELEVENTS_H
 
-#include "Inventor/Ww/SoWwBasic.h"
-#include "Inventor/Ww/widgets/SoAnyThumbWheel.h"
+#include "wx/event.h"
 
-#include <wx/panel.h>
+wxDECLARE_EVENT(SO_WW_MOUSE_WHEEL_PRESSED, wxCommandEvent);
+wxDECLARE_EVENT(SO_WW_MOUSE_WHEEL_RELEASED, wxCommandEvent);
+wxDECLARE_EVENT(SO_WW_MOUSE_WHEEL_MOVED, wxCommandEvent);
 
-class SOWW_DLL_API SoWwThumbWheel : public wxPanel
-{
-
-public:
-    enum Orientation { Horizontal, Vertical };
-
-    explicit SoWwThumbWheel(wxWindow * parent = 0, const char * name = 0);
-    explicit SoWwThumbWheel(Orientation, wxWindow * parent = 0, const char * name = 0);
-    ~SoWwThumbWheel();
-
-    void setOrientation(Orientation);
-    Orientation orientation() const;
-
-    void setValue(float value);
-    float value() const;
-
-    void setEnabled(bool enable);
-    bool isEnabled() const;
-
-    enum boundaryHandling {
-        CLAMP,
-        MODULATE,
-        ACCUMULATE
-    };
-    void setRangeBoundaryHandling(boundaryHandling handling);
-    boundaryHandling getRangeBoundaryHandling() const;
-
-    wxSize sizeHint() const;
-
-    void paintEvent(wxPaintEvent& );
-    void mousePressEvent(wxMouseEvent& );
-    void mouseReleaseEvent(wxMouseEvent& );
-    void mouseMoveEvent(wxMouseEvent& );
-    void mouseWheel(wxMouseEvent& );
-
-private:
-    void constructor(Orientation);
-    void sendEvent(long id,
-                   const std::string& event_id);
-
-    SoWwThumbWheel(const SoWwThumbWheel & wheel);
-    SoWwThumbWheel & operator = (const SoWwThumbWheel & wheel);
-
-    enum State { Idle, Dragging, Disabled } state;
-
-    Orientation orient;
-    float wheelValue, tempWheelValue;
-    int mouseDownPos, mouseLastPos;
-
-    void initWheel(int diameter, int width);
-
-    SoAnyThumbWheel * wheel;
-    wxBitmap**   pixmaps;
-    int numPixmaps;
-    int currentPixmap;
-
-wxDECLARE_EVENT_TABLE();
-
-}; // class SoWwThumbWheel
-
-// *************************************************************************
-
-
-#endif //SOWW_SOWWTHUMBWHEEL_H
+#endif //SOWW_WHEELEVENTS_H

@@ -34,9 +34,14 @@
 #include "Inventor/Ww/viewers/SoWwExaminerViewerP.h"
 #include "Inventor/Ww/viewers/SoWwViewer.h"
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
+#include "Inventor/nodes/SoOrthographicCamera.h"
+#include "sowwdefs.h"
+#include "ButtonIndexValues.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h> // for HAVE_LIBXPM
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+
 #endif // HAVE_CONFIG_H
 
 #if HAVE_LIBXPM
@@ -70,11 +75,60 @@ SoWwExaminerViewer::SoWwExaminerViewer(wxWindow* parent,
 }
 
 
-void SoWwExaminerViewer::setCamera(SoCamera * camera) {
+void SoWwExaminerViewer::setCamera(SoCamera * newCamera) {
+    // This method overridden from parent class to toggle the camera
+    // type selection button pixmap and string of the zoom/dolly
+    // thumbwheel.
+
+    if (newCamera) {
+        SoType camtype = newCamera->getTypeId();
+        SbBool orthogonal =
+                camtype.isDerivedFrom(SoOrthographicCamera::getClassTypeId());
+
+        const char * oldLabel = this->getRightWheelString();
+        if (oldLabel) {
+            if (orthogonal) {
+                if (strcmp("Dolly",oldLabel) == 0)
+                    this->setRightWheelString("Zoom");
+            }
+            else if (strcmp("Zoom",oldLabel) == 0)
+                this->setRightWheelString("Dolly");
+        }
+        if (PRIVATE(this)->cameratogglebutton) {
+            SOWW_STUB();
+            /*PRIVATE(this)->cameratogglebutton->setIcon(
+                    orthogonal ?
+                    * (PRIVATE(this)->orthopixmap) :
+                    * (PRIVATE(this)->perspectivepixmap));*/
+        }
+    }
+
+    inherited::setCamera(newCamera);
 
 }
 
 void SoWwExaminerViewer::createViewerButtons(wxWindow* parent, SbPList * buttonlist) {
+
+    inherited::createViewerButtons(parent, buttonlist);
+    PRIVATE(this)->cameratogglebutton = new wxButton(parent, CAMERA_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+
+    // PRIVATE(this)->cameratogglebutton->setFocusPolicy(QTWIDGET_NOFOCUS);
+    assert(PRIVATE(this)->perspectivepixmap);
+    assert(PRIVATE(this)->orthopixmap);
+
+    wxImage * p = NULL;
+    SoType t = this->getCameraType();
+    if (t.isDerivedFrom(SoOrthographicCamera::getClassTypeId()))
+        p = PRIVATE(this)->orthopixmap;
+    else if (t.isDerivedFrom(SoPerspectiveCamera::getClassTypeId()))
+        p = PRIVATE(this)->perspectivepixmap;
+    else assert(0 && "unsupported cameratype");
+
+    PRIVATE(this)->cameratogglebutton->SetBitmap(*p);
+
+    // QObject::connect(PRIVATE(this)->cameratogglebutton, SIGNAL(clicked()), PRIVATE(this), SLOT(cameratoggleClicked()));
+
+    buttonlist->append(PRIVATE(this)->cameratogglebutton);
 
 }
 

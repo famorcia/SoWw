@@ -30,21 +30,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#ifndef SOWW_SOWWPLANEVIEWERP_H
-#define SOWW_SOWWPLANEVIEWERP_H
+#include "wx/wx.h"
+#include "wx/button.h"
+#include "wx/gbsizer.h"
 
-#ifndef SOWW_INTERNAL
-#error this is a private header file
-#endif
+#include "common/SimpleFrame.h"
 
-#include <Inventor/SbBasic.h>
-#include "Inventor/Ww/viewers/SoGuiPlaneViewerP.h"
+#include <Inventor/Ww/common/pixmaps/pick.xpm>
+#include <Inventor/Ww/common/pixmaps/view.xpm>
+#include <Inventor/Ww/common/pixmaps/home.xpm>
+#include <Inventor/Ww/common/pixmaps/set_home.xpm>
+#include <Inventor/Ww/common/pixmaps/view_all.xpm>
+#include <Inventor/Ww/common/pixmaps/seek.xpm>
 
-class SoWwPlaneViewerP : public SoGuiPlaneViewerP {
+wxButton* addButton(wxWindow* parent,
+                    const char** xpm) {
+    wxButton* p = new wxButton(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    wxImage img(xpm);
+    p->SetBitmap(wxImage(img));
+    //p->SetMaxSize(bmp.GetSize());
+    return (p);
+}
+
+// Define a new application type
+class MyApp : public wxApp
+{
 public:
-    explicit SoWwPlaneViewerP(SoWwPlaneViewer*);
-    void constructor(SbBool buildnow);
+    virtual bool OnInit() wxOVERRIDE {
+        if ( !wxApp::OnInit() )
+            return false;
+
+        SimpleFrame *aFrame = new SimpleFrame(NULL,
+                                              "thumb wheel",
+                                              wxDefaultPosition);
+
+        wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+        sizer->Add( addButton(aFrame, pick_xpm), 0, wxALL, 1);
+        sizer->Add( addButton(aFrame, view_xpm), 0, wxALL, 1);
+        sizer->Add( addButton(aFrame, home_xpm), 0, wxALL, 1);
+        sizer->Add( addButton(aFrame, set_home_xpm), 0, wxALL, 1);
+        sizer->Add( addButton(aFrame, view_all_xpm), 0, wxALL, 1);
+        sizer->Add( addButton(aFrame, seek_xpm), 0, wxALL, 1);
+        aFrame->SetSizer(sizer);
+        return true;
+    }
 };
 
-
-#endif //SOWW_SOWWPLANEVIEWERP_H
+wxIMPLEMENT_APP(MyApp);

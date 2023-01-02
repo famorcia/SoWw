@@ -31,7 +31,7 @@
 \**************************************************************************/
 
 #include <Inventor/nodes/SoCube.h>
-
+#include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Ww/SoWw.h>
 #include <Inventor/Ww/viewers/SoWwExaminerViewer.h>
 
@@ -43,7 +43,8 @@ main(int argc,
 {
     wxWindow* window = SoWw::init( argv[0] );
 
-    SoNode * root = new SoCube;
+    SoSeparator * root = new SoSeparator();
+    root->addChild( new SoCube );
 
     SoWwExaminerViewer * viewer = new SoWwExaminerViewer( window );
 

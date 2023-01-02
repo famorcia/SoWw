@@ -39,19 +39,22 @@
 
 // *************************************************************************
 
+#include <Inventor/Ww/widgets/SoWwThumbWheel.h>
+#include <Inventor/Ww/widgets/SoAnyThumbWheel.h>
+#include <Inventor/SbBasic.h>
+#include <Inventor/errors/SoDebugError.h>
+
+#include "WheelEvents.h"
+#include "sowwdefs.h"
+#include "Inventor/Ww/viewers/ViewersWxIds.h"
+
+#include <wx/wx.h>
+#include <wx/mstream.h>
+
 #include <math.h>
 #include <assert.h>
 #include <stdio.h>
 #include <sstream>
-#include <Inventor/SbBasic.h>
-#include <Inventor/errors/SoDebugError.h>
-
-#include <Inventor/Ww/widgets/SoWwThumbWheel.h>
-#include <Inventor/Ww/widgets/SoAnyThumbWheel.h>
-
-#include "sowwdefs.h"
-#include <wx/wx.h>
-#include <wx/mstream.h>
 
 wxBEGIN_EVENT_TABLE(SoWwThumbWheel, wxPanel)
                 EVT_MOTION(SoWwThumbWheel::mouseMoveEvent)
@@ -59,8 +62,8 @@ wxBEGIN_EVENT_TABLE(SoWwThumbWheel, wxPanel)
                 EVT_LEFT_UP(SoWwThumbWheel::mouseReleaseEvent)
                 EVT_MOUSEWHEEL(SoWwThumbWheel::mouseWheel)
                 EVT_PAINT(SoWwThumbWheel::paintEvent)
+                // EVT_COMMAND(FULL_VIEWER_P, SO_WW_MOUSE_WHEEL_PRESSED, SoWwThumbWheel::testMe)
 wxEND_EVENT_TABLE()
-
 
 // *************************************************************************
 
@@ -72,9 +75,6 @@ SoWwThumbWheel::SoWwThumbWheel(wxWindow * parent,
                   wxID_ANY) {
     this->constructor(SoWwThumbWheel::Vertical);
 }
-
-static const wxSize max_horizontal_size(116,14);
-static const wxSize max_vertical_size(30,200);
 
 SoWwThumbWheel::SoWwThumbWheel(Orientation orientation,
                                wxWindow * parent,
@@ -100,11 +100,12 @@ SoWwThumbWheel::constructor(Orientation orientation) {
     this->numPixmaps = 0;
     this->currentPixmap = -1;
     wxSize s = sizeHint();
-    SetSize(s);
     SetMinSize(s);
     SetMaxSize(s);
+#if SOWW_DEBUG && 0
     s = GetSize();
     s = GetSize();
+#endif
 }
 
 SoWwThumbWheel::~SoWwThumbWheel() {
@@ -181,6 +182,11 @@ SoWwThumbWheel::mousePressEvent(wxMouseEvent&  event) {
 
     this->mouseLastPos = this->mouseDownPos;
 
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("SoWwThumbWheel::mouseMoveEvent","");
+#endif
+
+    sendEvent(SO_WW_MOUSE_WHEEL_PRESSED, "mousePressEvent");
 }
 
 /*!
@@ -211,6 +217,7 @@ SoWwThumbWheel::mouseMoveEvent(wxMouseEvent& event) {
                                                        this->mouseDownPos,
                                                        delta);
 
+    sendEvent(SO_WW_MOUSE_WHEEL_MOVED, "mouseWheel");
     Refresh();
 }
 
@@ -226,11 +233,13 @@ SoWwThumbWheel::mouseReleaseEvent(wxMouseEvent& WXUNUSED(event)) {
     this->wheelValue = this->tempWheelValue;
     this->mouseLastPos = this->mouseDownPos;
     this->state = SoWwThumbWheel::Idle;
+    sendEvent(SO_WW_MOUSE_WHEEL_RELEASED, "mouseReleaseEvent");
 }
 
 void
 SoWwThumbWheel::mouseWheel(wxMouseEvent &event) {
-
+    SOWW_STUB();
+    return;
     int delta = /*event.GetWheelDelta() * */(float)(event.GetWheelRotation()) / 120.0;
 #if SOWW_DEBUG && 0
     SoDebugError::postInfo("SoWwThumbWheel::mouseWheel",
@@ -243,9 +252,9 @@ SoWwThumbWheel::mouseWheel(wxMouseEvent &event) {
     this->tempWheelValue = this->wheel->calculateValue(this->wheelValue,
                                                        this->mouseDownPos,
                                                        delta);
-
     Refresh();
-
+    sendEvent(SO_WW_MOUSE_WHEEL_MOVED,
+              "mouseWheel");
 }
 
 /*
@@ -412,6 +421,24 @@ SoWwThumbWheel::getRangeBoundaryHandling() const {
             assert(0 && "impossible");
     }
     return CLAMP; // never reached
+}
+
+void
+SoWwThumbWheel::sendEvent(long id,
+                          const std::string& event_id) {
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("SoWwThumbWheel::sendEvent",
+                           "id: %d event: %s tempWheelValue: %d",
+                           id,
+                           event_id.c_str(),
+                           this->tempWheelValue);
+#endif
+
+    wxCommandEvent a_wx_event(id, GetId());
+    a_wx_event.SetEventObject(this);
+    a_wx_event.SetString(event_id);
+    a_wx_event.SetClientData(&this->tempWheelValue);
+    ProcessWindowEvent(a_wx_event);
 }
 
 
