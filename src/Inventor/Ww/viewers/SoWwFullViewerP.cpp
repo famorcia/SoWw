@@ -60,7 +60,6 @@ wxBEGIN_EVENT_TABLE(SoWwFullViewerP, wxWindow)
                 EVT_BUTTON(SEEK_BUTTON, SoWwFullViewerP::seekbuttonClicked)
                 EVT_BUTTON(EXAMINE_BUTTON, SoWwFullViewerP::viewbuttonClicked)
                 EVT_BUTTON(VIEW_ALL_BUTTON, SoWwFullViewerP::viewallbuttonClicked)
-                EVT_BUTTON(CAMERA_BUTTON, SoWwFullViewerP::cameratoggleClicked)
 wxEND_EVENT_TABLE()
 
 #define PUBLIC(o) (o->pub)
@@ -97,11 +96,12 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
         g->SetFlexibleDirection( wxBOTH );
         g->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 
-        g->Add( PUBLIC(this)->leftDecoration, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
-        g->Add( this->canvas, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
+        const int border_size = 0;
+        g->Add( PUBLIC(this)->leftDecoration, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size);
+        g->Add( this->canvas, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size );
 
-        g->Add( PUBLIC(this)->rightDecoration, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
-        g->Add( PUBLIC(this)->bottomDecoration, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
+        g->Add( PUBLIC(this)->rightDecoration, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size );
+        g->Add( PUBLIC(this)->bottomDecoration, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxEXPAND | wxALL, border_size );
 
 #if SOWW_DEBUG && 0
         SoWwP::dumpWindowData(PUBLIC(this)->leftDecoration);
@@ -267,12 +267,6 @@ SoWwFullViewerP::viewbuttonClicked(wxCommandEvent &) {
     if (!PUBLIC(this)->isViewing())
         PUBLIC(this)->setViewing(TRUE);
 
-}
-
-void
-SoWwFullViewerP::cameratoggleClicked(wxCommandEvent&)
-{
-    if (PUBLIC(this)->getCamera()) PUBLIC(this)->toggleCameraType();
 }
 
 #undef ADD_DATA_IN_MAP

@@ -283,6 +283,10 @@ SoWwFullViewer::buildDecoration(wxWindow* parent) {
 wxWindow*
 SoWwFullViewer::buildLeftTrim(wxWindow* parent){
     wxPanel* p = new wxPanel(parent);
+#if SOWW_DEBUG
+    p->SetBackgroundColour(wxColour(255, 0, 255));
+#endif
+
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, p);
 
@@ -290,11 +294,11 @@ SoWwFullViewer::buildLeftTrim(wxWindow* parent){
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
     this->leftWheelVal = t->value();
     this->leftWheel = t;
-    sizer->Add( 0, 0, 1, wxEXPAND, 5 );
-    sizer->Add(t, 1, wxALL, 5);
+
+    sizer->Add( 0, 0, 1, wxEXPAND, 0 );
+    sizer->Add(t, 0, wxALL|wxALIGN_RIGHT, 0);
     p->SetSizer(sizer);
     return p;
-
 }
 
 wxWindow*
@@ -320,12 +324,12 @@ SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
 
     wxBoxSizer* layout = new wxBoxSizer(wxHORIZONTAL);
 
-    layout->Add( this->leftWheelLabel, 0, wxALL, 1 );
-    layout->Add(0,0,1, wxEXPAND, 1);
-    layout->Add( this->bottomWheelLabel, 0, wxALL, 1 );
-    layout->Add( this->bottomWheel, 1, wxEXPAND | wxALL, 1 );
-    layout->Add(0,0,1, wxEXPAND, 1);
-    layout->Add( this->rightWheelLabel, 1, wxALL, 1 );
+    layout->Add( this->leftWheelLabel, 0, wxALL, 0 );
+    layout->Add(0,0,1, wxEXPAND, 0);
+    layout->Add( this->bottomWheelLabel, 0, wxALL, 0 );
+    layout->Add( this->bottomWheel, 1, wxEXPAND | wxALL, 0 );
+    layout->Add(0,0,1, wxEXPAND, 0);
+    layout->Add( this->rightWheelLabel, 1, wxALL, 0 );
 
     w->SetSizer( layout );
     w->Layout();
@@ -342,8 +346,9 @@ SoWwFullViewer::buildRightTrim(wxWindow* parent) {
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
     this->rightWheelVal = t->value();
     this->rightWheel = t;
-    sizer->Add(this->buildViewerButtons(p),  1, wxALL, 5);
-    sizer->Add(t, 1, wxALL, 5);
+    const int border_size = 0;
+    sizer->Add(this->buildViewerButtons(p),  1, wxALL, border_size);
+    sizer->Add(t, 1, wxALL, border_size);
     p->SetSizer(sizer);
     return p;
 }
@@ -438,6 +443,7 @@ SoWwFullViewer::openPopupMenu(const SbVec2s position) {
     SOWW_STUB();
 }
 
+
 void
 SoWwFullViewer::setLeftWheelString(const char * const name) {
     delete [] this->leftWheelStr;
@@ -446,7 +452,7 @@ SoWwFullViewer::setLeftWheelString(const char * const name) {
     if (name)
         this->leftWheelStr = strcpy(new char [strlen(name)+1], name);
     if (this->leftWheelLabel)
-        this->leftWheelLabel->SetName(name ? name : "");
+        this->leftWheelLabel->SetLabel(name ? name : "");
 }
 
 void
@@ -457,7 +463,7 @@ SoWwFullViewer::setBottomWheelString(const char * const name) {
     if (name)
         this->bottomWheelStr = strcpy(new char [strlen(name)+1], name);
     if (this->bottomWheelLabel)
-        this->leftWheelLabel->SetName(name ? name : "");
+        this->leftWheelLabel->SetLabel(name ? name : "");
 
 }
 
@@ -468,8 +474,10 @@ SoWwFullViewer::setRightWheelString(const char * const name) {
 
     if (name)
         this->rightWheelStr = strcpy(new char [strlen(name)+1], name);
-    if (this->rightWheelLabel)
-        this->leftWheelLabel->SetName(name ? name : "");
+
+    if (this->rightWheelLabel) {
+        this->rightWheelLabel->SetLabel(name ? name : "");
+    }
 }
 
 short

@@ -54,15 +54,6 @@
 
 SOWW_OBJECT_SOURCE(SoWwExaminerViewer);
 
-/**
- * wxFrame* parent,
-                    const char * name,
-                    SbBool embed,
-                    BuildFlag flag,
-                    Type type,
-                    SbBool build
- * @param parent
- */
 SoWwExaminerViewer::SoWwExaminerViewer(wxWindow* parent,
                                        char const* name,
                                        int embed,
@@ -95,16 +86,14 @@ void SoWwExaminerViewer::setCamera(SoCamera * newCamera) {
                 this->setRightWheelString("Dolly");
         }
         if (PRIVATE(this)->cameratogglebutton) {
-            SOWW_STUB();
-            /*PRIVATE(this)->cameratogglebutton->setIcon(
+            PRIVATE(this)->cameratogglebutton->SetBitmap(
                     orthogonal ?
                     * (PRIVATE(this)->orthopixmap) :
-                    * (PRIVATE(this)->perspectivepixmap));*/
+                    * (PRIVATE(this)->perspectivepixmap));
         }
     }
 
     inherited::setCamera(newCamera);
-
 }
 
 void SoWwExaminerViewer::createViewerButtons(wxWindow* parent, SbPList * buttonlist) {
@@ -112,7 +101,6 @@ void SoWwExaminerViewer::createViewerButtons(wxWindow* parent, SbPList * buttonl
     inherited::createViewerButtons(parent, buttonlist);
     PRIVATE(this)->cameratogglebutton = new wxButton(parent, CAMERA_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 
-    // PRIVATE(this)->cameratogglebutton->setFocusPolicy(QTWIDGET_NOFOCUS);
     assert(PRIVATE(this)->perspectivepixmap);
     assert(PRIVATE(this)->orthopixmap);
 
@@ -126,10 +114,7 @@ void SoWwExaminerViewer::createViewerButtons(wxWindow* parent, SbPList * buttonl
 
     PRIVATE(this)->cameratogglebutton->SetBitmap(*p);
 
-    // QObject::connect(PRIVATE(this)->cameratogglebutton, SIGNAL(clicked()), PRIVATE(this), SLOT(cameratoggleClicked()));
-
     buttonlist->append(PRIVATE(this)->cameratogglebutton);
-
 }
 
 

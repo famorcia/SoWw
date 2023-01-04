@@ -37,16 +37,81 @@
 
 /***********************************************************************/
 
-#include <Inventor/Qt/SoQt.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include "Inventor/Ww/SoWw.h"
+#include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
 #include <Inventor/nodes/SoCone.h>
 #include <Inventor/nodes/SoSeparator.h>
-#include <qapplication.h>
-#include <qsplitter.h>
-#include <qmainwindow.h>
-#include <qlistview.h>
+
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/panel.h>
+#include <wx/gdicmn.h>
+#include <wx/font.h>
+#include <wx/colour.h>
+#include <wx/settings.h>
+#include <wx/string.h>
+#include <wx/splitter.h>
+#include <wx/sizer.h>
+#include <wx/frame.h>
+
+///////////////////////////////////////////////////////////////////////////
 
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class MyMainWindow
+///////////////////////////////////////////////////////////////////////////////
+class MyMainWindow : public wxFrame
+{
+private:
+
+protected:
+    wxSplitterWindow* m_splitter1;
+    wxPanel* m_panel19;
+    wxPanel* m_panel20;
+
+public:
+
+    MyMainWindow( wxWindow* parent,
+                  wxWindowID id = wxID_ANY,
+                  const wxString& title = wxEmptyString,
+                  const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxSize( 500,300 ),
+                  long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL )
+                  : wxFrame( parent, id, title, pos, size, style )
+    {
+        this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+
+        wxBoxSizer* bSizer12;
+        bSizer12 = new wxBoxSizer( wxHORIZONTAL );
+
+        m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
+        m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( MyMainWindow::m_splitter1OnIdle ), NULL, this );
+
+        m_panel19 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+        m_panel20 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+        m_splitter1->SplitVertically( m_panel19, m_panel20, 0 );
+        bSizer12->Add( m_splitter1, 1, wxEXPAND, 5 );
+
+
+        this->SetSizer( bSizer12 );
+        this->Layout();
+
+        this->Centre( wxBOTH );
+    }
+
+    ~MyMainWindow()
+    {
+    }
+
+    void m_splitter1OnIdle( wxIdleEvent& )
+    {
+        m_splitter1->SetSashPosition( 0 );
+        m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( MyMainWindow::m_splitter1OnIdle ), NULL, this );
+    }
+
+};
+
+#if 0
 class MyMainWindow : public QMainWindow {
 public:
   MyMainWindow(void)
@@ -65,36 +130,36 @@ public:
 
       // Add the examinerviewer.
 
-      SoQtExaminerViewer * examinerviewer = new SoQtExaminerViewer(glw);
+      SoWwExaminerViewer * examinerviewer = new SoWwExaminerViewer(glw);
       examinerviewer->setSceneGraph(root);
 
       split->resize(640, 480);
       this->resize(640, 480);
     }
 };
-
+#endif
 /***********************************************************************/
 
 int
 main(int argc, char ** argv)
 {
-  // Initialize Qt and SoQt.
+  // Initialize Ww and SoWw.
 
   // You should not create a QApplication instance if you want
   // to receive spaceball events.
   //  QApplication app(argc, argv);
 
-  SoQt::init((QWidget *)NULL);
+  SoWw::init((wxWindow *)NULL);
 
   // Set up scrollview window.
-  MyMainWindow * vp = new MyMainWindow();
+  MyMainWindow * vp = new MyMainWindow(0);
 
   // Map window.
-  vp->show();
+  vp->Show();
   // Set termination condition.
-  QObject::connect(qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()));
+  // QObject::connect(qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()));
   // Start event loop.
-  SoQt::mainLoop();
+  SoWw::mainLoop();
 
   return 0;
 }

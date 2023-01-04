@@ -40,12 +40,13 @@
 #include "wx/button.h"
 #include "wx/frame.h"
 
-class SoWwExaminerViewerP : public SoGuiExaminerViewerP {
+class SoWwExaminerViewerP :  public SoGuiExaminerViewerP {
 
 public:
     explicit SoWwExaminerViewerP(SoWwExaminerViewer *publ);
-    ~SoWwExaminerViewerP();
+    virtual ~SoWwExaminerViewerP();
     void constructor(const SbBool build);
+    void cameratoggleClicked(wxCommandEvent & );
 
     wxImage * orthopixmap;
     wxImage* perspectivepixmap;

@@ -72,8 +72,7 @@ public:
 
     void finish();
 
-    static void dumpWindowData(const wxWindow* window,
-                               int level=0);
+    static void dumpWindowData(const wxWindow* window);
 };
 
 #endif //SOWW_SOWWP_H

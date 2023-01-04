@@ -34,12 +34,13 @@
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
 #include "Inventor/Ww/common/pixmaps/ortho.xpm"
 #include "Inventor/Ww/common/pixmaps/perspective.xpm"
+#include "ButtonIndexValues.h"
 
 #define PRIVATE(obj) ((obj)->pimpl)
 #define PUBLIC(obj) ((obj)->pub)
 
 SoWwExaminerViewerP::SoWwExaminerViewerP(SoWwExaminerViewer *publ)
-: SoGuiExaminerViewerP(publ) {
+        : SoGuiExaminerViewerP(publ) {
 
 }
 
@@ -53,13 +54,26 @@ void SoWwExaminerViewerP::constructor(const SbBool build) {
     assert(this->orthopixmap->GetSize() == this->perspectivepixmap->GetSize());
 
     PUBLIC(this)->setClassName("SoWwExaminerViewer");
-
     PUBLIC(this)->setPopupMenuString("Examiner Viewer");
     PUBLIC(this)->setLeftWheelString("RotX");
     PUBLIC(this)->setBottomWheelString("RotY");
 
     if (build) {
         wxWindow *widget = PUBLIC(this)->buildWidget(PUBLIC(this)->getParentWidget());
+        widget->Bind( wxEVT_BUTTON,
+                      &SoWwExaminerViewerP::cameratoggleClicked,
+                      this,
+                      CAMERA_BUTTON);
         PUBLIC(this)->setBaseWidget(widget);
     }
+}
+
+void
+SoWwExaminerViewerP::cameratoggleClicked(wxCommandEvent&) {
+    if (PUBLIC(this)->getCamera())
+        PUBLIC(this)->toggleCameraType();
+}
+
+SoWwExaminerViewerP::~SoWwExaminerViewerP() {
+
 }

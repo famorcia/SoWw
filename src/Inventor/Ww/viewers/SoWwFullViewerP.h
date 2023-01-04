@@ -101,7 +101,6 @@ public:
     void viewallbuttonClicked(wxCommandEvent & );
     void seekbuttonClicked(wxCommandEvent & );
     void seekbuttonClicked();
-    void cameratoggleClicked(wxCommandEvent & );
 
     // Menu items.
     void selectedViewing();

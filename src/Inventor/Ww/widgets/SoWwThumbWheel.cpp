@@ -102,10 +102,6 @@ SoWwThumbWheel::constructor(Orientation orientation) {
     wxSize s = sizeHint();
     SetMinSize(s);
     SetMaxSize(s);
-#if SOWW_DEBUG && 0
-    s = GetSize();
-    s = GetSize();
-#endif
 }
 
 SoWwThumbWheel::~SoWwThumbWheel() {

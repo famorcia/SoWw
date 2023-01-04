@@ -304,19 +304,16 @@ void
 dumpData(const wxWindow* w,
          const std::string& prefix="") {
     std::clog<<prefix<<w->GetName()<<" has sizer:" << (w->GetSizer() != 0 ? "yes":"no") <<std::endl;
-    std::clog<<"Size is (width,height):"<<w->GetSize().GetWidth() <<','<<w->GetSize().GetHeight()<<std::endl;
-    return;
+    std::clog<<prefix<<"Size is (width,height):"<<w->GetSize().GetWidth() <<','<<w->GetSize().GetHeight()<<std::endl;
     if(w->GetSizer()) {
         wxSizerItemList list = w->GetSizer()->GetChildren();
         wxSizerItemList::compatibility_iterator node = list.GetFirst();
         while(node) {
             wxSize size = node->GetData()->GetSize();
-            std::clog<<"x/y:"<<size.GetX() <<" "<<size.GetY();
-            std::clog<<" sizer window name:";
+            std::clog<<prefix<<"x/y:"<<size.GetX() <<" "<<size.GetY();
+            std::clog<<prefix<<" sizer window name:";
             if(node->GetData() && node->GetData()->GetWindow())
-                std::clog<<node->GetData()->GetWindow()->GetName();
-            else
-                std::clog<<"";
+                std::clog<<prefix<<node->GetData()->GetWindow()->GetName();
             std::clog<<std::endl;
             node = node->GetNext();
         }
@@ -324,24 +321,24 @@ dumpData(const wxWindow* w,
 }
 
 void
-SoWwP::dumpWindowData(const wxWindow* window, int level) {
+dumpWindowDataImpl(const wxWindow* window, int level) {
     const wxWindowList& windows_list =  window->GetWindowChildren();
     wxWindowList::compatibility_iterator node = windows_list.GetFirst();
-    if(level == 0)
-        std::clog<<__PRETTY_FUNCTION__ <<std::endl;
     std::string tabs;
     for(int i=0;i<level;++i)
         tabs+="\t";
     if(level == 0)
         dumpData(window, tabs+"Parent is:");
-    return;
     while (node)
     {
         wxWindow *win = node->GetData();
         dumpData(win);
-        dumpWindowData(win, level+1);
+        dumpWindowDataImpl(win, level+1);
         node = node->GetNext();
     }
-    if(level == 0)
-        std::clog<<__PRETTY_FUNCTION__ <<"--END--"<<std::endl;
+}
+
+void
+SoWwP::dumpWindowData(const wxWindow* window) {
+    dumpWindowDataImpl(window, 0);
 }

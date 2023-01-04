@@ -1,12 +1,9 @@
 executable(coloreditor SOURCES coloreditor.cpp LIBS SoWw)
 
-executable(embeddedexaminer SOURCES embeddedexaminer.cpp LIBS SoWw)
 
 executable(renderarea SOURCES renderarea.cpp LIBS SoWw)
 
 executable(wx_renderarea SOURCES wx_renderarea.cpp LIBS SoWw)
-
-executable(examinerviewer SOURCES examinerviewer.cpp LIBS SoWw)
 
 #add_executable(scrollview components/scrollview.cpp)
 #target_link_libraries(scrollview SoWw)
