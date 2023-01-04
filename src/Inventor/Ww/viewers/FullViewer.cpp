@@ -150,14 +150,14 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
                            PRIVATE(this)->viewerwidget->GetSize().GetHeight());
 #endif
 
-#if SOWW_DEBUG && 0
-    PRIVATE(this)->viewerwidget->SetBackgroundColour(wxColour(250, 250, 0));
+#if SOWW_DEBUG
+    PRIVATE(this)->viewerwidget->SetBackgroundColour(wxColour(125, 150, 190));
 #endif
 
     PRIVATE(this)->canvas = inherited::buildWidget(PRIVATE(this)->viewerwidget);
-    PRIVATE(this)->canvas->SetSize(400,400);
+    //PRIVATE(this)->canvas->SetSize(400,400);
 
-#if SOWW_DEBUG && 0
+#if SOWW_DEBUG
     PRIVATE(this)->canvas->SetBackgroundColour(wxColour(250, 0, 255));
 #endif
 
@@ -176,7 +176,8 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
 }
 
 
-void SoWwFullViewer::setDecoration(const SbBool enable){
+void
+SoWwFullViewer::setDecoration(const SbBool enable){
 #if SOWW_DEBUG && 0
     if ((enable  && this->isDecoration()) ||
         (!enable && !this->isDecoration())) {
@@ -248,8 +249,25 @@ SoWwFullViewer::getRenderAreaWidget(void) const {
 }
 
 void
-SoWwFullViewer::setViewing(SbBool on) {
-    SOWW_STUB();
+SoWwFullViewer::setViewing(SbBool enable) {
+    if ((enable && this->isViewing()) ||
+        (!enable && !this->isViewing())) {
+#if SOWW_DEBUG
+        SoDebugError::postWarning("SoWwFullViewer::setViewing",
+                              "view mode already %s", enable ? "on" : "off");
+#endif
+        return;
+    }
+
+    inherited::setViewing(enable);
+
+    // Must check that buttons have been built, in case this viewer
+    // component was made without decorations.
+    if (PRIVATE(this)->viewerbuttons->getLength() > 0) {
+        ((wxToggleButton*)(PRIVATE(this))->getViewerbutton(EXAMINE_BUTTON))->SetValue(enable);
+        ((wxToggleButton*)(PRIVATE(this))->getViewerbutton(INTERACT_BUTTON))->SetValue(enable ? FALSE : TRUE);
+        ((wxButton*)PRIVATE(this)->getViewerbutton(SEEK_BUTTON))->Enable(enable);
+    }
 }
 
 SoWwFullViewer::~SoWwFullViewer() {
@@ -388,8 +406,7 @@ SoWwFullViewer::createViewerButtons(wxWindow* parent,
                 delete p;
                 PRIVATE(this)->interactbutton = new wxToggleButton(parent, i, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
                 p = PRIVATE(this)->interactbutton;
-                wxImage img(pick_xpm);
-                p->SetBitmap(wxImage(img));
+                p->SetBitmap(wxImage(pick_xpm));
                 PRIVATE(this)->interactbutton->SetValue(this->isViewing() ? FALSE : TRUE);
             }
 
@@ -400,28 +417,23 @@ SoWwFullViewer::createViewerButtons(wxWindow* parent,
                 PRIVATE(this)->viewbutton = new wxToggleButton(parent, i, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
                 p = PRIVATE(this)->viewbutton;
                 PRIVATE(this)->viewbutton->SetValue(this->isViewing());
-                wxImage img(view_xpm);
-                p->SetBitmap(img);
+                p->SetBitmap(wxImage(view_xpm));
             }
                 break;
             case HOME_BUTTON: {
-                wxImage img(home_xpm);
-                p->SetBitmap(img);
+                p->SetBitmap(wxImage(home_xpm));
             }
                 break;
             case SET_HOME_BUTTON: {
-                wxImage img(set_home_xpm);
-                p->SetBitmap(img);
+                p->SetBitmap(wxImage(set_home_xpm));
             }
                 break;
             case VIEW_ALL_BUTTON: {
-                wxImage img(view_all_xpm);
-                p->SetBitmap(img);
+                p->SetBitmap(wxImage (view_all_xpm));
             }
                 break;
             case SEEK_BUTTON: {
-                wxImage img(seek_xpm);
-                p->SetBitmap(img);
+                p->SetBitmap(wxImage(seek_xpm));
             }
                 break;
             default:

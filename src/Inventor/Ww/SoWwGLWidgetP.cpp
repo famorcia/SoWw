@@ -39,8 +39,6 @@
 
 #include "sowwdefs.h"
 
-#define SOWW_DEBUG 0
-
 #define PRIVATE(obj) ((obj)->pimpl)
 #define PUBLIC(obj) ((obj)->pub)
 
@@ -65,12 +63,13 @@ SoWwGLWidgetP::GLAreaKeyEvent(QKeyEvent * e, void * userdata)
 // slot invoked upon QScreen change
 void
 SoWwGLWidgetP::gl_changed(void) {
-    if (SOWW_DEBUG) { // debug
+#if SOWW_DEBUG
         SoDebugError::postInfo("gl_changed", "invoked");
-    }
+#endif
 
     if (this->currentglwidget) {
-        // SbVec2s glSize = this->glSizeUnscaled * this->currentglwidget->devicePixelRatioF();
+        return;
+        SbVec2s glSize = this->glSizeUnscaled * this->currentglwidget->GetDPIScaleFactor();
         if (glSize != this->glSize) {
             this->glSize = glSize;
             PUBLIC(this)->setSize(PUBLIC(this)->getSize());
@@ -82,9 +81,9 @@ SoWwGLWidgetP::gl_changed(void) {
 void
 SoWwGLWidgetP::gl_init(void)
 {
-    if (SOWW_DEBUG) { // debug
-        SoDebugError::postInfo("gl_init", "invoked");
-    }
+#if SOWW_DEBUG
+    SoDebugError::postInfo("gl_init", "invoked");
+#endif
 
     PUBLIC(this)->initGraphic();
 }
@@ -102,9 +101,9 @@ SoWwGLWidgetP::gl_reshape(int width, int height) {
 
 void
 SoWwGLWidgetP::gl_exposed(void) {
-    if (SOWW_DEBUG) { // debug
+#if SOWW_DEBUG
         SoDebugError::postInfo("gl_exposed", "%f", SbTime::getTimeOfDay().getValue());
-    }
+#endif
 
     if (PUBLIC(this)->waitForExpose) {
         PUBLIC(this)->waitForExpose = false; // Gets flipped from TRUE on first expose.
@@ -308,7 +307,7 @@ SoWwGLWidgetP::eventHandler(wxFrame * widget, void * closure, QEvent * event,
 void
 SoWwGLWidgetP::buildGLWidget(void) {
 
-    if (SOWW_DEBUG) { // debug
+#if SOWW_DEBUG
         SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
                 // TODO "%s, %s, %s, %s, %s",
                                "%s, %s, %s",
@@ -318,7 +317,7 @@ SoWwGLWidgetP::buildGLWidget(void) {
                                PUBLIC(this)->isQuadBufferStereo() ? "stereo" : "mono"
                 // TODO: ,QGLFormat_hasOverlay(this->glformat) ? "overlay" : "no overlay"
         );
-    }
+#endif
 
     wxFrame * wascurrent = dynamic_cast<wxFrame *>(this->currentglwidget);
     wxFrame * wasprevious = this->previousglwidget;

@@ -30,6 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
+#ifndef SOWW_INTERNAL
+#error this is a private header file
+#endif
+
 #include "Inventor/Ww/viewers/SoWwExaminerViewerP.h"
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
 #include "Inventor/Ww/common/pixmaps/ortho.xpm"
@@ -44,7 +48,12 @@ SoWwExaminerViewerP::SoWwExaminerViewerP(SoWwExaminerViewer *publ)
 
 }
 
-void SoWwExaminerViewerP::constructor(const SbBool build) {
+SoWwExaminerViewerP::~SoWwExaminerViewerP() {
+
+}
+
+void
+SoWwExaminerViewerP::constructor(const SbBool build) {
     this->genericConstructor();
 
     this->cameratogglebutton = NULL;
@@ -75,6 +84,4 @@ SoWwExaminerViewerP::cameratoggleClicked(wxCommandEvent&) {
         PUBLIC(this)->toggleCameraType();
 }
 
-SoWwExaminerViewerP::~SoWwExaminerViewerP() {
 
-}

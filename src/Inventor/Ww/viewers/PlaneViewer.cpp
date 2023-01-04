@@ -29,27 +29,143 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
+
 #include "Inventor/Ww/viewers/SoWwPlaneViewer.h"
 #include "Inventor/Ww/viewers/SoWwPlaneViewerP.h"
+#include "Inventor/Ww/common/pixmaps/ortho.xpm"
+#include "Inventor/Ww/common/pixmaps/perspective.xpm"
+#include "Inventor/Ww/common/pixmaps/x.xpm"
+#include "Inventor/Ww/common/pixmaps/y.xpm"
+#include "Inventor/Ww/common/pixmaps/z.xpm"
+#include "Inventor/nodes/SoOrthographicCamera.h"
+#include "Inventor/nodes/SoPerspectiveCamera.h"
 
-wxWindow* SoWwPlaneViewer::buildWidget(wxWindow* parent) {
+#include "sowwdefs.h"
+#include "ButtonIndexValues.h"
 
+#define PUBLIC(o) (o->pub)
+#define PRIVATE(o) (o->pimpl)
+
+wxWindow*
+SoWwPlaneViewer::buildWidget(wxWindow* parent) {
+    return inherited::buildWidget(parent);
+}
+
+void
+SoWwPlaneViewer::createViewerButtons(wxWindow* parent,
+                                     SbPList * buttons) {
+    inherited::createViewerButtons(parent, buttons);
+
+    // add X, Y, Z viewpoint buttons
+    PRIVATE(this)->buttons.x = new wxButton(parent, X_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);;
+    PRIVATE(this)->buttons.x->SetBitmap(wxImage(x_xpm));
+    buttons->append(PRIVATE(this)->buttons.x);
+
+    PRIVATE(this)->buttons.y = new wxButton(parent, Y_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);;
+    PRIVATE(this)->buttons.y->SetBitmap(wxImage(y_xpm));
+    buttons->append(PRIVATE(this)->buttons.y);
+
+    PRIVATE(this)->buttons.z =  new wxButton(parent, Z_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);;
+    PRIVATE(this)->buttons.z->SetBitmap(wxImage(z_xpm));
+    buttons->append(PRIVATE(this)->buttons.z);
+
+    // add camera toggle button
+    assert(PRIVATE(this)->pixmaps.perspective != NULL);
+    assert(PRIVATE(this)->pixmaps.orthogonal != NULL);
+    PRIVATE(this)->buttons.camera = new wxButton(parent, CAMERA_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);;
+
+    wxImage * pixmap = NULL;
+    SoType t = this->getCameraType();
+    if (t.isDerivedFrom(SoOrthographicCamera::getClassTypeId()))
+        pixmap = PRIVATE(this)->pixmaps.orthogonal;
+    else if (t.isDerivedFrom(SoPerspectiveCamera::getClassTypeId()))
+        pixmap = PRIVATE(this)->pixmaps.perspective;
+    else assert(0 && "unsupported cameratype");
+
+    PRIVATE(this)->buttons.camera->SetBitmap( wxBitmap(*pixmap));
+    buttons->append(PRIVATE(this)->buttons.camera);
+}
+
+void
+SoWwPlaneViewer::setCamera( SoCamera* camera) {
+    if (camera) {
+        SoType type = camera->getTypeId();
+        SbBool orthogonal =
+                type.isDerivedFrom(SoOrthographicCamera::getClassTypeId());
+        const char * oldLabel = this->getRightWheelString();
+        if (oldLabel) {
+            if (orthogonal) {
+                if (strcmp("Dolly",oldLabel) == 0)
+                    this->setRightWheelString("Zoom");
+            }
+            else if (strcmp("Zoom",oldLabel) == 0)
+                this->setRightWheelString("Dolly");
+        }
+        if (PRIVATE(this)->buttons.camera) {
+            PRIVATE(this)->buttons.camera->SetBitmap(
+                    orthogonal ?
+                    *(PRIVATE(this)->pixmaps.orthogonal) :
+                    *(PRIVATE(this)->pixmaps.perspective));
+        }
+    }
+    inherited::setCamera(camera);
 }
 
 
-void  SoWwPlaneViewer::createViewerButtons(wxWindow* parent, SbPList * buttons) {
-
-}
-
-
-void  SoWwPlaneViewer::setCamera( SoCamera*) {
-
-}
-
-SoWwPlaneViewerP::SoWwPlaneViewerP(SoWwPlaneViewer *v) : SoGuiPlaneViewerP(v){
+SoWwPlaneViewerP::SoWwPlaneViewerP(SoWwPlaneViewer *v)
+        : SoGuiPlaneViewerP(v){
 
 }
 
 void SoWwPlaneViewerP::constructor(SbBool buildnow) {
+    this->commonConstructor(); // init generic stuff
 
+    this->pixmaps.orthogonal = new wxImage((const char **) ortho_xpm);
+    this->pixmaps.perspective = new wxImage((const char **) perspective_xpm);
+
+    PUBLIC(this)->setClassName("SoQtPlaneViewer");
+    PUBLIC(this)->setLeftWheelString("transY");
+    PUBLIC(this)->setBottomWheelString("transX");
+
+    if (!buildnow) return;
+
+    PUBLIC(this)->setSize(SbVec2s(550, 490)); // extra buttons -> more height
+    wxWindow * viewer = PUBLIC(this)->buildWidget(PUBLIC(this)->getParentWidget());
+    PUBLIC(this)->setBaseWidget(viewer);
+
+    viewer->Bind(wxEVT_BUTTON,
+                 &SoWwPlaneViewerP::cameraToggleClicked,
+                 this,
+                 CAMERA_BUTTON);
+    viewer->Bind(wxEVT_BUTTON,
+                 &SoWwPlaneViewerP::xClicked,
+                 this,
+                 X_BUTTON);
+    viewer->Bind(wxEVT_BUTTON,
+                 &SoWwPlaneViewerP::yClicked,
+                 this,
+                 Y_BUTTON);
+    viewer->Bind(wxEVT_BUTTON,
+                 &SoWwPlaneViewerP::zClicked,
+                 this,
+                 Z_BUTTON);
 }
+
+void SoWwPlaneViewerP::xClicked(wxEvent &) {
+    this->viewPlaneX();
+}
+
+void SoWwPlaneViewerP::yClicked(wxEvent &) {
+    this->viewPlaneY();
+}
+
+void SoWwPlaneViewerP::zClicked(wxEvent &) {
+    this->viewPlaneZ();
+}
+
+void SoWwPlaneViewerP::cameraToggleClicked(wxEvent &) {
+    PUBLIC(this)->toggleCameraType();
+}
+
+#undef PUBLIC
+#undef PRIVATE

@@ -33,6 +33,10 @@
 #ifndef SOWW_SOWWEXAMINERVIEWERP_H
 #define SOWW_SOWWEXAMINERVIEWERP_H
 
+#ifndef SOWW_INTERNAL
+#error this is a private header file
+#endif
+
 #include <Inventor/SbBasic.h>
 #include "Inventor/Ww/viewers/SoGuiExaminerViewerP.h"
 
@@ -46,11 +50,12 @@ public:
     explicit SoWwExaminerViewerP(SoWwExaminerViewer *publ);
     virtual ~SoWwExaminerViewerP();
     void constructor(const SbBool build);
-    void cameratoggleClicked(wxCommandEvent & );
 
     wxImage * orthopixmap;
-    wxImage* perspectivepixmap;
+    wxImage * perspectivepixmap;
     wxButton * cameratogglebutton;
+
+    void cameratoggleClicked(wxCommandEvent & );
 
 };
 

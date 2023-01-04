@@ -66,7 +66,12 @@ SoWwExaminerViewer::SoWwExaminerViewer(wxWindow* parent,
 }
 
 
-void SoWwExaminerViewer::setCamera(SoCamera * newCamera) {
+SoWwExaminerViewer::~SoWwExaminerViewer() {
+
+}
+
+void
+SoWwExaminerViewer::setCamera(SoCamera * newCamera) {
     // This method overridden from parent class to toggle the camera
     // type selection button pixmap and string of the zoom/dolly
     // thumbwheel.
@@ -96,7 +101,9 @@ void SoWwExaminerViewer::setCamera(SoCamera * newCamera) {
     inherited::setCamera(newCamera);
 }
 
-void SoWwExaminerViewer::createViewerButtons(wxWindow* parent, SbPList * buttonlist) {
+void
+SoWwExaminerViewer::createViewerButtons(wxWindow* parent,
+                                        SbPList * buttonlist) {
 
     inherited::createViewerButtons(parent, buttonlist);
     PRIVATE(this)->cameratogglebutton = new wxButton(parent, CAMERA_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
@@ -117,7 +124,3 @@ void SoWwExaminerViewer::createViewerButtons(wxWindow* parent, SbPList * buttonl
     buttonlist->append(PRIVATE(this)->cameratogglebutton);
 }
 
-
-SoWwExaminerViewer::~SoWwExaminerViewer() {
-
-}

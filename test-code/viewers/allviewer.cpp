@@ -32,8 +32,12 @@
 
 #include <Inventor/nodes/SoCone.h>
 
+#define VIEWER_TYPE  SoWwPlaneViewer
+
 #include <Inventor/Ww/SoWw.h>
 #include <Inventor/Ww/viewers/SoWwExaminerViewer.h>
+#include <Inventor/Ww/viewers/SoWwPlaneViewer.h>
+#include <Inventor/Ww/viewers/SoWwFlyViewer.h>
 
 // *************************************************************************
 
@@ -46,8 +50,7 @@ main(
 
   SoNode * root = new SoCone;
 
-  SoWwExaminerViewer * viewer = new SoWwExaminerViewer( window );
-  viewer->setBackgroundColor(SbColor(1,0,0));
+    VIEWER_TYPE * viewer = new VIEWER_TYPE( window );
 
   viewer->setSceneGraph( root );
   viewer->show();

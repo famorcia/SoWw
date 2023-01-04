@@ -44,6 +44,20 @@ class SoWwPlaneViewerP : public SoGuiPlaneViewerP {
 public:
     explicit SoWwPlaneViewerP(SoWwPlaneViewer*);
     void constructor(SbBool buildnow);
+
+    struct {
+        class wxButton * x, * y, * z;
+        class wxButton * camera;
+    } buttons;
+
+    struct {
+        class wxImage * orthogonal, * perspective;
+    } pixmaps;
+
+    void xClicked(wxEvent&);
+    void yClicked(wxEvent&);
+    void zClicked(wxEvent&);
+    void cameraToggleClicked(wxEvent&);
 };
 
 

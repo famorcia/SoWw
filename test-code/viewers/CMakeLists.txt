@@ -7,3 +7,5 @@ executable(fullviewer SOURCES fullviewer.cpp LIBS SoWw)
 executable(examinerviewer SOURCES examinerviewer.cpp LIBS SoWw)
 
 executable(embeddedexaminer SOURCES embeddedexaminer.cpp LIBS SoWw)
+
+executable(allviewer SOURCES allviewer.cpp LIBS SoWw)

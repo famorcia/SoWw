@@ -99,6 +99,13 @@ void SoWwGLArea::OnPaint(wxPaintEvent& event ) {
 }
 
 void SoWwGLArea::OnSize(wxSizeEvent& event) {
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwGLArea::OnSize",
+                           "size:%d %d",
+                           event.GetSize().x,
+                           event.GetSize().y);
+#endif
+
     // on size Coin need to know the new view port
     ww_gl_widget->gl_reshape(event.GetSize().x,
                              event.GetSize().y);
