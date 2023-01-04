@@ -65,6 +65,7 @@ void SoWwExaminerViewerP::constructor(const SbBool build) {
                       this,
                       CAMERA_BUTTON);
         PUBLIC(this)->setBaseWidget(widget);
+        PUBLIC(this)->setSize(SbVec2s(500, 300));
     }
 }
 
