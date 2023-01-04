@@ -88,7 +88,6 @@ public:
 
         gbSizer2->Add( m_panel16, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
 
-
         gbSizer2->AddGrowableCol( 1 );
         gbSizer2->AddGrowableRow( 0 );
 

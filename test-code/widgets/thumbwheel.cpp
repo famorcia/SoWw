@@ -57,15 +57,23 @@ public:
                                               wxDefaultPosition,
                                               wxSize(300,300));
 
+        wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
         SoWwThumbWheel *wheel_h = new SoWwThumbWheel(SoWwThumbWheel::Horizontal,
                                                      aFrame);
-        wheel_h->SetSize(200, 30);
 
+        wheel_h->SetSize(wheel_h->sizeHint());
+        //wheel_h->SetMinSize( wheel_h->sizeHint());
+
+        sizer->Add(wheel_h, 1, wxALL| wxEXPAND, 5 );
         SoWwThumbWheel *wheel_v = new SoWwThumbWheel(SoWwThumbWheel::Vertical,
                                                      aFrame);
-        wheel_v->SetSize(30, 200);
-        wheel_h->SetPosition(wxPoint(40, 100));
-
+        // wheel_v->SetSize(30, 200);
+        wheel_v->SetSize(wheel_v->sizeHint());
+        //wheel_h->SetPosition(wxPoint(40, 100));
+        wheel_v->SetBackgroundColour(wxColour(255,0,0));
+        wheel_h->SetBackgroundColour(wxColour(0,255,0));
+        sizer->Add(wheel_v, 1, wxALL| wxEXPAND, 5 );
+        aFrame->SetSizer(sizer);
         wheel_h->Show();
         wheel_v->Show();
         return true;

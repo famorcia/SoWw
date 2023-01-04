@@ -94,7 +94,7 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
 
         wxGridBagSizer* g = new wxGridBagSizer( 0, 0 );
         g->SetFlexibleDirection( wxBOTH );
-        g->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
+        //g->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 
         const int border_size = 0;
         g->Add( PUBLIC(this)->leftDecoration, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size);

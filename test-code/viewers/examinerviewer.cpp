@@ -47,7 +47,7 @@ main(
   SoNode * root = new SoCone;
 
   SoWwExaminerViewer * viewer = new SoWwExaminerViewer( window );
-  viewer->setBackgroundColor(SbColor(1,0,0));
+  // viewer->setBackgroundColor(SbColor(1,0,0));
 
   viewer->setSceneGraph( root );
   viewer->show();

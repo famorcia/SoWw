@@ -150,14 +150,14 @@ SoWwFullViewer::buildWidget(wxWindow* parent) {
                            PRIVATE(this)->viewerwidget->GetSize().GetHeight());
 #endif
 
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     PRIVATE(this)->viewerwidget->SetBackgroundColour(wxColour(125, 150, 190));
 #endif
 
     PRIVATE(this)->canvas = inherited::buildWidget(PRIVATE(this)->viewerwidget);
     //PRIVATE(this)->canvas->SetSize(400,400);
 
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     PRIVATE(this)->canvas->SetBackgroundColour(wxColour(250, 0, 255));
 #endif
 
@@ -301,7 +301,7 @@ SoWwFullViewer::buildDecoration(wxWindow* parent) {
 wxWindow*
 SoWwFullViewer::buildLeftTrim(wxWindow* parent){
     wxPanel* p = new wxPanel(parent);
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
     p->SetBackgroundColour(wxColour(255, 0, 255));
 #endif
 
@@ -335,6 +335,11 @@ SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
     this->rightWheelLabel = label;
 
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Horizontal, w);
+#if SOWW_DEBUG && 0
+    t->SetBackgroundColour(wxColour(0,0,0));
+#endif
+    t->SetWindowStyle(wxBORDER_DOUBLE );
+
     this->bottomWheel = t;
     t->setRangeBoundaryHandling(SoWwThumbWheel::ACCUMULATE);
 
@@ -342,12 +347,12 @@ SoWwFullViewer::buildBottomTrim(wxWindow* parent) {
 
     wxBoxSizer* layout = new wxBoxSizer(wxHORIZONTAL);
 
-    layout->Add( this->leftWheelLabel, 0, wxALL, 0 );
+    layout->Add( this->leftWheelLabel, 0, wxALIGN_CENTER |wxALL, 0 );
     layout->Add(0,0,1, wxEXPAND, 0);
-    layout->Add( this->bottomWheelLabel, 0, wxALL, 0 );
-    layout->Add( this->bottomWheel, 1, wxEXPAND | wxALL, 0 );
+    layout->Add( this->bottomWheelLabel, 0, wxALIGN_CENTER |wxALL, 0 );
+    layout->Add( this->bottomWheel, 1, wxALIGN_CENTER |wxALL, 0 );
     layout->Add(0,0,1, wxEXPAND, 0);
-    layout->Add( this->rightWheelLabel, 1, wxALL, 0 );
+    layout->Add( this->rightWheelLabel, 1, wxALIGN_CENTER |wxALL, 0 );
 
     w->SetSizer( layout );
     w->Layout();
@@ -365,8 +370,8 @@ SoWwFullViewer::buildRightTrim(wxWindow* parent) {
     this->rightWheelVal = t->value();
     this->rightWheel = t;
     const int border_size = 0;
-    sizer->Add(this->buildViewerButtons(p),  1, wxALL, border_size);
-    sizer->Add(t, 1, wxALL, border_size);
+    sizer->Add(this->buildViewerButtons(p),  1, wxALL | wxCENTER, border_size);
+    sizer->Add(t, 1, wxALL| wxCENTER, border_size);
     p->SetSizer(sizer);
     return p;
 }
@@ -387,7 +392,7 @@ SoWwFullViewer::buildViewerButtons(wxWindow* parent) {
 
     for (int i = 0; i < numViewerButtons; i++) {
         wxAnyButton * b = PRIVATE(this)->getViewerbutton(i);
-        sizer->Add( b, 0, wxALL, 0);
+        sizer->Add( b, 0, wxALL | wxCENTER, 0);
     }
     w->SetSizer(sizer);
 
@@ -398,13 +403,13 @@ void
 SoWwFullViewer::createViewerButtons(wxWindow* parent,
                                     SbPList * buttonlist) {
     for (int i=0; i <= SEEK_BUTTON; i++) {
-        wxAnyButton *p = new wxButton(parent, i, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        wxAnyButton *p = new wxButton(parent, i);
 
         switch (i) {
             case INTERACT_BUTTON: {
                 parent->RemoveChild(p);
                 delete p;
-                PRIVATE(this)->interactbutton = new wxToggleButton(parent, i, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+                PRIVATE(this)->interactbutton = new wxToggleButton(parent, i, wxEmptyString);
                 p = PRIVATE(this)->interactbutton;
                 p->SetBitmap(wxImage(pick_xpm));
                 PRIVATE(this)->interactbutton->SetValue(this->isViewing() ? FALSE : TRUE);
@@ -414,7 +419,7 @@ SoWwFullViewer::createViewerButtons(wxWindow* parent,
             case EXAMINE_BUTTON: {
                 parent->RemoveChild(p);
                 delete p;
-                PRIVATE(this)->viewbutton = new wxToggleButton(parent, i, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+                PRIVATE(this)->viewbutton = new wxToggleButton(parent, i, wxEmptyString);
                 p = PRIVATE(this)->viewbutton;
                 PRIVATE(this)->viewbutton->SetValue(this->isViewing());
                 p->SetBitmap(wxImage(view_xpm));
@@ -441,6 +446,7 @@ SoWwFullViewer::createViewerButtons(wxWindow* parent,
                 break;
         }
 
+        p->SetWindowStyle( wxBU_EXACTFIT);
         buttonlist->append(p);
     }
 }

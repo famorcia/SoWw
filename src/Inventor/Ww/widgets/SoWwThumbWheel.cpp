@@ -155,9 +155,46 @@ SoWwThumbWheel::paintEvent(wxPaintEvent& WXUNUSED(event)) {
 
     if(pixmap >= numPixmaps)
         return;
+
+    wxRect widgetrect(0, 0,
+                      this->GetSize().GetWidth(),
+                      this->GetSize().GetHeight());
+    wxRect wheelrect(widgetrect);
+
+    if (this->orient == Vertical) {
+        wheelrect.SetTop(   wheelrect.GetTop() + 2);
+        wheelrect.SetBottom(wheelrect.GetBottom() - 4);
+        wheelrect.SetLeft(  wheelrect.GetLeft() + 5);
+        wheelrect.SetRight( wheelrect.GetRight() - 10);
+    } else {
+        wheelrect.SetTop(   wheelrect.GetTop() + 5);
+        wheelrect.SetBottom(wheelrect.GetBottom() - 10);
+        wheelrect.SetLeft(  wheelrect.GetLeft() + 2);
+        wheelrect.SetRight( wheelrect.GetRight() - 4);
+    }
+    dc.DrawRectangle(wheelrect);
+
+    wheelrect.SetTop(   wheelrect.GetTop() + 1);
+    wheelrect.SetBottom(wheelrect.GetBottom() - 1);
+    wheelrect.SetLeft(  wheelrect.GetLeft() + 1);
+    wheelrect.SetRight( wheelrect.GetRight() - 1);
+    // wheelrect is now wheel-only
+
+    wxRect sRect;
+    wxRect dRect;
+    if (this->orient == Vertical) {
+        sRect = wxRect(0,0,w,dval);
+        dRect = wxRect(wheelrect.GetLeft(),wheelrect.GetTop(),w,dval);
+    }
+    else {
+        sRect = wxRect(0,0,dval,w);
+        dRect = wxRect(wheelrect.GetLeft(),wheelrect.GetTop(),dval,w);
+    }
+
     assert(pixmap < numPixmaps);
     wxBitmap bitmap(*this->pixmaps[pixmap]);
-    dc.DrawBitmap(bitmap, 0, 0, false);
+    dc.DrawBitmap(bitmap, dRect.GetX(), dRect.GetY(), false);
+
     this->currentPixmap = pixmap;
 }
 
