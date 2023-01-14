@@ -45,7 +45,7 @@ SoWwExaminerViewerP::SoWwExaminerViewerP(SoWwExaminerViewer *publ)
 }
 
 SoWwExaminerViewerP::~SoWwExaminerViewerP() {
-
+    this->genericDestructor();
 }
 
 void
@@ -54,9 +54,9 @@ SoWwExaminerViewerP::constructor(const SbBool build) {
 
     this->cameratogglebutton = NULL;
 
-    this->orthopixmap = new wxImage((const char **) ortho_xpm);
-    this->perspectivepixmap = new wxImage((const char **) perspective_xpm);
-    assert(this->orthopixmap->GetSize() == this->perspectivepixmap->GetSize());
+    this->orthopixmap = wxImage((const char **) ortho_xpm);
+    this->perspectivepixmap = wxImage((const char **) perspective_xpm);
+    assert(this->orthopixmap.GetSize() == this->perspectivepixmap.GetSize());
 
     PUBLIC(this)->setClassName("SoWwExaminerViewer");
     PUBLIC(this)->setPopupMenuString("Examiner Viewer");

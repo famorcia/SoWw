@@ -49,7 +49,6 @@ SoWwGLWidgetP::SoWwGLWidgetP(SoWwGLWidget * o)
 }
 
 SoWwGLWidgetP::~SoWwGLWidgetP() {
-    
 }
 
 /*// Gets called by the SoWwGLArea instance upon keyboard presses. These

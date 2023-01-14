@@ -51,8 +51,8 @@ public:
     virtual ~SoWwExaminerViewerP();
     void constructor(const SbBool build);
 
-    wxImage * orthopixmap;
-    wxImage * perspectivepixmap;
+    wxImage orthopixmap;
+    wxImage perspectivepixmap;
     wxButton * cameratogglebutton;
 
     void cameratoggleClicked(wxCommandEvent & );

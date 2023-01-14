@@ -92,8 +92,8 @@ SoWwExaminerViewer::setCamera(SoCamera * newCamera) {
         if (PRIVATE(this)->cameratogglebutton) {
             PRIVATE(this)->cameratogglebutton->SetBitmap(
                     orthogonal ?
-                    * (PRIVATE(this)->orthopixmap) :
-                    * (PRIVATE(this)->perspectivepixmap));
+                    (PRIVATE(this)->orthopixmap) :
+                    (PRIVATE(this)->perspectivepixmap));
         }
     }
 
@@ -108,15 +108,13 @@ SoWwExaminerViewer::createViewerButtons(wxWindow* parent,
     PRIVATE(this)->cameratogglebutton = new wxButton(parent, CAMERA_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     PRIVATE(this)->cameratogglebutton->SetName("CAMERA");
 
-    assert(PRIVATE(this)->perspectivepixmap);
-    assert(PRIVATE(this)->orthopixmap);
 
     wxImage * p = NULL;
     SoType t = this->getCameraType();
     if (t.isDerivedFrom(SoOrthographicCamera::getClassTypeId()))
-        p = PRIVATE(this)->orthopixmap;
+        p = &PRIVATE(this)->orthopixmap;
     else if (t.isDerivedFrom(SoPerspectiveCamera::getClassTypeId()))
-        p = PRIVATE(this)->perspectivepixmap;
+        p = &PRIVATE(this)->perspectivepixmap;
     else assert(0 && "unsupported cameratype");
 
     PRIVATE(this)->cameratogglebutton->SetBitmap(*p);

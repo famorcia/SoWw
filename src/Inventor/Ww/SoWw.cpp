@@ -142,9 +142,13 @@ SoWw::init(wxWindow* toplevelwidget) {
 void
 SoWw::mainLoop(void) {
     wxTheApp->OnRun();
-    // after app is finished remove sensor callback
-    SoDB::getSensorManager()->setChangedCallback(NULL,
-                                                 NULL);
+
+    // To avoid getting any further invocations of
+    // SoGuiP::sensorQueueChanged() (which would re-allocate the timers
+    // we destruct below). This could for instance happen when
+    // de-coupling the scenegraph camera, triggering a notification
+    // chain through the scenegraph.
+    SoDB::getSensorManager()->setChangedCallback(NULL, NULL);
     // turn off timers
     SoWwP::instance()->finish();
 
@@ -153,6 +157,17 @@ SoWw::mainLoop(void) {
         wxTheApp->OnExit();
         wxEntryCleanup();
     }
+}
+
+void
+SoWw::done() {
+
+#if 0 // FIXME: These methods exist in TGS Inventor. We should add
+    // them, and then call them from here. 20060210 kyrah
+  SoInteraction::finish();
+  SoNodeKit::finish();
+#endif
+    SoDB::finish();
 }
 
 void

@@ -57,6 +57,7 @@ main(
   SoWw::mainLoop();
 
   delete viewer;
+  SoWw::done(); // delete all Coin stuff
   return 0;
 } // main()
 
