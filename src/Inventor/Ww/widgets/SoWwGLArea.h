@@ -42,13 +42,8 @@ class SoWwGLWidgetP;
 class SoWwGLArea : public wxGLCanvas
 {
 public:
-    SoWwGLArea(SoWwGLWidgetP* glWidget,
-               wxGLAttributes&,
-               wxWindowID id = wxID_ANY,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = 0,
-               const wxString& name = "SoWwGLArea");
+    SoWwGLArea(wxWindow *parent,
+               wxGLAttributes&);
 
     virtual ~SoWwGLArea();
 
@@ -61,21 +56,20 @@ public:
 
 protected:
     void OnPaint(wxPaintEvent& event);
-    void OnSize(wxSizeEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
-    void OnMouse(wxMouseEvent& event);
 
 private:
     void InitGL();
 
     bool is_gl_initialized;
     wxGLContext* gl_real_context;
-    SoWwGLWidgetP* ww_gl_widget;
     wxGLAttributes  gl_attributes;
 
 wxDECLARE_NO_COPY_CLASS(SoWwGLArea);
 wxDECLARE_EVENT_TABLE();
 };
 
+wxDECLARE_EVENT(SO_WW_GL_INIT, wxCommandEvent);
+wxDECLARE_EVENT(SO_WW_GL_DRAW, wxCommandEvent);
 
 #endif //SOWW_SOWWGLAREA_H

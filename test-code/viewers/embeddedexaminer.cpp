@@ -42,13 +42,9 @@
 #include <Inventor/nodes/SoCone.h>
 #include <Inventor/nodes/SoSeparator.h>
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/panel.h>
 #include <wx/gdicmn.h>
-#include <wx/font.h>
 #include <wx/colour.h>
-#include <wx/settings.h>
 #include <wx/string.h>
 #include <wx/splitter.h>
 #include <wx/sizer.h>
@@ -88,10 +84,26 @@ public:
         m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( MyMainWindow::m_splitter1OnIdle ), NULL, this );
 
         m_panel19 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+        m_panel19->SetBackgroundColour(wxColour(0,0,0));
         m_panel20 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
+        m_panel20->SetBackgroundColour(wxColour(0,255,0));
+
+        // Construct a simple scenegraph.
+
+        SoSeparator * root = new SoSeparator;
+
+        SoCone * cone = new SoCone;
+        root->addChild(cone);
+
+        // Add the examinerviewer.
+
+        SoWwExaminerViewer * examinerviewer = new SoWwExaminerViewer(m_panel20);
+        examinerviewer->setSceneGraph(root);
+        examinerviewer->show();
+
         m_splitter1->SplitVertically( m_panel19, m_panel20, 0 );
         bSizer12->Add( m_splitter1, 1, wxEXPAND, 5 );
-
 
         this->SetSizer( bSizer12 );
         this->Layout();
@@ -99,8 +111,7 @@ public:
         this->Centre( wxBOTH );
     }
 
-    ~MyMainWindow()
-    {
+    ~MyMainWindow() {
     }
 
     void m_splitter1OnIdle( wxIdleEvent& )
@@ -111,43 +122,12 @@ public:
 
 };
 
-#if 0
-class MyMainWindow : public QMainWindow {
-public:
-  MyMainWindow(void)
-    {
-      QSplitter * split = new QSplitter(this);
-
-      QListView * listview = new QListView(split);
-      QWidget * glw = new QWidget(split);
-
-      // Construct a simple scenegraph.
-
-      SoSeparator * root = new SoSeparator;
-
-      SoCone * cone = new SoCone;
-      root->addChild(cone);
-
-      // Add the examinerviewer.
-
-      SoWwExaminerViewer * examinerviewer = new SoWwExaminerViewer(glw);
-      examinerviewer->setSceneGraph(root);
-
-      split->resize(640, 480);
-      this->resize(640, 480);
-    }
-};
-#endif
 /***********************************************************************/
 
 int
 main(int argc, char ** argv)
 {
   // Initialize Ww and SoWw.
-
-  // You should not create a QApplication instance if you want
-  // to receive spaceball events.
-  //  QApplication app(argc, argv);
 
   SoWw::init((wxWindow *)NULL);
 

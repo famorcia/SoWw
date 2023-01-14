@@ -6,6 +6,8 @@ set(GUI WW)
 set(WIDGET wxWindow*)
 set(EVENT wxEvent&)
 
+set (CMAKE_CXX_STANDARD 11)
+
 function(dump_variable)
   if (SO${GUI}_VERBOSE)
     foreach(f ${ARGN})
@@ -413,6 +415,7 @@ set(PACKAGE_REQUIREMENTS "${SOWW_PKG_DEPS}")
 
 add_subdirectory(data)
 add_subdirectory(src)
+
 ##### small test programs (to be run interactively)
 if (SO${GUI}_BUILD_TESTS)
   add_subdirectory(test-code)

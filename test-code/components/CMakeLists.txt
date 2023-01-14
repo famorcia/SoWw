@@ -8,8 +8,7 @@ executable(wx_renderarea SOURCES wx_renderarea.cpp LIBS SoWw)
 #add_executable(scrollview components/scrollview.cpp)
 #target_link_libraries(scrollview SoWw)
 
-#add_executable(tripleview components/tripleview.cpp)
-#target_link_libraries(tripleview SoWw)
+executable(tripleview SOURCES tripleview.cpp LIBS SoWw)
 
 executable(withoutdecor0 SOURCES withoutdecor0.cpp LIBS SoWw)
 

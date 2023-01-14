@@ -39,8 +39,12 @@
 #include "Inventor/Ww/viewers/SoWwViewer.h"
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
+#include "SoWwP.h"
+#include "Inventor/Ww/viewers/SoWwPlaneViewer.h"
+#include "Inventor/Ww/viewers/SoWwConstrainedViewer.h"
+#include "Inventor/Ww/viewers/SoWwFlyViewer.h"
 
-#define SOWWCOMP_RESIZE_DEBUG 0
+#define SOWWCOMP_RESIZE_DEBUG 1
 
 #define PRIVATE(obj) ((obj)->pimpl)
 #define PUBLIC(obj) ((obj)->pub)
@@ -76,7 +80,7 @@ SoWwComponent::SoWwComponent(wxWindow* const parent,
                                  this->getDefaultWidgetName());
 
     if (!parent || !embed) {
-        // TODO: PRIVATE(this)->parent = (QWidget *) new QMainWindow(NULL, name);
+        PRIVATE(this)->parent = new wxFrame(NULL, wxID_ANY, name);
         PRIVATE(this)->embedded = false;
         PRIVATE(this)->shelled = true;
     }
@@ -93,14 +97,11 @@ void  SoWwComponent::initClasses(void) {
     SoWwGLWidget::initClass();
     SoWwRenderArea::initClass();
     SoWwViewer::initClass();
-    SoWwFullViewer::initClass();
     SoWwExaminerViewer::initClass();
-#if 0
     SoWwPlaneViewer::initClass();
     SoWwConstrainedViewer::initClass();
-    SoWwWalkViewer::initClass();
+    SoWwFullViewer::initClass();
     SoWwFlyViewer::initClass();
-#endif
 }
 
 void
@@ -115,6 +116,12 @@ SoWwComponent::setClassName(const char * const name) {
 
 void
 SoWwComponent::setBaseWidget(wxWindow* w) {
+
+#ifdef SOWW_DEBUG
+    SoDebugError::postInfo("SoWw::setBaseWidget",
+                           "%s",
+                           SoWwP::dumpWindowData(w).c_str());
+#endif
 
     std::string iconText = this->getDefaultIconTitle();
     std::string widgetName = PRIVATE(this)->widgetname;
@@ -148,7 +155,7 @@ SoWwComponent::setBaseWidget(wxWindow* w) {
             this->setTitle(this->getDefaultTitle());
         }
 
-        // TODO: SoWw::getShellWidget(this->getWidget())-setWindowIconText(iconText);
+        SoWw::getShellWidget(this->getWidget())->SetName(iconText);
     }
     PRIVATE(this)->widget->SetName(widgetName);
 }
@@ -170,12 +177,12 @@ SoWwComponent::show(void) {
     }
 
     if (PRIVATE(this)->shelled) {
-        PRIVATE(this)->parent->SetSize(PRIVATE(this)->storesize[0],
-                                       PRIVATE(this)->storesize[1]);
+        PRIVATE(this)->parent->SetClientSize(PRIVATE(this)->storesize[0],
+                                             PRIVATE(this)->storesize[1]);
     }
     else {
-        PRIVATE(this)->widget->SetSize(PRIVATE(this)->storesize[0],
-                                       PRIVATE(this)->storesize[1]);
+        PRIVATE(this)->widget->SetClientSize(PRIVATE(this)->storesize[0],
+                                             PRIVATE(this)->storesize[1]);
     }
 
     if (SOWWCOMP_RESIZE_DEBUG) {  // debug
@@ -232,6 +239,7 @@ SoWwComponent::isFullScreen(void) const {
 SbBool
 SoWwComponent::setFullScreen(const SbBool onoff) {
     SOWW_STUB();
+    return (FALSE);
 }
 
 SbBool
@@ -272,7 +280,26 @@ SoWwComponent::getParentWidget(void) const {
 
 void
 SoWwComponent::setSize(const SbVec2s size) {
-#if SOWW_DEBUG
+
+#ifdef SOWW_DEBUG
+    SoDebugError::postInfo("SoWw::setSize",
+                           " baseWidget %s",
+    SoWwP::dumpWindowData(this->getBaseWidget()).c_str());
+    SoDebugError::postInfo("SoWw::setSize",
+                           " shellWidget %s",
+    SoWwP::dumpWindowData(this->getShellWidget()).c_str());
+#endif
+
+#if 0
+    if ( PRIVATE(this)->embedded ) {
+        SoWw::setWidgetSize(this->getBaseWidget(), size);
+    }
+    else {
+        SoWw::setWidgetSize(this->getShellWidget(), size);
+    }
+#endif
+#if 1
+    #if SOWW_DEBUG
     if((size[0] <= 0) || (size[1] <= 0)) {
         SoDebugError::postWarning("SoWwComponent::setSize",
                                   "Invalid size setting: <%d, %d>.",
@@ -290,8 +317,12 @@ SoWwComponent::setSize(const SbVec2s size) {
     const SbBool yetbuilt = (this->getWidget() != NULL);
     if (yetbuilt) {
         wxWindow * shell = this->getShellWidget();
-        if (shell) { shell->SetSize(size[0], size[1]); }
+        if (shell) {
+            // shell->SetSize(size[0], size[1]);
+            shell->SetClientSize(wxSize(size[0], size[1]));
+        }
     }
+#endif
     PRIVATE(this)->storesize = size;
     this->sizeChanged(size);
 }
@@ -303,13 +334,12 @@ SoWwComponent::getSize(void) const {
 
 void
 SoWwComponent::setTitle(const char * const title) {
-    SOWW_STUB();
+    SoWw::getShellWidget(this->getWidget())->SetName(title);
 }
 
 const char *
 SoWwComponent::getTitle(void) const {
-    SOWW_STUB();
-    return ("");
+    return (SoWw::getShellWidget(this->getWidget())->GetName());
 }
 
 void
@@ -320,16 +350,19 @@ SoWwComponent::setIconTitle(const char * const title) {
 const char *
 SoWwComponent::getIconTitle(void) const {
     SOWW_STUB();
+    return ("");
 }
 
 const char *
 SoWwComponent::getWidgetName(void) const{
     SOWW_STUB();
+    return ("");
 }
 
 const char *
 SoWwComponent::getClassName(void) const {
     SOWW_STUB();
+    return ("");
 }
 
 void

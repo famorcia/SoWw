@@ -47,53 +47,54 @@ public:
         SimpleFrame *aFrame = new SimpleFrame(NULL,
                                               "thumb wheel",
                                               wxDefaultPosition,
-                                              wxSize(600   ,600));
+                                              wxSize(300,300));
 
+        wxGridBagSizer* sizer;
+        sizer = new wxGridBagSizer( 0, 0 );
+        sizer->SetFlexibleDirection( wxBOTH );
+        sizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
+
+        wxPanel* left_panel;
+        wxPanel* center_panel;
+        wxPanel* right_panel;
+        wxPanel* bottom_panel;
+
+        left_panel = new wxPanel( aFrame, wxID_ANY);
+        left_panel->SetBackgroundColour( wxColour( 255, 0, 0 ) );
+        left_panel->SetMinSize( wxSize( 10,100 ) );
+        //left_panel->SetMaxSize( wxSize( 10,200 ) );
+
+        sizer->Add( left_panel, wxGBPosition( 0, 0 ), wxDefaultSpan, wxEXPAND | wxALL, 5 );
+
+        center_panel = new wxPanel( aFrame, wxID_ANY);
+        center_panel->SetBackgroundColour( wxColour( 0, 255, 0 ) );
+        center_panel->SetMinSize( wxSize( 10,100 ) );
+        //center_panel->SetMaxSize( wxSize( 10,200 ) );
+
+        sizer->Add( center_panel, wxGBPosition( 0, 1 ), wxDefaultSpan, wxEXPAND | wxALL, 5 );
+
+        right_panel = new wxPanel( aFrame, wxID_ANY);
+        right_panel->SetBackgroundColour( wxColour( 0, 0, 255 ) );
+        right_panel->SetMinSize( wxSize( 10,100 ) );
+        // right_panel->SetMaxSize( wxSize( 10,200 ) );
+
+        sizer->Add( right_panel, wxGBPosition( 0, 2 ), wxDefaultSpan, wxEXPAND | wxALL, 5 );
 #if 1
-        wxGridBagSizer* gbSizer2;
-        gbSizer2 = new wxGridBagSizer( 0, 0 );
-        gbSizer2->SetFlexibleDirection( wxBOTH );
-        gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
-
-        wxPanel* m_panel8;
-        wxPanel* m_panel81;
-        wxPanel* m_panel82;
-        wxPanel* m_panel16;
-
-        m_panel8 = new wxPanel( aFrame, wxID_ANY, wxDefaultPosition, wxSize( 10,200 ), wxTAB_TRAVERSAL );
-        m_panel8->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
-        m_panel8->SetMinSize( wxSize( 10,200 ) );
-        m_panel8->SetMaxSize( wxSize( 10,200 ) );
-
-        gbSizer2->Add( m_panel8, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
-
-        m_panel81 = new wxPanel( aFrame, wxID_ANY, wxDefaultPosition, wxSize( 10,200 ), wxTAB_TRAVERSAL );
-        m_panel81->SetBackgroundColour( wxColour( 19, 229, 220 ) );
-        m_panel81->SetMinSize( wxSize( 10,200 ) );
-        m_panel81->SetMaxSize( wxSize( 10,200 ) );
-
-        gbSizer2->Add( m_panel81, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
-
-        m_panel82 = new wxPanel( aFrame, wxID_ANY, wxDefaultPosition, wxSize( 10,200 ), wxTAB_TRAVERSAL );
-        m_panel82->SetBackgroundColour( wxColour( 171, 73, 73 ) );
-        m_panel82->SetMinSize( wxSize( 10,200 ) );
-        m_panel82->SetMaxSize( wxSize( 10,200 ) );
-
-        gbSizer2->Add( m_panel82, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
-
-        m_panel16 = new wxPanel( aFrame, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
-        m_panel16->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
-        m_panel16->SetMinSize( wxSize( -1,20 ) );
-        m_panel16->SetMaxSize( wxSize( -1,20 ) );
-
-        gbSizer2->Add( m_panel16, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
-
-        gbSizer2->AddGrowableCol( 1 );
-        gbSizer2->AddGrowableRow( 0 );
-
-        aFrame->SetSizer( gbSizer2 );
-        aFrame->Layout();
+        bottom_panel = new wxPanel( aFrame, wxID_ANY);
+        bottom_panel->SetBackgroundColour( wxColour( 255, 255, 255 ) );
+        bottom_panel->SetMinSize( wxSize( -1,20 ) );
+        bottom_panel->Show();
+        //bottom_panel->SetMaxSize( wxSize( -1,20 ) );
+        sizer->Add( bottom_panel, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxEXPAND | wxALL, 5 );
 #endif
+
+        sizer->AddGrowableCol( 1 );
+        sizer->AddGrowableRow( 0 );
+
+        aFrame->SetSizer( sizer );
+        aFrame->Layout();
+        // aFrame->Fit();
+        aFrame->Center();
         return true;
     }
 };

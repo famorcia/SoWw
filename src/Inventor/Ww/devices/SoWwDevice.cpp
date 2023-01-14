@@ -42,6 +42,6 @@ SoWwDevice::SoWwDevice() {
 }
 
 SoWwDevice::~SoWwDevice() {
-
+    delete PRIVATE(this);
 }
 

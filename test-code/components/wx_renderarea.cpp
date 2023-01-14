@@ -47,7 +47,7 @@ public:
         root->addChild(userroot);
 
         SoWwRenderArea * renderarea =
-                new SoWwRenderArea(window, "Renderarea demonstration", FALSE);
+                new SoWwRenderArea(window, "Renderarea demonstration");
         camera->viewAll( userroot, renderarea->getViewportRegion() );
         renderarea->setSceneGraph(root);
         renderarea->setBackgroundColor(SbColor(0.0f, 0.2f, 0.3f));

@@ -65,6 +65,10 @@
 #ifndef SOWW_WHEELEVENTS_H
 #define SOWW_WHEELEVENTS_H
 
+#ifndef SOWW_INTERNAL
+#error this is a private header file
+#endif
+
 #include "wx/event.h"
 
 wxDECLARE_EVENT(SO_WW_MOUSE_WHEEL_PRESSED, wxCommandEvent);

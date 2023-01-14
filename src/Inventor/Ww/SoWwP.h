@@ -42,16 +42,13 @@
 #include <wx/app.h>
 #include <wx/window.h>
 
-class SoWwFrame;
-
 class SoWwP : public SoGuiP {
 
     bool init;
-    SoWwFrame* main_frame;
+    wxWindow* main_frame;
     SoWwP();
-    wxApp*  main_app;
+    wxAppConsole*  main_app;
     static wxTimer *timerqueuetimer;
-    static wxTimer *idletimer;
     static wxTimer *delaytimeouttimer;
 
     static void initTimers();
@@ -61,18 +58,20 @@ public:
     static SoWwP* instance();
     bool isInitialized() const;
     void setInitialize(bool);
+
     static void sensorQueueChanged();
+    void onIdle(wxIdleEvent& event);
 
     void buildWxApp();
-    void setWxApp(wxApp*);
-    wxApp* getWxApp() const;
+    void setWxApp(wxAppConsole*);
+    wxAppConsole* getWxApp() const;
 
-    void setMainFrame(SoWwFrame*);
-    SoWwFrame* getMainFrame() const;
+    void setMainFrame(wxWindow*);
+    wxWindow* getMainFrame() const;
 
     void finish();
 
-    static void dumpWindowData(const wxWindow* window);
+    static std::string dumpWindowData(const wxWindow* window);
 };
 
 #endif //SOWW_SOWWP_H

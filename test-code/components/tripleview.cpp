@@ -62,9 +62,11 @@
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/sensors/SoTimerSensor.h>
 #include <Inventor/actions/SoGLRenderAction.h>
-#include <qapplication.h>
-#include <qgroupbox.h>
-#include <qlayout.h>
+#include <wx/gbsizer.h>
+
+#include "wx/wx.h"
+#define SOWW_INTERNAL
+#include "Inventor/Ww/SoWwP.h"
 
 /***********************************************************************/
 
@@ -73,128 +75,150 @@
 static void
 timer_callback(void * data, SoSensor * sensor)
 {
-  static SbTime t = SbTime::getTimeOfDay().getValue();
-  SbTime timediff = SbTime::getTimeOfDay() - t;
+    static SbTime t = SbTime::getTimeOfDay().getValue();
+    SbTime timediff = SbTime::getTimeOfDay() - t;
 
-  SbRotation rotx(SbVec3f(1, 0, 0), 0.5 * timediff.getValue());
-  SbRotation roty(SbVec3f(0, 1, 0), timediff.getValue());
-  SbRotation rotz(SbVec3f(0, 0, 1), 1.5 * timediff.getValue());
-  SoRotation * scenerotate = (SoRotation *)data;
-  scenerotate->rotation.setValue(rotx * roty * rotz);
+    SbRotation rotx(SbVec3f(1, 0, 0), 0.5 * timediff.getValue());
+    SbRotation roty(SbVec3f(0, 1, 0), timediff.getValue());
+    SbRotation rotz(SbVec3f(0, 0, 1), 1.5 * timediff.getValue());
+    SoRotation * scenerotate = (SoRotation *)data;
+    scenerotate->rotation.setValue(rotx * roty * rotz);
 }
 
 // Make a Ww renderarea as a child widget of viewparent, adding the
 // scene under common and a camera with the given orientation.
 void
-add_view(QWidget * viewparent, SoGroup * common, SbRotation cameraorientation)
+add_view(wxWindow * viewparent, SoGroup * common, SbRotation cameraorientation)
 {
-  SoSeparator * root = new SoSeparator;
+    SoSeparator * root = new SoSeparator;
 
-  SoPerspectiveCamera * camera = new SoPerspectiveCamera;
-  camera->orientation = cameraorientation;
-  root->addChild(camera);
+    SoPerspectiveCamera * camera = new SoPerspectiveCamera;
+    camera->orientation = cameraorientation;
+    root->addChild(camera);
 
-  root->addChild(common);
+    root->addChild(common);
 
-  SoWwRenderArea * area = new SoWwRenderArea(viewparent);
-  area->setSceneGraph(root);
+    std::cerr<<"-----------------------------------\n";
+    std::cerr<<SoWwP::dumpWindowData(viewparent)<<std::endl;
+    std::cerr<<"-----------------------------------\n";
+
+    SoWwRenderArea * area = new SoWwRenderArea(viewparent);
+    // SoWwExaminerViewer * area = new SoWwExaminerViewer(viewparent);
+    area->setSceneGraph(root);
+    std::cerr<<"-------AFTER-----------------\n";
+    std::cerr<<SoWwP::dumpWindowData(viewparent)<<std::endl;
+    std::cerr<<"-----------------------------------\n";
 
 #ifndef __COIN__
-  // IMPORTANT: make sure each GL context has a unique cache context
+    // IMPORTANT: make sure each GL context has a unique cache context
   // id.  this is needed for TGS/SGI Inventor. Coin handles this
   // automatically.
   static uint32_t contextcnt = 0;
   area->getGLRenderAction()->setCacheContext(contextcnt++);
 #endif // !__COIN__
 
-  camera->viewAll(root, area->getViewportRegion());
+    camera->viewAll(root, area->getViewportRegion());
 }
 
 /***********************************************************************/
 
-int
-main(int argc, char ** argv)
+// Define a new application type
+class MyApp : public wxApp
 {
-  // Initialize system.
+public:
+    virtual bool OnInit() wxOVERRIDE {
+        if ( !wxApp::OnInit() )
+            return false;
 
-  QApplication app(argc, argv);
-  wxWindow * parent = new wxFrame;
+        // Initialize system.
 
-  SoWw::init(parent);
+        wxWindow * parent = new wxFrame(0,wxID_ANY, "");
+        SoWw::init(parent);
 
-  parent->SetMinSize( wxSize(300, 200));
+        wxPanel* view0;
+        wxPanel* view1;
+        wxPanel* view2;
 
-  // Set up the Ww widget layout data.
+        wxGridBagSizer* gbSizer2;
+        gbSizer2 = new wxGridBagSizer( 0, 0 );
+        gbSizer2->SetFlexibleDirection( wxBOTH );
+        gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-  QHBoxLayout * hlayout = new QHBoxLayout(parent);
+        const int border_size = 5;
+        view0 = new wxPanel(parent);
+        gbSizer2->Add( view0, wxGBPosition( 0, 0 ), wxGBSpan( 2, 1 ), wxEXPAND | wxALL, border_size );
 
-  QGroupBox * view0 = new QGroupBox(parent);
-  hlayout->addWidget(view0, 0.66);
+        view1 = new wxPanel( parent);
+        wxBoxSizer* b_s = new wxBoxSizer(wxHORIZONTAL);
+        b_s->Add(view1, 1,wxALL | wxEXPAND,0);
+        gbSizer2->Add( b_s, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size );
 
-  QVBoxLayout * vlayout = new QVBoxLayout();
-  hlayout->addLayout(vlayout, 0.33);
+        view2 = new wxPanel( parent);
+        wxBoxSizer* b_s1 = new wxBoxSizer(wxHORIZONTAL);
+        b_s1->Add(view2, 1,wxALL | wxEXPAND,0);
+        gbSizer2->Add( b_s1, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size );
 
-  QGroupBox * view1 = new QGroupBox(parent);
-  vlayout->addWidget(view1, 0.50);
-  QGroupBox * view2 = new QGroupBox(parent);
-  vlayout->addWidget(view2, 0.50);
+        gbSizer2->AddGrowableRow(0);
+        gbSizer2->AddGrowableCol(0);
+        gbSizer2->AddGrowableCol(1);
+        gbSizer2->AddGrowableRow(1);
 
+        // Construct the common part of the scenegraph.
 
-  // Construct the common part of the scenegraph.
+        SoGroup * commonroot = new SoGroup;
+        SoDirectionalLight * light = new SoDirectionalLight;
+        light->direction.setValue(-0.5f, -0.5f, -0.8f);
+        commonroot->addChild(light);
+        SoRotation * scenerotate = new SoRotation;
+        commonroot->addChild(scenerotate);
 
-  SoGroup * commonroot = new SoGroup;
-  SoDirectionalLight * light = new SoDirectionalLight;
-  light->direction.setValue(-0.5f, -0.5f, -0.8f);
-  commonroot->addChild(light);
-  SoRotation * scenerotate = new SoRotation;
-  commonroot->addChild(scenerotate);
+        if (argc == 2) {
+            SoInput in;
+            in.openFile(argv[1]);
+            SoSeparator * fileroot = SoDB::readAll(&in);
+            if (!fileroot) exit(1);
+            commonroot->addChild(fileroot);
+        }
+        else {
+            SoMaterial * mat = new SoMaterial;
+            mat->diffuseColor.setValue(1, 1, 0);
+            commonroot->addChild(mat);
 
-  if (argc == 2) {
-    SoInput in;
-    in.openFile(argv[1]);
-    SoSeparator * fileroot = SoDB::readAll(&in);
-    if (!fileroot) exit(1);
-    commonroot->addChild(fileroot);
-  }
-  else {
-    SoMaterial * mat = new SoMaterial;
-    mat->diffuseColor.setValue(1, 1, 0);
-    commonroot->addChild(mat);
+            SoCube * cube = new SoCube;
+            commonroot->addChild(cube);
 
-    SoCube * cube = new SoCube;
-    commonroot->addChild(cube);
+            mat = new SoMaterial;
+            mat->diffuseColor.setValue(0, 0, 1);
+            commonroot->addChild(mat);
 
-    mat = new SoMaterial;
-    mat->diffuseColor.setValue(0, 0, 1);
-    commonroot->addChild(mat);
+            SoTranslation * trans = new SoTranslation;
+            trans->translation.setValue(0, 0, 1);
+            commonroot->addChild(trans);
 
-    SoTranslation * trans = new SoTranslation;
-    trans->translation.setValue(0, 0, 1);
-    commonroot->addChild(trans);
+            SoSphere * sphere = new SoSphere;
+            sphere->radius = 0.5;
+            commonroot->addChild(sphere);
+        }
 
-    SoSphere * sphere = new SoSphere;
-    sphere->radius = 0.5;
-    commonroot->addChild(sphere);
-  }
+        // Add the 3 renderareas.
+        add_view(view0, commonroot, SbRotation(SbVec3f(0, 0, 1), 0));
+        add_view(view1, commonroot, SbRotation(SbVec3f(0, 1, 0), float(M_PI / 2.0)));
+        add_view(view2, commonroot, SbRotation(SbVec3f(1, 0, 0), float(-M_PI / 2.0)));
 
-  // Add the 3 renderareas.
+        // Set up a timer callback to do a simple animation.
 
-  add_view(view0, commonroot, SbRotation(SbVec3f(0, 0, 1), 0));
-  add_view(view1, commonroot, SbRotation(SbVec3f(0, 1, 0), float(M_PI / 2.0)));
-  add_view(view2, commonroot, SbRotation(SbVec3f(1, 0, 0), float(-M_PI / 2.0)));
+        SoTimerSensor ts(timer_callback, scenerotate);
+        ts.setInterval(0.02f); // max 50 fps
+        ts.schedule();
 
+        // Map window and start event loop.
+        parent->SetSizer( gbSizer2 );
+        parent->Layout();
 
-  // Set up a timer callback to do a simple animation.
+        SoWw::show(parent);
+        SoWw::mainLoop();
+        return true;
+    }
+};
 
-  SoTimerSensor ts(timer_callback, scenerotate);
-  ts.setInterval(0.02f); // max 50 fps
-  ts.schedule();
-
-
-  // Map window and start event loop.
-
-  SoWw::show(parent);
-  SoWw::mainLoop();
-
-  return 0;
-}
+wxIMPLEMENT_APP(MyApp);

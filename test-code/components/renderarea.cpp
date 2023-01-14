@@ -45,9 +45,15 @@
 */
 
 
+class MyPanel : public wxPanel {
+public:
+    wxDECLARE_EVENT_TABLE();
+};
+
+
 int main(int argc, char ** argv)
 {
-    wxWindow * window = SoWw::init(argv[0]);
+    wxWindow * window = SoWw::init("renderarea");
 
     SoSeparator * root = new SoSeparator;
     root->ref();
@@ -57,9 +63,7 @@ int main(int argc, char ** argv)
     SoSeparator * userroot = get_scene_graph();
     root->addChild(userroot);
 
-
-    SoWwRenderArea * renderarea =
-            new SoWwRenderArea(window, "Renderarea demonstration", FALSE);
+    SoWwRenderArea * renderarea = new SoWwRenderArea(window);
     camera->viewAll( userroot, renderarea->getViewportRegion() );
     renderarea->setSceneGraph(root);
     renderarea->setBackgroundColor(SbColor(0.0f, 0.2f, 0.3f));

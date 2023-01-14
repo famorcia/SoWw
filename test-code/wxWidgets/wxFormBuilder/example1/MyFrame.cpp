@@ -30,26 +30,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#ifndef SOWW_SoWwFrame_H
-#define SOWW_SoWwFrame_H
+#include "MyFrame.h"
+#include <iostream>
+#include <wx/wx.h>
 
-#include <wx/frame.h>
+MyFrame::MyFrame()
+:AFrame(0) {
+}
 
-class SoWwFrame : public wxFrame
-{
-public:
-    SoWwFrame(wxFrame *frame,
-              const wxString& title,
-              const wxPoint& pos,
-              const wxSize& size,
-              long style = wxDEFAULT_FRAME_STYLE);
+wxPanel*
+MyFrame::getPanel() {
+    return (this->panel);
+}
 
-    void OnPaint(wxPaintEvent& event);
+void
+MyFrame::on_size( wxSizeEvent& event ) {
+    std::cerr<<"MyFrame::on_size"<<std::endl;
+    event.Skip();
+}
 
-    void OnSize(wxSizeEvent& event);
+void
+MyFrame::on_about( wxCommandEvent& event ) {
+    wxMessageBox("wxFrameBuilder Sample (c) Fabrizio Morciano");
+    event.Skip();
+}
 
-wxDECLARE_EVENT_TABLE();
-
-};
-
-#endif //SOWW_SoWwFrame_H
+void
+MyFrame::on_quit( wxCommandEvent& event ) {
+    Close(true);
+}

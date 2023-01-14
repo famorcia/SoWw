@@ -11,7 +11,6 @@ set(HDRS
   Inventor/${Gui}/So${Gui}Clipboard.h               # added
   Inventor/${Gui}/So${Gui}ComponentP.h
   Inventor/${Gui}/So${Gui}DirectionalLightEditor.h  # added
-  Inventor/${Gui}/So${Gui}Frame.h                   # added
   Inventor/${Gui}/So${Gui}GLWidgetP.h
   Inventor/${Gui}/So${Gui}Icons.h                   # added
   #Inventor/${Gui}/So${Gui}ImageReader.h            # missing
@@ -44,7 +43,6 @@ set(SRCS
   Inventor/${Gui}/So${Gui}Component.cpp
   Inventor/${Gui}/So${Gui}ComponentP.cpp #added
   Inventor/${Gui}/So${Gui}DirectionalLightEditor.cpp #added
-  Inventor/${Gui}/So${Gui}Frame.cpp                  # added
   Inventor/${Gui}/So${Gui}GLWidget.cpp
   Inventor/${Gui}/So${Gui}GLWidgetP.cpp #added
   Inventor/${Gui}/So${Gui}Icons.cpp #added

@@ -30,7 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
+#define  SOWW_INTERNAL
 #include <Inventor/Ww/SoWw.h>
+#include "Inventor/Ww/SoWwP.h"
 
 #define protected public
 #include <Inventor/Ww/viewers/SoWwFullViewer.h>
@@ -62,10 +64,14 @@ public:
                                    FALSE);
 
         SimpleFrame* asimpleframe = new SimpleFrame(0,
-                                                    "lefttrim",
-                                                    wxDefaultPosition,
-                                                    wxSize(60,300));
-        renderarea->buildRightTrim(asimpleframe);
+                                                    "righttrim",
+                                                    wxDefaultPosition);
+
+        asimpleframe->SetSize(40,300);
+        wxWindow* w = renderarea->buildRightTrim(asimpleframe);
+
+        std::clog<<SoWwP::dumpWindowData(asimpleframe)<<std::endl;
+        //asimpleframe->SetSize(w->GetSize());
         asimpleframe->Show();
         return true;
     }

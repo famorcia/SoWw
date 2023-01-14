@@ -30,10 +30,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#ifndef SOWW_INTERNAL
-#error this is a private header file
-#endif
-
 #include "Inventor/Ww/viewers/SoWwFullViewerP.h"
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
 #include "Inventor/Ww/widgets/WheelEvents.h"
@@ -41,39 +37,30 @@
 #include "ViewersWxIds.h"
 #include "ButtonIndexValues.h"
 #include "sowwdefs.h"
+#include "Inventor/Ww/widgets/SoWwThumbWheel.h"
 
 #include <wx/gbsizer.h>
 
 const wxWindowID FULL_VIEWER_P = wxID_ANY;
 
-/*
-        VIEW_ALL_BUTTON,
-*/
-
-wxBEGIN_EVENT_TABLE(SoWwFullViewerP, wxWindow)
-                EVT_COMMAND(FULL_VIEWER_P, SO_WW_MOUSE_WHEEL_PRESSED, SoWwFullViewerP::wheelPressed)
-                EVT_COMMAND(FULL_VIEWER_P, SO_WW_MOUSE_WHEEL_RELEASED, SoWwFullViewerP::wheelReleased)
-                EVT_COMMAND(FULL_VIEWER_P, SO_WW_MOUSE_WHEEL_MOVED, SoWwFullViewerP::wheelMoved)
-                EVT_TOGGLEBUTTON(INTERACT_BUTTON, SoWwFullViewerP::interactbuttonClicked)
-                EVT_TOGGLEBUTTON(EXAMINE_BUTTON, SoWwFullViewerP::viewbuttonClicked)
-                EVT_BUTTON(HOME_BUTTON, SoWwFullViewerP::homebuttonClicked)
-                EVT_BUTTON(SET_HOME_BUTTON, SoWwFullViewerP::sethomebuttonClicked)
-                EVT_BUTTON(SEEK_BUTTON, SoWwFullViewerP::seekbuttonClicked)
-                EVT_BUTTON(VIEW_ALL_BUTTON, SoWwFullViewerP::viewallbuttonClicked)
+wxBEGIN_EVENT_TABLE(SoWwFullViewerP, wxEvtHandler)
 wxEND_EVENT_TABLE()
 
 #define PUBLIC(o) (o->pub)
 #define PRIVATE(o) (o->pimpl)
 
 SoWwFullViewerP::SoWwFullViewerP(SoWwFullViewer *pViewer)
-        : SoGuiFullViewerP(pViewer)
-        , wxPanel(pViewer->getParentWidget()) {
-    assert(PUBLIC(this));
+        : SoGuiFullViewerP(pViewer) {
+    assert(pViewer);
+}
+
+SoWwFullViewerP::~SoWwFullViewerP() {
+    objectMap.clear();
 }
 
 void
-SoWwFullViewerP::setThumbWheelValue(wxWindow*, float value) {
-    SOWW_STUB();
+SoWwFullViewerP::setThumbWheelValue(wxWindow* wheel, float val) {
+    ((SoWwThumbWheel *)wheel)->setValue(val);
 }
 
 void
@@ -82,40 +69,43 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
     SoDebugError::postInfo("SoWwFullViewerP::showDecorationWidgets", "[invoked]");
 #endif
     // remove old one
-    delete this->mainlayout;
+    this->viewerwidget->SetSizer(0);
 
     assert(this->viewerwidget);
 
     assert(PUBLIC(this)->leftDecoration && PUBLIC(this)->bottomDecoration && PUBLIC(this)->rightDecoration);
+    const int border_size = 0;
     if (onOff) {
         PUBLIC(this)->leftDecoration->Show();
         PUBLIC(this)->bottomDecoration->Show();
         PUBLIC(this)->rightDecoration->Show();
 
-        wxGridBagSizer* g = new wxGridBagSizer( 0, 0 );
-        g->SetFlexibleDirection( wxBOTH );
-        //g->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
+        wxGridBagSizer* sizer = new wxGridBagSizer( 0, 0 );
+        sizer->SetFlexibleDirection( wxBOTH );
+        sizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
+        sizer->SetEmptyCellSize(wxSize(0,0));
 
-        const int border_size = 0;
-        g->Add( PUBLIC(this)->leftDecoration, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size);
-        g->Add( this->canvas, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size );
+        sizer->Add( PUBLIC(this)->leftDecoration, wxGBPosition( 0, 0 ), wxGBSpan(1,1), wxEXPAND | wxALL, 0 );
 
-        g->Add( PUBLIC(this)->rightDecoration, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, border_size );
-        g->Add( PUBLIC(this)->bottomDecoration, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxEXPAND | wxALL, border_size );
+        sizer->Add( this->canvas, wxGBPosition( 0, 1 ), wxGBSpan(1,1), wxEXPAND | wxALL, 0 );
+
+        sizer->Add( PUBLIC(this)->rightDecoration, wxGBPosition( 0, 2 ), wxGBSpan(1,1), wxEXPAND | wxALL, 0 );
+        sizer->Add( PUBLIC(this)->bottomDecoration, wxGBPosition( 1, 0 ), wxGBSpan( 1, 3 ), wxEXPAND | wxALL, 0 );
+
+        sizer->AddGrowableCol( 1 );
+        sizer->AddGrowableRow( 0 );
 
 #if SOWW_DEBUG && 0
         SoWwP::dumpWindowData(PUBLIC(this)->leftDecoration);
+        SoWwP::dumpWindowData(this->canvas);
         SoWwP::dumpWindowData(PUBLIC(this)->rightDecoration);
         SoWwP::dumpWindowData(PUBLIC(this)->bottomDecoration);
 #endif
 
-        g->AddGrowableCol( 1 );
-        g->AddGrowableRow( 0 );
-
-        this->mainlayout = g;
+        this->mainlayout = sizer;
     } else {
         wxBoxSizer * g = new wxBoxSizer(wxVERTICAL);
-        g->Add(this->canvas);
+        g->Add(this->canvas,  0,  wxEXPAND | wxALL, border_size );
         this->mainlayout = g;
         PUBLIC(this)->leftDecoration->Hide();
         PUBLIC(this)->bottomDecoration->Hide();
@@ -125,9 +115,9 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
     this->viewerwidget->SetSizer(this->mainlayout);
     this->viewerwidget->Layout();
 
-#if SOWW_DEBUG && 0
+#if SOWW_DEBUG
     SoDebugError::postInfo("SoWwFullViewerP::showDecorationWidgets", "dumpWindowData");
-    SoWwP::dumpWindowData(this->viewerwidget->GetParent());
+    SoWwP::dumpWindowData(this->viewerwidget);
 #endif
 
     wxSize size = this->viewerwidget->GetSize();
@@ -147,7 +137,7 @@ SoWwFullViewerP::wheelPressed(wxCommandEvent& event) {
     }
 #if SOWW_DEBUG && 0
     else {
-        SoDebugError::postInfo("SoWwFullViewerP::wheelPressed", "not valid event found!");
+        SoDebugError::postWarning("SoWwFullViewerP::wheelPressed", "not valid event found!");
     }
 #endif
 
@@ -166,14 +156,12 @@ SoWwFullViewerP::wheelReleased(wxCommandEvent& event) {
     }
 #if SOWW_DEBUG && 0
     else {
-        SoDebugError::postInfo("SoWwFullViewerP::wheelReleased", "not valid event found!");
+        SoDebugError::postWarning("SoWwFullViewerP::wheelReleased", "not valid event found!");
     }
 #endif
 
     event.Skip();
 }
-
-void processEvent();
 
 void
 SoWwFullViewerP::wheelMoved(wxCommandEvent & event) {
@@ -190,7 +178,7 @@ SoWwFullViewerP::wheelMoved(wxCommandEvent & event) {
     }
 #if SOWW_DEBUG && 0
     else {
-        SoDebugError::postInfo("SoWwFullViewerP::wheelMoved", "not valid event found!");
+        SoDebugError::postWarning("SoWwFullViewerP::wheelMoved", "not valid event found!");
     }
 #endif
 
@@ -267,6 +255,21 @@ SoWwFullViewerP::viewbuttonClicked(wxCommandEvent &) {
     if (!PUBLIC(this)->isViewing())
         PUBLIC(this)->setViewing(TRUE);
 
+}
+
+void SoWwFullViewerP::bindEvents(wxWindow *w) {
+    assert(w && "window can not be null!");
+    w->Bind(SO_WW_MOUSE_WHEEL_PRESSED, &SoWwFullViewerP::wheelPressed, this, FULL_VIEWER_P);
+    w->Bind(SO_WW_MOUSE_WHEEL_RELEASED, &SoWwFullViewerP::wheelReleased, this, FULL_VIEWER_P);
+    w->Bind(SO_WW_MOUSE_WHEEL_MOVED, &SoWwFullViewerP::wheelMoved, this, FULL_VIEWER_P);
+
+    w->Bind(wxEVT_TOGGLEBUTTON, &SoWwFullViewerP::interactbuttonClicked, this, INTERACT_BUTTON);
+    w->Bind(wxEVT_TOGGLEBUTTON, &SoWwFullViewerP::viewbuttonClicked, this, EXAMINE_BUTTON);
+
+    w->Bind(wxEVT_BUTTON, &SoWwFullViewerP::homebuttonClicked, this, HOME_BUTTON);
+    w->Bind(wxEVT_BUTTON, &SoWwFullViewerP::sethomebuttonClicked, this, SET_HOME_BUTTON);
+    w->Bind(wxEVT_BUTTON, &SoWwFullViewerP::seekbuttonClicked, this, SEEK_BUTTON);
+    w->Bind(wxEVT_BUTTON, &SoWwFullViewerP::viewallbuttonClicked, this, VIEW_ALL_BUTTON);
 }
 
 #undef ADD_DATA_IN_MAP

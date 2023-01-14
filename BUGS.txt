@@ -6,8 +6,14 @@ number is just the chronological numeric id, and has no bearing on what
 priority the item has.
 =====================================================================
 
-000 Missing implementation.
+001 wxQt
 
-    The functionality is missing.
+    wxQT does not support wxGLAttributes, require list of int!
 
-    20221127 famorcia.
+    20230112 famorcia.
+
+002 wxX11
+
+    wxX11 does not support wxCheckButtons
+
+    20230112 famorcia.

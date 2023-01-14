@@ -52,14 +52,18 @@ SoWwInputFocus::~SoWwInputFocus() {
 
 }
 
-void SoWwInputFocus::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
+void 
+SoWwInputFocus::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
     SOWW_STUB();
 }
 
-void SoWwInputFocus::disable(wxWindow* widget, SoWwEventHandler * handler, void * closure){
+void 
+SoWwInputFocus::disable(wxWindow* widget, SoWwEventHandler * handler, void * closure){
     SOWW_STUB();
 }
 
-const SoEvent * SoWwInputFocus::translateEvent(wxEvent& event) {
+const SoEvent * 
+SoWwInputFocus::translateEvent(wxEvent& event) {
     SOWW_STUB();
+    return (0);
 }

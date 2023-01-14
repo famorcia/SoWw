@@ -39,6 +39,7 @@
 
 #include <iostream>
 #include <wx/sizer.h>
+#include <sstream>
 
 class SoWxApp : public  wxApp {
 public:
@@ -52,7 +53,6 @@ public:
 };
 
 wxTimer * SoWwP::timerqueuetimer = 0;
-wxTimer * SoWwP::idletimer = 0;
 wxTimer * SoWwP::delaytimeouttimer = 0;
 
 SoWwP::SoWwP() {
@@ -66,21 +66,21 @@ SoWwP::buildWxApp() {
     if(!main_app) {
         setWxApp( new SoWxApp);
     } else if (SOWW_DEBUG && 0){
-        SoDebugError::postInfo("SoWwP::buildWxApp",
+        SoDebugError::postWarning("SoWwP::buildWxApp",
                                "wxApp already built");
 
     }
 }
 
 void
-SoWwP::setWxApp(wxApp* app) {
+SoWwP::setWxApp(wxAppConsole* app) {
     main_app = app;
 }
 
 /**
  * if an app is not already available build and return
  */
-wxApp*
+wxAppConsole*
 SoWwP::getWxApp() const {
     return (main_app);
 }
@@ -104,21 +104,6 @@ public:
         }
 
         SoDB::getSensorManager()->processTimerQueue();
-
-        // The change callback is _not_ called automatically from
-        // SoSensorManager after the process methods, so we need to
-        // explicitly trigger it ourselves here.
-        SoGuiP::sensorQueueChanged(NULL);
-    }
-};
-
-class IdleTimer : public wxTimer {
-public:
-    virtual void
-    Notify() {
-
-        SoDB::getSensorManager()->processTimerQueue();
-        SoDB::getSensorManager()->processDelayQueue(true);
 
         // The change callback is _not_ called automatically from
         // SoSensorManager after the process methods, so we need to
@@ -159,7 +144,7 @@ SoWwP::sensorQueueChanged(void) {
     //
     // 1. Detect when the application is idle and then empty the
     // delay-queue completely for delay-sensors -- handled by
-    // SoWwP::idletimer.
+    // SoWwP::onIdle.
     //
     // 2. Detect when one or more timer-sensors are ripe and trigger
     // those -- handled by SoWwP::timerqueuetimer.
@@ -212,16 +197,6 @@ SoWwP::sensorQueueChanged(void) {
                                    "delaysensor pending");
         }
 
-        // Start idletimer at 0 seconds in the future. -- That means it will
-        // trigger when the Qt event queue has been run through, i.e. when
-        // the application is idle.
-        // TODO: use idle time of wxWidgets, now every 1/24 seconds
-        if (!SoWwP::idletimer->IsRunning()) {
-            SbTime idleTime;
-            idleTime.setValue(1.0/24.0);
-            SoWwP::idletimer->Start(idleTime.getMsecValue(), true);
-        }
-
         if (!SoWwP::delaytimeouttimer->IsRunning()) {
             const SbTime & delaySensorTimeout = SoDB::getDelaySensorTimeout();
             if (delaySensorTimeout != SbTime::zero()) {
@@ -231,8 +206,6 @@ SoWwP::sensorQueueChanged(void) {
         }
     }
     else {
-        if (SoWwP::idletimer->IsRunning())
-            SoWwP::idletimer->Stop();
         if (SoWwP::delaytimeouttimer->IsRunning())
             SoWwP::delaytimeouttimer->Stop();
     }
@@ -254,13 +227,13 @@ SoWwP::setInitialize(bool i) {
     init = i;
 }
 
-SoWwFrame *
+wxWindow *
 SoWwP::getMainFrame() const {
     return (main_frame);
 }
 
 void
-SoWwP::setMainFrame(SoWwFrame * frame) {
+SoWwP::setMainFrame(wxWindow * frame) {
     main_frame = frame;
 }
 
@@ -276,7 +249,6 @@ SoWwP::initTimers() {
 
     if(!are_initialized) {
         INIT_TIMER(SoWwP::timerqueuetimer, TimerQueueTimer);
-        INIT_TIMER(SoWwP::idletimer, IdleTimer);
         INIT_TIMER(SoWwP::delaytimeouttimer, DelayTimeoutTimer);
         are_initialized = true;
     }
@@ -290,7 +262,6 @@ void
 SoWwP::stopTimers() {
     STOP_TIMER(SoWwP::timerqueuetimer);
     STOP_TIMER(SoWwP::delaytimeouttimer);
-    STOP_TIMER(SoWwP::idletimer);
 }
 
 #undef STOP_TIMER
@@ -300,45 +271,99 @@ SoWwP::finish() {
     stopTimers();
 }
 
-void
+std::string
+nameToString(const wxWindow* w) {
+    std::ostringstream  oss;
+    oss<<"name:\""<<w->GetName()<<"\"";
+    oss<<" ptr:"<<std::hex<<w;
+    return (oss.str());
+}
+
+std::string
+sizeToString(const wxSize& s) {
+    std::ostringstream  oss;
+    oss<<"size:("<<s.GetX()<<","<<s.GetY()<<")";
+    return (oss.str());
+}
+
+std::string
+dumpSizer(wxSizer* sizer,
+          const std::string& prefix) {
+    std::string out;
+    out += prefix;
+    out += " -> sizer:";
+    out += sizeToString(sizer->GetSize());
+    return (out);
+}
+
+std::string
 dumpData(const wxWindow* w,
          const std::string& prefix="") {
-    std::clog<<prefix<<w->GetName()<<" has sizer:" << (w->GetSizer() != 0 ? "yes":"no") <<std::endl;
-    std::clog<<prefix<<"Size is (width,height):"<<w->GetSize().GetWidth() <<','<<w->GetSize().GetHeight()<<std::endl;
+    std::string out;
+    out += prefix;
+    out += nameToString(w);
+    out += " ";
+    out += sizeToString(w->GetSize());
+    out += " minClientSize:";
+    out += sizeToString(w->GetMinClientSize());
     if(w->GetSizer()) {
+        out += dumpSizer(w->GetSizer(), prefix);
+#if 0
         wxSizerItemList list = w->GetSizer()->GetChildren();
         wxSizerItemList::compatibility_iterator node = list.GetFirst();
         while(node) {
-            wxSize size = node->GetData()->GetSize();
-            std::clog<<prefix<<"x/y:"<<size.GetX() <<" "<<size.GetY();
-            std::clog<<prefix<<" sizer window name:";
-            if(node->GetData() && node->GetData()->GetWindow())
-                std::clog<<prefix<<node->GetData()->GetWindow()->GetName();
-            std::clog<<std::endl;
+            if(node->GetData() && node->GetData()->GetSizer())
+                dumpSizer(node->GetData()->GetSizer(), prefix);
+           // if(node->GetData() && node->GetData()->GetWindow())
+            //    dumpData(node->GetData()->GetWindow(), prefix);
             node = node->GetNext();
         }
+#endif
     }
+    return (out);
 }
 
-void
+std::string
 dumpWindowDataImpl(const wxWindow* window, int level) {
-    const wxWindowList& windows_list =  window->GetWindowChildren();
-    wxWindowList::compatibility_iterator node = windows_list.GetFirst();
+    if(window == 0) {
+        return ("windows is null\n");
+    }
+
+    std::string out;
     std::string tabs;
     for(int i=0;i<level;++i)
-        tabs+="\t";
-    if(level == 0)
-        dumpData(window, tabs+"Parent is:");
-    while (node)
-    {
+        tabs+='-';
+
+    out += "\n";
+    out += dumpData(window, tabs);
+
+    const wxWindowList& windows_list =  window->GetWindowChildren();
+    wxWindowList::compatibility_iterator node = windows_list.GetFirst();
+    while (node) {
         wxWindow *win = node->GetData();
-        dumpData(win);
-        dumpWindowDataImpl(win, level+1);
+        out += dumpWindowDataImpl(win, level+1);
         node = node->GetNext();
     }
+    return (out);
+}
+
+std::string
+SoWwP::dumpWindowData(const wxWindow* window) {
+    return (dumpWindowDataImpl(window, 0));
 }
 
 void
-SoWwP::dumpWindowData(const wxWindow* window) {
-    dumpWindowDataImpl(window, 0);
+SoWwP::onIdle(wxIdleEvent&) {
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("SoWwP::onIdle",
+                               "idlesensor pending");
+#endif
+
+    SoDB::getSensorManager()->processTimerQueue();
+    SoDB::getSensorManager()->processDelayQueue(true);
+
+    // The change callback is _not_ called automatically from
+    // SoSensorManager after the process methods, so we need to
+    // explicitly trigger it ourselves here.
+    SoGuiP::sensorQueueChanged(NULL);
 }

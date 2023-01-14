@@ -29,33 +29,109 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
+
 #include "WwNativePopupMenu.h"
+#include "sowwdefs.h"
 
 
-int WwNativePopupMenu::newMenu(const char * name, int menuid) {
-
+int 
+WwNativePopupMenu::newMenu(const char * name, int menuid) {
+    SOWW_STUB();
+    return (0);
 }
-int WwNativePopupMenu::getMenu(const char * name){ }
-void WwNativePopupMenu::setMenuTitle(int id, const char * title){ }
-const char * WwNativePopupMenu::getMenuTitle(int id){ }
 
-int WwNativePopupMenu::newMenuItem(const char * name, int itemid){ }
-int WwNativePopupMenu::getMenuItem(const char * name){ }
-void WwNativePopupMenu::setMenuItemTitle(int itemid, const char * title){ }
-const char * WwNativePopupMenu::getMenuItemTitle(int itemid){ }
-void WwNativePopupMenu::setMenuItemEnabled(int itemid, SbBool enabled){ }
-SbBool WwNativePopupMenu::getMenuItemEnabled(int itemid){ }
-void WwNativePopupMenu::setMenuItemMarked(int itemid, SbBool marked) {
-
+int 
+WwNativePopupMenu::getMenu(const char * name) { 
+    SOWW_STUB();
+    return (0);
 }
-SbBool WwNativePopupMenu::getMenuItemMarked(int itemid){ }
 
-void WwNativePopupMenu::addMenu(int menuid, int submenuid, int pos){ }
-void WwNativePopupMenu::addMenuItem(int menuid, int itemid, int pos){ }
-void WwNativePopupMenu::addSeparator(int menuid, int pos){ }
-void WwNativePopupMenu::removeMenu(int menuid){ }
-void WwNativePopupMenu::removeMenuItem(int itemid){ }
+void 
+WwNativePopupMenu::setMenuTitle(int id, const char * title) {
+    SOWW_STUB();
+}
 
-void WwNativePopupMenu::popUp(wxWindow* inside, int x, int y){ }
+const char * 
+WwNativePopupMenu::getMenuTitle(int id) { 
+    SOWW_STUB();
+    return ("");
+}
 
-void WwNativePopupMenu::_setMenuItemMarked(int itemid, SbBool marked){ }
+int 
+WwNativePopupMenu::newMenuItem(const char * name, int itemid) { 
+    SOWW_STUB();
+    return (0);
+}
+
+int 
+WwNativePopupMenu::getMenuItem(const char * name) { 
+    SOWW_STUB();
+    return (0);
+}
+
+void 
+WwNativePopupMenu::setMenuItemTitle(int itemid, const char * title) { 
+    SOWW_STUB();
+}
+
+const char * 
+WwNativePopupMenu::getMenuItemTitle(int itemid) {
+    SOWW_STUB();
+    return ("");
+}
+
+void 
+WwNativePopupMenu::setMenuItemEnabled(int itemid, SbBool enabled) {
+    SOWW_STUB();
+}
+
+SbBool 
+WwNativePopupMenu::getMenuItemEnabled(int itemid) {
+    SOWW_STUB();
+    return (FALSE);
+}
+
+void 
+WwNativePopupMenu::setMenuItemMarked(int itemid, SbBool marked) {
+    SOWW_STUB();
+}
+
+SbBool 
+WwNativePopupMenu::getMenuItemMarked(int itemid) {
+    SOWW_STUB();
+    return (FALSE);
+}
+
+void 
+WwNativePopupMenu::addMenu(int menuid, int submenuid, int pos) {
+    SOWW_STUB();
+}
+
+void 
+WwNativePopupMenu::addMenuItem(int menuid, int itemid, int pos) {
+    SOWW_STUB();
+}
+
+void 
+WwNativePopupMenu::addSeparator(int menuid, int pos) {
+    SOWW_STUB();
+}
+
+void 
+WwNativePopupMenu::removeMenu(int menuid) {
+    SOWW_STUB();
+}
+
+void WwNativePopupMenu::removeMenuItem(int itemid) {
+    SOWW_STUB();
+}
+
+void 
+WwNativePopupMenu::popUp(wxWindow* inside, int x, int y) {
+    SOWW_STUB();
+}
+
+void 
+WwNativePopupMenu::_setMenuItemMarked(int itemid, SbBool marked) {
+    SOWW_STUB();
+}

@@ -30,26 +30,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#include "Inventor/Ww/SoWwFrame.h"
-#include "sowwdefs.h"
+#include "wx/wx.h"
 
-wxBEGIN_EVENT_TABLE(SoWwFrame, wxFrame)
-                EVT_SIZE(SoWwFrame::OnSize)
-                EVT_PAINT(SoWwFrame::OnPaint)
-wxEND_EVENT_TABLE()
+#include <Inventor/Ww/SoWw.h>
+#include <Inventor/Ww/SoWwRenderArea.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoSeparator.h>
 
-SoWwFrame::SoWwFrame(wxFrame *frame,
-                     const wxString& title,
-                     const wxPoint& pos,
-                     const wxSize& size,
-                     long style)
-        : wxFrame(frame, wxID_ANY, title, pos, size, style) {
+#include "MyFrame.h"
+#include "common/get_scene_graph.h"
+#include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
+
+void add_view(wxWindow* window) {
+
+    SoWw::init(window);
+
+    SoSeparator * root = new SoSeparator;
+    root->ref();
+    SoPerspectiveCamera * camera;
+    root->addChild(camera = new SoPerspectiveCamera);
+    root->addChild(new SoDirectionalLight);
+    SoSeparator * userroot = get_scene_graph();
+    root->addChild(userroot);
+#if 1
+    SoWwRenderArea * renderarea = new SoWwRenderArea(window);
+    camera->viewAll( userroot, renderarea->getViewportRegion() );
+    renderarea->setSceneGraph(root);
+    renderarea->setBackgroundColor(SbColor(0.0f, 0.2f, 0.3f));
+    renderarea->show();
+#else
+    SoWwExaminerViewer * viewer = new SoWwExaminerViewer(window);
+    viewer->setSceneGraph( root );
+    viewer->viewAll();
+    viewer->show();
+#endif
+
+    SoWw::show(window);
 }
 
-void SoWwFrame::OnPaint(wxPaintEvent& event) {
-    event.Skip();
-}
 
-void SoWwFrame::OnSize(wxSizeEvent& event) {
-    event.Skip();
-}
+// Define a new application type
+class MyApp : public wxApp
+{
+public:
+    virtual bool OnInit() wxOVERRIDE {
+        if ( !wxApp::OnInit() )
+            return false;
+        MyFrame* w = new MyFrame();
+        //w->getPanel()->SetBackgroundColour(wxColour(255,0,0));
+        add_view(w->getPanel());
+        w->Show();
+        return true;
+    }
+};
+
+wxIMPLEMENT_APP(MyApp);

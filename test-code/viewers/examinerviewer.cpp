@@ -44,6 +44,7 @@ main(
 {
   wxWindow* window = SoWw::init( argv[0] );
 
+  window->SetSize(1024,768);
   SoNode * root = new SoCone;
 
   SoWwExaminerViewer * viewer = new SoWwExaminerViewer( window );

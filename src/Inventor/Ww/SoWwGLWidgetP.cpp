@@ -49,6 +49,7 @@ SoWwGLWidgetP::SoWwGLWidgetP(SoWwGLWidget * o)
 }
 
 SoWwGLWidgetP::~SoWwGLWidgetP() {
+    
 }
 
 /*// Gets called by the SoWwGLArea instance upon keyboard presses. These
@@ -60,26 +61,10 @@ SoWwGLWidgetP::GLAreaKeyEvent(QKeyEvent * e, void * userdata)
     that->processEvent(e);
 }*/
 
-// slot invoked upon QScreen change
-void
-SoWwGLWidgetP::gl_changed(void) {
-#if SOWW_DEBUG
-        SoDebugError::postInfo("gl_changed", "invoked");
-#endif
-
-    if (this->currentglwidget) {
-        return;
-        SbVec2s glSize = this->glSizeUnscaled * this->currentglwidget->GetDPIScaleFactor();
-        if (glSize != this->glSize) {
-            this->glSize = glSize;
-            PUBLIC(this)->setSize(PUBLIC(this)->getSize());
-        }
-    }
-}
 
 // slot invoked upon QGLWidget initialization
 void
-SoWwGLWidgetP::gl_init(void)
+SoWwGLWidgetP::gl_init(wxCommandEvent& )
 {
 #if SOWW_DEBUG
     SoDebugError::postInfo("gl_init", "invoked");
@@ -89,27 +74,36 @@ SoWwGLWidgetP::gl_init(void)
 }
 
 void
-SoWwGLWidgetP::gl_reshape(int width, int height) {
+SoWwGLWidgetP::gl_reshape(wxSizeEvent& event) {
 #if SOWW_DEBUG
-    SoDebugError::postInfo("SoWwGLWidgetP::gl_reshape", "<%d, %d>", width, height);
+    SoDebugError::postInfo("SoWwGLWidgetP::gl_reshape",
+                           "<%d, %d>",
+                           event.GetSize().GetWidth(),
+                           event.GetSize().GetHeight());
 #endif
 
-    this->glSize = SbVec2s((short) width, (short) height);
+    this->glSize = SbVec2s((short) event.GetSize().GetWidth(), (short) event.GetSize().GetHeight());
     this->wasresized = true;
-    // pub->setSize(this->glSize);
+    pub->setSize(this->glSize);
 }
 
 void
-SoWwGLWidgetP::gl_exposed(void) {
+SoWwGLWidgetP::gl_exposed(wxCommandEvent&) {
 #if SOWW_DEBUG
-        SoDebugError::postInfo("gl_exposed", "%f", SbTime::getTimeOfDay().getValue());
+        SoDebugError::postInfo("SoWwGLWidgetP::gl_exposed", "%f", SbTime::getTimeOfDay().getValue());
 #endif
 
     if (PUBLIC(this)->waitForExpose) {
+#if SOWW_DEBUG
+        SoDebugError::postInfo("SoWwGLWidgetP::gl_exposed", "waitForExpose");
+#endif
         PUBLIC(this)->waitForExpose = false; // Gets flipped from TRUE on first expose.
         PUBLIC(this)->setSize(PUBLIC(this)->getSize());
     }
     if (this->wasresized) {
+#if SOWW_DEBUG
+        SoDebugError::postInfo("SoWwGLWidgetP::gl_exposed", "wasresized");
+#endif
         PUBLIC(this)->sizeChanged(this->glSize);
         this->wasresized = false;
     }
@@ -304,9 +298,10 @@ SoWwGLWidgetP::eventHandler(wxFrame * widget, void * closure, QEvent * event,
 //  2) robustness; killing off the previous widget in the build-method
 //  below has nasty sideeffects (like "random" coredumps), since the
 //  Qt event loop might be using it
-void
+SoWwGLArea*
 SoWwGLWidgetP::buildGLWidget(void) {
 
+    try {
 #if SOWW_DEBUG
         SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
                 // TODO "%s, %s, %s, %s, %s",
@@ -319,71 +314,63 @@ SoWwGLWidgetP::buildGLWidget(void) {
         );
 #endif
 
-    wxFrame * wascurrent = dynamic_cast<wxFrame *>(this->currentglwidget);
-    wxFrame * wasprevious = this->previousglwidget;
-    SoWwGLArea * wascurrentarea = this->currentglarea;
-    SoWwGLArea * waspreviousarea = this->previousglarea;
+        wxWindow *wascurrent = this->currentglwidget;
+        wxWindow *wasprevious = this->previousglwidget;
+        SoWwGLArea *wascurrentarea = this->currentglarea;
+        SoWwGLArea *waspreviousarea = this->previousglarea;
 
-    void * display = NULL;
-    void * screen = NULL;
+        void *display = NULL;
+        void *screen = NULL;
 
-    if (wascurrent) {
-        // Do _not_ turn off mousetracking or remove the eventfilter, as
-        // we'd loose events after the switch has happened if the user is
-        // already interacting with the canvas (e.g. when starting a drag
-        // in BUFFER_INTERACTIVE mode).
-        //TODO: QObject::disconnect(wascurrentarea, SIGNAL(expose_sig()), this, SLOT(gl_exposed()));
-        //TODO: QObject::disconnect(wascurrentarea, SIGNAL(init_sig()), this, SLOT(gl_init()));
-        //TODO: QObject::disconnect(wascurrentarea, SIGNAL(screenChanged(QScreen*)), this, SLOT(gl_changed()));
-        //    QObject::disconnect(wascurrentarea, SIGNAL(reshape_sig()), this, SLOT(gl_reshape()));
-        this->previousglwidget = wascurrent;
-        this->previousglarea = wascurrentarea;
-    }
-
-#if 0
-    if (wasprevious
-        // TODO: && QGLFormat_eq(*this->glformat, waspreviousarea->format())
-            ) {
-        // Reenable the previous widget.
-        if (this->currentglwidget) SoAny::si()->unregisterGLContext((void *)PUBLIC(this));
-        this->currentglwidget = wasprevious;
-        this->currentglarea = waspreviousarea;
-        SoAny::si()->registerGLContext((void *)PUBLIC(this), display, screen);
-        if (SOWW_DEBUG) { // debug
-            SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
-                                   "reused previously used GL widget");
+        if (wascurrent) {
+            // Do _not_ turn off mousetracking or remove the eventfilter, as
+            // we'd loose events after the switch has happened if the user is
+            // already interacting with the canvas (e.g. when starting a drag
+            // in BUFFER_INTERACTIVE mode).
+            //TODO: QObject::disconnect(wascurrentarea, SIGNAL(expose_sig()), this, SLOT(gl_exposed()));
+            //TODO: QObject::disconnect(wascurrentarea, SIGNAL(init_sig()), this, SLOT(gl_init()));
+            //TODO: QObject::disconnect(wascurrentarea, SIGNAL(screenChanged(QScreen*)), this, SLOT(gl_changed()));
+            //    QObject::disconnect(wascurrentarea, SIGNAL(reshape_sig()), this, SLOT(gl_reshape()));
+            this->previousglwidget = wascurrent;
+            this->previousglarea = wascurrentarea;
         }
-    }
-    else {
-        // Couldn't use the previous widget, make a new one.
-        SoWwGLWidget * sharewidget = (SoWwGLWidget*) SoAny::si()->getSharedGLContext(display, screen);
-        if (this->currentglwidget) SoAny::si()->unregisterGLContext((void *)PUBLIC(this));
 
-        this->currentglarea = new SoWwGLArea(sharewidget ? (wxWindow*) sharewidget->getGLWidget() : NULL,
-                                             glAttributes);
-        this->currentglwidget = this->currentglarea;
-        // TODO: this->currentglarea->registerQKeyEventHandler(SoWwGLWidgetP::GLAreaKeyEvent, PUBLIC(this));
-        // TODO: this->currentglwidget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-        SoAny::si()->registerGLContext((void *)PUBLIC(this), display, screen);
-        // Send this one to the final hunting grounds.
-        delete wasprevious;
-    }
-#else
-    if (this->currentglwidget) SoAny::si()->unregisterGLContext((void *)PUBLIC(this));
+        if (wasprevious
+            // TODO: && QGLFormat_eq(*this->glformat, waspreviousarea->format())
+                ) {
+            // Reenable the previous widget.
+            if (this->currentglwidget) SoAny::si()->unregisterGLContext((void *) PUBLIC(this));
+            this->currentglwidget = wasprevious;
+            this->currentglarea = waspreviousarea;
+            SoAny::si()->registerGLContext((void *) PUBLIC(this), display, screen);
+            if (SOWW_DEBUG) { // debug
+                SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
+                                       "reused previously used GL widget");
+            }
+        } else {
+            if (this->currentglwidget)
+                SoAny::si()->unregisterGLContext((void *) PUBLIC(this));
 
-    this->currentglarea = new SoWwGLArea(this,
-                                         glAttributes);
+            this->currentglarea = new SoWwGLArea(
+                    glparent, //sharewidget ? (wxWindow*) sharewidget->getGLWidget() : NULL,
+                    glAttributes);
 
-    this->currentglwidget = this->currentglarea;
-    // TODO: this->currentglarea->registerQKeyEventHandler(SoWwGLWidgetP::GLAreaKeyEvent, PUBLIC(this));
-    // TODO: this->currentglwidget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-    SoAny::si()->registerGLContext((void *)PUBLIC(this), display, screen);
+            // a wxPanel need a sizer, look at: https://forums.wxwidgets.org/viewtopic.php?t=44252
+            if( SoWwGLWidgetP::isAPanel(glparent)) {
+                addSizer();
+            }
 
-#endif
+            this->currentglwidget = this->currentglarea;
+            // TODO: this->currentglarea->registerQKeyEventHandler(SoWwGLWidgetP::GLAreaKeyEvent, PUBLIC(this));
+            // TODO: this->currentglwidget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+            SoAny::si()->registerGLContext((void *) PUBLIC(this), display, screen);
+            // Send this one to the final hunting grounds.
+            delete wasprevious;
+        }
 
-    if (SOWW_DEBUG) { // Warn about requested features that we didn't get.
-        // TODO: QSurfaceFormat * w = this->glformat; // w(anted)
-        // TODO: QSurfaceFormat g = this->currentglarea->format(); // g(ot)
+        if (SOWW_DEBUG) { // Warn about requested features that we didn't get.
+            // TODO: QSurfaceFormat * w = this->glformat; // w(anted)
+            // TODO: QSurfaceFormat g = this->currentglarea->format(); // g(ot)
 
 #define GLWIDGET_FEATURECMP(_glformatfunc_, _cmpvalue_, _truestr_, _falsestr_) \
   do { \
@@ -395,62 +382,74 @@ SoWwGLWidgetP::buildGLWidget(void) {
     } \
   } while (0)
 
-        // TODO: GLWIDGET_FEATURECMP(swapBehavior, QSurfaceFormat::DoubleBuffer, "doublebuffer visual", "singlebuffer visual");
-        // TODO: GLWIDGET_FEATURECMP(depthBufferSize, 0, "visual without depthbuffer", "visual with depthbuffer");
-        // TODO: //GLWIDGET_FEATURECMP(rgba, true, "RGBA buffer", "colorindex buffer");
-        // TODO: GLWIDGET_FEATURECMP(stereo, true, "stereo buffers", "mono buffer");
+            // TODO: GLWIDGET_FEATURECMP(swapBehavior, QSurfaceFormat::DoubleBuffer, "doublebuffer visual", "singlebuffer visual");
+            // TODO: GLWIDGET_FEATURECMP(depthBufferSize, 0, "visual without depthbuffer", "visual with depthbuffer");
+            // TODO: //GLWIDGET_FEATURECMP(rgba, true, "RGBA buffer", "colorindex buffer");
+            // TODO: GLWIDGET_FEATURECMP(stereo, true, "stereo buffers", "mono buffer");
 
 #if HAVE_QT_SAMPLE_BUFFERS
-        // TODO:     GLWIDGET_FEATURECMP(samples, 0, "no sample buffers", "sample buffers");
+            // TODO:     GLWIDGET_FEATURECMP(samples, 0, "no sample buffers", "sample buffers");
 #endif
 
 // TODO:
 #if 0
-        if (QGLFormat_hasOverlay(w) != QGLFormat_hasOverlay(&g)) {
-            SoDebugError::postWarning("SoWwGLWidgetP::buildGLWidget",
-                                      "wanted %s, but that is not supported "
-                                      "by the OpenGL driver",
-                                      QGLFormat_hasOverlay(w) ?
-                                      "overlay plane(s)" :
-                                      "visual without overlay plane(s)");
-        }
+            if (QGLFormat_hasOverlay(w) != QGLFormat_hasOverlay(&g)) {
+                SoDebugError::postWarning("SoWwGLWidgetP::buildGLWidget",
+                                          "wanted %s, but that is not supported "
+                                          "by the OpenGL driver",
+                                          QGLFormat_hasOverlay(w) ?
+                                          "overlay plane(s)" :
+                                          "visual without overlay plane(s)");
+            }
 #endif
-    }
+        }
 #undef GLWIDGET_FEATURECMP
 
-    //TODO: this->glformat = this->currentglarea->format();
+        //TODO: this->glformat = this->currentglarea->format();
 
-    int frame = PUBLIC(this)->isBorder() ? this->borderthickness : 0;
-    // TODO: this->currentglwidget->setGeometry(frame, frame,this->glSize[0] - 2*frame,this->glSize[1] - 2*frame);
+        int frame = PUBLIC(this)->isBorder() ? this->borderthickness : 0;
+        // TODO: this->currentglwidget->setGeometry(frame, frame,this->glSize[0] - 2*frame,this->glSize[1] - 2*frame);
 
-    // TODO: QObject::connect(this->currentglarea, SIGNAL(init_sig()), this, SLOT(gl_init()));
-    //  QObject::connect(this->currentglarea, SIGNAL(reshape_sig(int, int)),
-    //                    this, SLOT(gl_reshape(int, int)));
-    // TODO: QObject::connect(this->currentglarea, SIGNAL(screenChanged(QScreen*)), this, SLOT(gl_changed()));
-    // TODO: QObject::connect(this->currentglarea, SIGNAL(expose_sig()), this, SLOT(gl_exposed()));
+        this->currentglarea->Bind(wxEVT_SIZE, &SoWwGLWidgetP::gl_reshape, this);
+        this->currentglarea->Bind(SO_WW_GL_INIT, &SoWwGLWidgetP::gl_init, this);
+        this->currentglarea->Bind(SO_WW_GL_DRAW, &SoWwGLWidgetP::gl_exposed, this);
+        this->currentglarea->Bind(wxEVT_LEFT_DOWN, &SoWwGLWidgetP::onMouse, this);
+        this->currentglarea->Bind(wxEVT_RIGHT_DOWN, &SoWwGLWidgetP::onMouse, this);
+        this->currentglarea->Bind(wxEVT_LEFT_UP, &SoWwGLWidgetP::onMouse, this);
+        this->currentglarea->Bind(wxEVT_RIGHT_UP, &SoWwGLWidgetP::onMouse, this);
+        this->currentglarea->Bind(wxEVT_MOTION, &SoWwGLWidgetP::onMouse, this);
+        this->currentglarea->Bind(wxEVT_MOUSEWHEEL, &SoWwGLWidgetP::onMouse, this);
+        this->currentglarea->Bind(wxEVT_KEY_DOWN, &SoWwGLWidgetP::onKey, this);
+        this->currentglarea->Bind(wxEVT_KEY_UP, &SoWwGLWidgetP::onKey, this);
 
-    // TODO: this->currentglwidget->setMouseTracking(true);
-    // TODO: this->currentglarea->installEventFilter(this);
+        // Reset to avoid unnecessary scenegraph redraws.
+        PUBLIC(this)->waitForExpose = true;
 
-    // Reset to avoid unnecessary scenegraph redraws.
-    //TODO: set to false for TEST
-    // PUBLIC(this)->waitForExpose = true;
-    PUBLIC(this)->waitForExpose = false;
+        // We've changed to a new widget, so notify subclasses through this
+        // virtual method.
+        PUBLIC(this)->widgetChanged(this->currentglwidget);
 
-    // We've changed to a new widget, so notify subclasses through this
-    // virtual method.
-    PUBLIC(this)->widgetChanged(dynamic_cast<wxFrame *>(this->currentglwidget));
-
-    if (wascurrent) {
-        // If we are rebuilding, we need to explicitly call show() here,
-        // as no message to show will be given from an already visible
-        // parent. (If the glwidget was built but not shown before the
-        // rebuild, the call below doesn't do any harm, as the glwidget
-        // still won't become visible until all parents are visible.)
-        this->currentglwidget->Show();
-        // TODO: this->currentglwidget->raise();
+        if (wascurrent) {
+            // If we are rebuilding, we need to explicitly call show() here,
+            // as no message to show will be given from an already visible
+            // parent. (If the glwidget was built but not shown before the
+            // rebuild, the call below doesn't do any harm, as the glwidget
+            // still won't become visible until all parents are visible.)
+            this->currentglwidget->Show();
+            // TODO: this->currentglwidget->raise();
+        }
+    }
+    catch (std::exception& e) {
+        SoDebugError::postWarning("SoWwGLWidgetP::buildGLWidget",
+                               "exception: %s",
+                               e.what());
+    }
+    catch(...) {
+        SoDebugError::postWarning("SoWwGLWidgetP::buildGLWidget",
+                               "unknown exception");
     }
     // TODO: this->currentglwidget->setFocus();
+    return (this->currentglarea);
 }
 
 // Returns the normal GL context.
@@ -485,11 +484,12 @@ void SoWwGLWidgetP::initGLModes(int glmodes) {
         supported_gl_modes.insert(WX_GL_DOUBLEBUFFER);
     }
     if(glmodes & SO_GL_ZBUFFER) {
-        glAttributes.Depth(32);
+        // 24 bit seems to be ok also on Windows
+        glAttributes.Depth(24);
         supported_gl_modes.insert(WX_GL_DEPTH_SIZE);
     }
     if(glmodes & SO_GL_RGB) {
-        glAttributes.MinRGBA(8, 8, 8, 8);
+        glAttributes.RGBA();
         supported_gl_modes.insert(WX_GL_RGBA);
     }
     if(glmodes & SO_GL_STEREO) {
@@ -498,20 +498,60 @@ void SoWwGLWidgetP::initGLModes(int glmodes) {
     }
     glAttributes.EndList();
 
+    /*
     if(!SoWwGLArea::IsDisplaySupported(glAttributes)) {
         SoDebugError::postInfo("SoWwGLWidget::SoWwGLWidget",
                                "required GL modes are not supported!");
     }
+     */
 }
 
-void SoWwGLWidgetP::eventHandler(wxWindow * widget , void *closure, wxEvent &event, bool *) {
+void
+SoWwGLWidgetP::eventHandler(wxWindow * /*widget*/ , void *closure, wxEvent &event, bool *) {
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwGLWidgetP::eventHandler","");
+#endif
     assert(closure != NULL);
     SoWwGLWidget * component = ((SoWwGLWidgetP *) closure)->pub;
     component->processEvent(event);
 }
 
+void
+SoWwGLWidgetP::onMouse(wxMouseEvent &event) {
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("SoWwGLWidgetP::onMouse","");
+#endif
+    PUBLIC(this)->processEvent(event);
+}
+
+void
+SoWwGLWidgetP::onKey(wxKeyEvent &event) {
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("SoWwGLWidgetP::onKey","");
+#endif
+    PUBLIC(this)->processEvent(event);
+}
+
+bool
+SoWwGLWidgetP::isAPanel(wxWindow* window) {
+    return (window->IsKindOf(wxCLASSINFO(wxPanel)));
+}
+
+void
+SoWwGLWidgetP::addSizer() {
+
+    if(glparent->GetSizer()) {
+        SoDebugError::postWarning("SoWwGLWidgetP::addSizer",
+                                "panel holds a sizer, the old one will be removed");
+    }
+
+    wxFlexGridSizer* sizer = new wxFlexGridSizer(0);
+    sizer->AddGrowableCol(0);
+    sizer->AddGrowableRow(0);
+    glparent->SetSizer(sizer);
+    sizer->Add(this->currentglarea, 0, wxEXPAND | wxALL, 0);
+    sizer->Layout();
+}
+
 #undef PRIVATE
 #undef PUBLIC
-
-
-

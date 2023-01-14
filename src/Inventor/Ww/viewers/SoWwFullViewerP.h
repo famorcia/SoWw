@@ -42,10 +42,11 @@
 #include <string>
 #include <map>
 
-class SoWwFullViewerP : public SoGuiFullViewerP, public wxPanel {
+class SoWwFullViewerP : public SoGuiFullViewerP, public wxEvtHandler {
 public:
 
-    SoWwFullViewerP(SoWwFullViewer *pViewer);
+    explicit SoWwFullViewerP(SoWwFullViewer *pViewer);
+    ~SoWwFullViewerP();
 
     std::string popupmenutitle;
     wxWindow * viewerwidget;
@@ -111,12 +112,12 @@ public:
     void increaseInteractiveCount();
     void decreaseInteractiveCount();
 
+    void bindEvents(wxWindow*);
+
     // Return pointer to pushbutton in right-side decoration bar.
-    wxAnyButton * getViewerbutton(const int idx)
-    {
+    wxAnyButton * getViewerbutton(const int idx) {
         return (wxAnyButton *)this->viewerbuttons->get(idx);
     }
-
 
 wxDECLARE_EVENT_TABLE();
 };

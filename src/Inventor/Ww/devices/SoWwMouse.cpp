@@ -34,8 +34,6 @@
 #include <config.h>
 #endif // HAVE_CONFIG_H
 
-#include <X11/X.h>
-
 #include <Inventor/errors/SoDebugError.h>
 #include <Inventor/events/SoLocation2Event.h>
 #include <Inventor/events/SoMouseButtonEvent.h>
@@ -61,7 +59,7 @@ SoWwMouse::SoWwMouse(int mask ) {
 }
 
 SoWwMouse::~SoWwMouse(void) {
-
+    delete PRIVATE(this);
 }
 
 void SoWwMouse::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure)    {
@@ -78,7 +76,7 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
 
     wxMouseEvent* mouse_event = dynamic_cast<wxMouseEvent*>(&event);
     if(!mouse_event) {
-        SoDebugError::postInfo("SoWwMouse::translateEvent",
+        SoDebugError::postWarning("SoWwMouse::translateEvent",
                                "is not a mouse event!");
 
         return (conv);

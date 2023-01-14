@@ -56,14 +56,14 @@ public:
     void initGLModes(int);
 
     wxGLAttributes  glAttributes;
-    void buildGLWidget();
+    SoWwGLArea* buildGLWidget();
 
     SbVec2s glSize;
     SbVec2s glSizeUnscaled;
     SbBool wasresized;
 
     wxWindow * currentglwidget;
-    wxFrame * previousglwidget;
+    wxWindow * previousglwidget;
     SoWwGLArea * currentglarea;
     SoWwGLArea * previousglarea;
     wxWindow * glparent;
@@ -75,11 +75,16 @@ public:
 
     std::set<long> supported_gl_modes;
 
-    void gl_changed(void);
-    void gl_init(void);
-    void gl_reshape(int, int);
-    void gl_exposed(void);
+    void gl_init(wxCommandEvent&);
+    void gl_reshape(wxSizeEvent&);
+    void gl_exposed(wxCommandEvent&);
+    void onMouse(wxMouseEvent&);
+    void onKey(wxKeyEvent&);
 
+    static bool isAPanel(wxWindow*);
+    void addSizer();
+
+    // Required by the common code
     static void eventHandler(wxWindow*, void*, wxEvent&, bool*);
 
 protected:

@@ -30,10 +30,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
 
-#ifndef SOWW_INTERNAL
-#error this is a private header file
-#endif
-
 #include "Inventor/Ww/viewers/SoWwExaminerViewerP.h"
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
 #include "Inventor/Ww/common/pixmaps/ortho.xpm"
@@ -74,6 +70,7 @@ SoWwExaminerViewerP::constructor(const SbBool build) {
                       this,
                       CAMERA_BUTTON);
         PUBLIC(this)->setBaseWidget(widget);
+        widget->SetMinSize(wxSize(500,300));
         PUBLIC(this)->setSize(SbVec2s(500, 300));
     }
 }

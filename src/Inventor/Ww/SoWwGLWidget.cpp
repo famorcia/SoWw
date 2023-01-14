@@ -34,6 +34,7 @@
 #include "Inventor/Ww/SoWwGLWidgetP.h"
 #include "Inventor/Ww/widgets/SoWwGLArea.h"
 #include "sowwdefs.h"
+#include "Inventor/Ww/SoAny.h"
 
 SOWW_OBJECT_ABSTRACT_SOURCE(SoWwGLWidget);
 
@@ -74,6 +75,11 @@ SoWwGLWidget::SoWwGLWidget(wxWindow* const parent ,
 
 SoWwGLWidget::~SoWwGLWidget() {
 
+    if (PRIVATE(this)->currentglwidget) {
+        SoAny::si()->unregisterGLContext((void *)this);
+    }
+
+    delete PRIVATE(this);
 }
 
 void
@@ -101,9 +107,8 @@ SoWwGLWidget::setGLSize(const SbVec2s size){
     PRIVATE(this)->glSize = size;
     PRIVATE(this)->glSizeUnscaled = size;
     if (PRIVATE(this)->currentglwidget) {
-        // Do nothing, already managed in GLAreal
         int frame = this->isBorder() ? PRIVATE(this)->borderthickness : 0;
-        //PRIVATE(this)->currentglwidget->SetSize( size[0], size[1] );
+        // PRIVATE(this)->currentglwidget->SetSize( size[0], size[1] );
     }
 }
 
@@ -291,26 +296,10 @@ SoWwGLWidget::processEvent(wxEvent& event){
 }
 
 wxWindow *
-SoWwGLWidget::buildWidget(wxWindow* parent){
-
-    if (parent != NULL && this->isTopLevelShell()) {
-        // TODO: parent->installEventFilter(PRIVATE(this));
-    }
-
-    // TODO:PRIVATE(this)->borderwidget = new QFrame(parent);
-    // TODO:this->registerWidget(PRIVATE(this)->borderwidget);
-
-    // TODO:PRIVATE(this)->borderwidget->setFrameStyle(QFrame::Panel | QFrame::Raised);
-    // TODO:PRIVATE(this)->borderwidget->setLineWidth(PRIVATE(this)->borderthickness);
-    // TODO:PRIVATE(this)->borderwidget->move(0, 0);
-
-    // Remember our parent widget, so we can use it in tests in the
-    // eventFilter().
+SoWwGLWidget::buildWidget(wxWindow* parent) {
+    assert(parent !=0 && "parent can not be null");
     PRIVATE(this)->glparent = parent;
-
-    PRIVATE(this)->buildGLWidget();
-
-    return PRIVATE(this)->currentglarea;
+    return (PRIVATE(this)->buildGLWidget());
 }
 
 void
@@ -334,6 +323,13 @@ SoWwGLWidget::initOverlayGraphic(void){
 
 void
 SoWwGLWidget::sizeChanged(const SbVec2s & size){
+    SOWW_STUB();
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwGLWidget::sizeChanged",
+                           "<%d, %d>",
+                           size[0], size[1]
+    );
+#endif
     // Do nothing
 }
 

@@ -32,6 +32,8 @@
 #include "Inventor/Ww/devices/SoWwKeyboard.h"
 #include "Inventor/Ww/devices/SoGuiKeyboardP.h"
 
+#include "sowwdefs.h"
+
 #define PRIVATE(p) (p->pimpl)
 #define PUBLIC(p) (p->pub)
 
@@ -45,17 +47,21 @@ SoWwKeyboard::SoWwKeyboard(int eventmask ) {
 }
 
 SoWwKeyboard::~SoWwKeyboard(void) {
-
+    delete PRIVATE(this);
 }
 
-void SoWwKeyboard::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
-
+void 
+SoWwKeyboard::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
+    SOWW_STUB();
 }
 
-void SoWwKeyboard::disable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
-
+void 
+SoWwKeyboard::disable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
+    SOWW_STUB();
 }
 
-const SoEvent * SoWwKeyboard::translateEvent(wxEvent& event) {
-
+const SoEvent * 
+SoWwKeyboard::translateEvent(wxEvent& event) {
+    SOWW_STUB();
+    return (0);
 }

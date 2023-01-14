@@ -59,15 +59,14 @@ SoWwExaminerViewer::SoWwExaminerViewer(wxWindow* parent,
                                        int embed,
                                        SoWwFullViewer::BuildFlag flag,
                                        SoWwViewer::Type type)
-        : inherited(parent, name, embed, flag, type, FALSE)
-{
+        : inherited(parent, name, embed, flag, type, FALSE) {
     PRIVATE(this) = new SoWwExaminerViewerP(this);
     PRIVATE(this)->constructor(TRUE);
 }
 
 
 SoWwExaminerViewer::~SoWwExaminerViewer() {
-
+    delete PRIVATE(this);
 }
 
 void
@@ -107,6 +106,7 @@ SoWwExaminerViewer::createViewerButtons(wxWindow* parent,
 
     inherited::createViewerButtons(parent, buttonlist);
     PRIVATE(this)->cameratogglebutton = new wxButton(parent, CAMERA_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    PRIVATE(this)->cameratogglebutton->SetName("CAMERA");
 
     assert(PRIVATE(this)->perspectivepixmap);
     assert(PRIVATE(this)->orthopixmap);

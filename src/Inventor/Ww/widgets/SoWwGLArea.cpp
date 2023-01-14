@@ -41,46 +41,34 @@
 #include <GL/gl.h>
 
 wxBEGIN_EVENT_TABLE(SoWwGLArea, wxGLCanvas)
-                EVT_SIZE(SoWwGLArea::OnSize)
                 EVT_PAINT(SoWwGLArea::OnPaint)
                 EVT_ERASE_BACKGROUND(SoWwGLArea::OnEraseBackground)
-                EVT_LEFT_DOWN(SoWwGLArea::OnMouse)
-                EVT_RIGHT_DOWN(SoWwGLArea::OnMouse)
-                EVT_LEFT_UP(SoWwGLArea::OnMouse)
-                EVT_RIGHT_UP(SoWwGLArea::OnMouse)
-                EVT_MOTION(SoWwGLArea::OnMouse)
-                EVT_MOUSEWHEEL(SoWwGLArea::OnMouse)
 wxEND_EVENT_TABLE()
 
-
-static int wxIsDoubleBuffer() {
-    static int is_double_buffer = -1;
-    if(is_double_buffer == -1) {
-        wxGLAttributes attributes;
-        attributes.DoubleBuffer();
-        attributes.EndList();
-        is_double_buffer = wxGLCanvasBase::IsDisplaySupported(attributes) ? 1 : 0;
-    }
-    return (is_double_buffer);
-}
+wxDEFINE_EVENT(SO_WW_GL_INIT, wxCommandEvent);
+wxDEFINE_EVENT(SO_WW_GL_DRAW, wxCommandEvent);
 
 
-SoWwGLArea::SoWwGLArea(SoWwGLWidgetP* aGLWidget,
-                       wxGLAttributes& attributes,
-                       wxWindowID id,
-                       const wxPoint& pos,
-                       const wxSize& size,
-                       long style,
-                       const wxString& name)
-        : wxGLCanvas(aGLWidget->glparent,
+SoWwGLArea::SoWwGLArea(wxWindow *parent,
+                       wxGLAttributes& attributes)
+
+#ifdef __WXQT__
+        : wxGLCanvas(parent,
+                     wxID_ANY,
+                     0,
+                     wxDefaultPosition,
+                     parent->GetClientSize())
+#else
+: wxGLCanvas(parent,
                      attributes,
-                     id,
-                     pos,
-                     size,
-                     style | wxFULL_REPAINT_ON_RESIZE,
-                     name) {
-    ww_gl_widget = aGLWidget;
-    gl_real_context = 0;
+                     wxID_ANY,
+                     wxDefaultPosition,
+                     parent->GetClientSize())
+#endif
+                     {
+    this->SetName("SoWwGLArea");
+
+    gl_real_context = new wxGLContext(this);
     is_gl_initialized = false;
     gl_attributes = attributes;
 }
@@ -90,26 +78,23 @@ SoWwGLArea::~SoWwGLArea() {
 }
 
 void SoWwGLArea::OnPaint(wxPaintEvent& event ) {
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwGLArea::OnPaint",
+                           "size:%d %d",
+                           GetSize().x,
+                           GetSize().y);
+#endif
+
     // must always be here
     wxPaintDC dc(this);
 
     InitGL();
-    ww_gl_widget->gl_exposed();
-    event.Skip();
-}
 
-void SoWwGLArea::OnSize(wxSizeEvent& event) {
-#if SOWW_DEBUG
-    SoDebugError::postInfo("SoWwGLArea::OnSize",
-                           "size:%d %d",
-                           event.GetSize().x,
-                           event.GetSize().y);
-#endif
+    wxCommandEvent a_wx_event(SO_WW_GL_DRAW, GetId());
+    a_wx_event.SetEventObject(this);
+    a_wx_event.SetString("SO_WW_GL_INIT");
+    ProcessWindowEvent(a_wx_event);
 
-    // on size Coin need to know the new view port
-    ww_gl_widget->gl_reshape(event.GetSize().x,
-                             event.GetSize().y);
-    ww_gl_widget->gl_changed();
     event.Skip();
 }
 
@@ -120,10 +105,13 @@ void SoWwGLArea::OnEraseBackground(wxEraseEvent& WXUNUSED(event)) {
 
 void SoWwGLArea::InitGL() {
     if(!is_gl_initialized) {
-        gl_real_context = new wxGLContext(this);
         SetCurrent(*gl_real_context);
         is_gl_initialized = true;
-        ww_gl_widget->gl_init();
+
+        wxCommandEvent a_wx_event(SO_WW_GL_INIT, GetId());
+        a_wx_event.SetEventObject(this);
+        a_wx_event.SetString("SO_WW_GL_INIT");
+        ProcessWindowEvent(a_wx_event);
     } else {
         SetCurrent(*gl_real_context);
     }
@@ -138,17 +126,11 @@ const wxGLContext *SoWwGLArea::context() {
     return gl_real_context;
 }
 
-void SoWwGLArea::OnMouse(wxMouseEvent &event) {
-    SoWwGLWidgetP::eventHandler(ww_gl_widget->glparent,
-                                ww_gl_widget,
-                                event,
-                                0);
-}
-
 // TODO: should be used glattributes, otherwise is not related to current glArea attributes
 bool
 SoWwGLArea::isDoubleBuffer() const {
-    return (wxIsDoubleBuffer());
+    SOWW_STUB();
+    return (true);
 }
 
 bool

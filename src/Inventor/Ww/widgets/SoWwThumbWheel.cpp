@@ -37,7 +37,6 @@
   \ingroup components
 */
 
-// *************************************************************************
 
 #include <Inventor/Ww/widgets/SoWwThumbWheel.h>
 #include <Inventor/Ww/widgets/SoAnyThumbWheel.h>
@@ -51,10 +50,10 @@
 #include <wx/wx.h>
 #include <wx/mstream.h>
 
-#include <math.h>
-#include <assert.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdio>
 #include <sstream>
+#include <stdint.h>
 
 wxBEGIN_EVENT_TABLE(SoWwThumbWheel, wxPanel)
                 EVT_MOTION(SoWwThumbWheel::mouseMoveEvent)
@@ -62,10 +61,7 @@ wxBEGIN_EVENT_TABLE(SoWwThumbWheel, wxPanel)
                 EVT_LEFT_UP(SoWwThumbWheel::mouseReleaseEvent)
                 EVT_MOUSEWHEEL(SoWwThumbWheel::mouseWheel)
                 EVT_PAINT(SoWwThumbWheel::paintEvent)
-                // EVT_COMMAND(FULL_VIEWER_P, SO_WW_MOUSE_WHEEL_PRESSED, SoWwThumbWheel::testMe)
 wxEND_EVENT_TABLE()
-
-// *************************************************************************
 
 static const int SHADEBORDERWIDTH = 0;
 
@@ -134,7 +130,7 @@ SoWwThumbWheel::paintEvent(wxPaintEvent& WXUNUSED(event)) {
     }
 
 #if SOWW_DEBUG && 0
-    SoDebugError::postWarning("SoWwThumbWheel::paintEvent",
+    SoDebugError::postInfo("SoWwThumbWheel::paintEvent",
                               "dval: %d and w: %d",
                               dval, w);
 #endif
@@ -148,7 +144,7 @@ SoWwThumbWheel::paintEvent(wxPaintEvent& WXUNUSED(event)) {
                                                 (this->state == SoWwThumbWheel::Disabled) ?
                                                 SoAnyThumbWheel::DISABLED : SoAnyThumbWheel::ENABLED);
 #if SOWW_DEBUG && 0
-    SoDebugError::postWarning("SoWwThumbWheel::paintEvent",
+    SoDebugError::postInfo("SoWwThumbWheel::paintEvent",
                               "pixmap value is: %d and bitmap pointer is %p",
                               pixmap, this->pixmaps);
 #endif
@@ -225,7 +221,6 @@ SoWwThumbWheel::mousePressEvent(wxMouseEvent&  event) {
 /*!
   \internal
 */
-
 void
 SoWwThumbWheel::mouseMoveEvent(wxMouseEvent& event) {
 
@@ -257,7 +252,6 @@ SoWwThumbWheel::mouseMoveEvent(wxMouseEvent& event) {
 /*!
   \internal
 */
-
 void
 SoWwThumbWheel::mouseReleaseEvent(wxMouseEvent& WXUNUSED(event)) {
     if (this->state != SoWwThumbWheel::Dragging)
@@ -337,9 +331,8 @@ SoWwThumbWheel::value() const {
     return this->wheelValue;
 }
 
-// *************************************************************************
-
-void fill(std::vector<u_int8_t>& buffer,
+void
+fill(std::vector<uint8_t>& buffer,
           unsigned long n,
           int channel = 3) {
     if(channel>3) {
@@ -350,7 +343,8 @@ void fill(std::vector<u_int8_t>& buffer,
     buffer.push_back(n & 0xFF);
 }
 
-uint8_t* toRGBChannel(const std::vector<unsigned int>& img) {
+uint8_t*
+toRGBChannel(const std::vector<unsigned int>& img) {
     std::vector<uint8_t> vout;
     for(size_t i=0;i<img.size();++i) {
         fill(vout, img[i]);
@@ -397,8 +391,6 @@ SoWwThumbWheel::initWheel(int diameter, int width) {
     }
 }
 
-// *************************************************************************
-
 void
 SoWwThumbWheel::setEnabled(bool enable) {
     if (enable)
@@ -420,8 +412,6 @@ SoWwThumbWheel::setValue(float value) {
     Refresh();
 }
 
-// *************************************************************************
-
 void
 SoWwThumbWheel::setRangeBoundaryHandling(boundaryHandling handling) {
     switch (handling) {
@@ -438,8 +428,6 @@ SoWwThumbWheel::setRangeBoundaryHandling(boundaryHandling handling) {
             assert(0 && "impossible");
     }
 }
-
-// *************************************************************************
 
 SoWwThumbWheel::boundaryHandling
 SoWwThumbWheel::getRangeBoundaryHandling() const {
@@ -473,6 +461,3 @@ SoWwThumbWheel::sendEvent(long id,
     a_wx_event.SetClientData(&this->tempWheelValue);
     ProcessWindowEvent(a_wx_event);
 }
-
-
-// *************************************************************************
