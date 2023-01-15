@@ -41,8 +41,8 @@ jobs:
     - name: Extract 
       run: tar zxvf coin-4.0.0-src.tar.gz
       
- # TODO:   - name: Compile Coin
- #     run: mkdir cmake-build && cd cmake-build && cmake ../coin && make
+    - name: Compile Coin
+      run: mkdir build_me && cd build_me && ../configure && sduo make install
 
 #      run: sudo apt-get install coin
 
