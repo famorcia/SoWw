@@ -19,9 +19,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
-   # - name: Get Sources
-   #   run: git submodule update --init --recursive
+      with:
+        submodules: recursive
     
     - name: Add key
       run: sudo apt-key adv --fetch-keys https://repos.codelite.org/CodeLite.asc
@@ -33,7 +32,7 @@ jobs:
       run: sudo apt-get update
       
     - name: Add wxWidgets
-      run: sudo apt-get install wx3.2-headers* libwxgtk3.2*      
+      run: sudo apt-get install wx3.2-headers* libwxgtk3.2* libboost*-dev     
 
     - name: Add Coin
       run: wget -c https://github.com/coin3d/coin/releases/download/Coin-4.0.0/coin-4.0.0-src.tar.gz
@@ -41,8 +40,8 @@ jobs:
     - name: Extract 
       run: tar zxvf coin-4.0.0-src.tar.gz
       
- # TODO:   - name: Compile Coin
- #     run: mkdir cmake-build && cd cmake-build && cmake ../coin && make
+    - name: Compile Coin
+      run: sh ./coin/configure && make -j 4 && sudo make install
 
 #      run: sudo apt-get install coin
 
