@@ -108,7 +108,6 @@ SoWwExaminerViewer::createViewerButtons(wxWindow* parent,
     PRIVATE(this)->cameratogglebutton = new wxButton(parent, CAMERA_BUTTON, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     PRIVATE(this)->cameratogglebutton->SetName("CAMERA");
 
-
     wxImage * p = NULL;
     SoType t = this->getCameraType();
     if (t.isDerivedFrom(SoOrthographicCamera::getClassTypeId()))

@@ -38,11 +38,20 @@ class SoWwGLArea : public wxGLCanvas
 public:
     SoWwGLArea(wxWindow *parent,
                wxGLAttributes& attributes)
+#if 0
             : wxGLCanvas(parent,
                          attributes,
                          wxID_ANY,
                          wxDefaultPosition,
-                         parent->GetClientSize()) {
+                         parent->GetClientSize())
+#else
+            : wxGLCanvas(parent,
+                         wxID_ANY,
+                         NULL,
+                         wxDefaultPosition,
+                         parent->GetClientSize())
+#endif
+                         {
         gl_real_context = new wxGLContext(this);
         is_gl_initialized = false;
     }
@@ -136,5 +145,7 @@ public:
         return true;
     }
 };
+
+
 
 wxIMPLEMENT_APP(MyApp);

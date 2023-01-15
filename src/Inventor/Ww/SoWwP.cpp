@@ -50,6 +50,11 @@ public:
             return false;
         return true;
     }
+
+    virtual void
+    CleanUp() wxOVERRIDE {
+        std::cerr<<"CleanUp: ADASDADASDASD ACLESO"<<std::endl;
+    }
 };
 
 wxTimer * SoWwP::timerqueuetimer = 0;
@@ -353,7 +358,7 @@ SoWwP::dumpWindowData(const wxWindow* window) {
 }
 
 void
-SoWwP::onIdle(wxIdleEvent&) {
+SoWwP::onIdle(wxIdleEvent& WXUNUSED(event)) {
 #if SOWW_DEBUG && 0
     SoDebugError::postInfo("SoWwP::onIdle",
                                "idlesensor pending");
@@ -366,4 +371,19 @@ SoWwP::onIdle(wxIdleEvent&) {
     // SoSensorManager after the process methods, so we need to
     // explicitly trigger it ourselves here.
     SoGuiP::sensorQueueChanged(NULL);
+}
+
+void
+SoWwP::onClose(wxCloseEvent& event) {
+    std::cerr<<"ADASDADASDASD ACLESO"<<std::endl;
+    // To avoid getting any further invocations of
+    // SoGuiP::sensorQueueChanged() (which would re-allocate the timers
+    // we destruct below). This could for instance happen when
+    // de-coupling the scenegraph camera, triggering a notification
+    // chain through the scenegraph.
+    SoDB::getSensorManager()->setChangedCallback(NULL, NULL);
+    // turn off timers
+    SoWwP::instance()->finish();
+
+    event.Skip(); // perform destroy
 }

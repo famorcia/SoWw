@@ -69,7 +69,6 @@ SoWwFullViewer::SoWwFullViewer(wxWindow* parent,
 
     PRIVATE(this)->viewerwidget = NULL;
     PRIVATE(this)->canvas = NULL;
-    // TODO: PRIVATE(this)->canvasparent = NULL;
 
     PRIVATE(this)->viewbutton = NULL;
     PRIVATE(this)->interactbutton = NULL;
@@ -124,7 +123,6 @@ SoWwFullViewer::~SoWwFullViewer() {
     delete [] this->leftWheelStr;
     delete [] this->bottomWheelStr;
     delete PRIVATE(this);
-    SOWW_STUB();
 }
 
 wxWindow*

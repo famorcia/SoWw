@@ -74,5 +74,6 @@ int main(int argc, char ** argv)
 
     delete renderarea;
     root->unref();
+    SoWw::done();
     return 0;
 }

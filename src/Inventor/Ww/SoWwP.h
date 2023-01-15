@@ -61,6 +61,7 @@ public:
 
     static void sensorQueueChanged();
     void onIdle(wxIdleEvent& event);
+    void onClose(wxCloseEvent& event);
 
     void buildWxApp();
     void setWxApp(wxAppConsole*);

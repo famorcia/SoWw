@@ -2,11 +2,11 @@ function(executable executable_name)
   set(multiValueArgs SOURCES LIBS)
   cmake_parse_arguments(executable "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
   add_executable(${executable_name} ${executable_SOURCES})
-  target_link_libraries(${executable_name} ${executable_LIBS})
   if (HAVE_ASAN)
     target_compile_options(${executable_name} PUBLIC "-fsanitize=address")
     set_target_properties(${executable_name} PROPERTIES LINK_FLAGS "-fsanitize=address")
   endif()
+  target_link_libraries(${executable_name} ${executable_LIBS})
 endfunction(executable)
 
 

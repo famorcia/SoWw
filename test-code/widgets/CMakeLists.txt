@@ -9,3 +9,4 @@ executable(multisizer SOURCES multisizer.cpp LIBS SoWw)
 
 executable(buttons SOURCES buttons.cpp LIBS SoWw)
 
+executable(glarea SOURCES glarea.cpp LIBS SoWw)

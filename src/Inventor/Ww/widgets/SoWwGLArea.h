@@ -33,15 +33,18 @@
 #ifndef SOWW_SOWWGLAREA_H
 #define SOWW_SOWWGLAREA_H
 
-#include <wx/glcanvas.h>
 #include <wx/wx.h>
+#include <wx/glcanvas.h>
 #include <wx/timer.h>
+#include <map>
 
 class SoWwGLWidgetP;
 
 class SoWwGLArea : public wxGLCanvas
 {
 public:
+    typedef std::map<long, int> GLFormat;
+
     SoWwGLArea(wxWindow *parent,
                wxGLAttributes&);
 

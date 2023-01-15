@@ -32,7 +32,7 @@
 
 #include "Inventor/Ww/SoWw.h"
 #include "Inventor/Ww/SoWwP.h"
-
+#include <wx/event.h>
 #include "sowwdefs.h"
 
 wxWindow*
@@ -75,6 +75,8 @@ SoWw::init(int & argc,
     assert(SoWwP::instance());
     assert(SoWwP::instance()->getWxApp());
     SoWwP::instance()->getWxApp()->Bind(wxEVT_IDLE, &SoWwP::onIdle,  SoWwP::instance());
+    SoWwP::instance()->getMainFrame()->Bind(wxEVT_CLOSE_WINDOW, &SoWwP::onClose,  SoWwP::instance());
+
     SoDB::getSensorManager()->setChangedCallback(SoGuiP::sensorQueueChanged,
                                                  NULL);
 
@@ -124,6 +126,7 @@ SoWw::init(wxWindow* toplevelwidget) {
 
     SoWwP::instance()->setMainFrame( toplevelwidget );
     SoWwP::instance()->getWxApp()->Bind(wxEVT_IDLE, &SoWwP::onIdle,  SoWwP::instance());
+    SoWwP::instance()->getMainFrame()->Bind(wxEVT_CLOSE_WINDOW, &SoWwP::onClose,  SoWwP::instance());
     SoDB::getSensorManager()->setChangedCallback(SoGuiP::sensorQueueChanged,
                                                  NULL);
 
@@ -142,15 +145,6 @@ SoWw::init(wxWindow* toplevelwidget) {
 void
 SoWw::mainLoop(void) {
     wxTheApp->OnRun();
-
-    // To avoid getting any further invocations of
-    // SoGuiP::sensorQueueChanged() (which would re-allocate the timers
-    // we destruct below). This could for instance happen when
-    // de-coupling the scenegraph camera, triggering a notification
-    // chain through the scenegraph.
-    SoDB::getSensorManager()->setChangedCallback(NULL, NULL);
-    // turn off timers
-    SoWwP::instance()->finish();
 
     // only if app is built by SoWw perform exit and cleanup
     if(SoWwP::instance()->getWxApp()) {
