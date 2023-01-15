@@ -164,55 +164,56 @@ SoWwP::sensorQueueChanged(void) {
     SoWwP::initTimers();
 
     SoSensorManager * sm = SoDB::getSensorManager();
+    if (SoWwP::timerqueuetimer) {
+        // Set up timer queue timeout if necessary.
+        SbTime t;
+        if (sm->isTimerSensorPending(t)) {
+            SbTime interval = t - SbTime::getTimeOfDay();
 
-    // Set up timer queue timeout if necessary.
+            // We also want to avoid setting it to 0.0, as that has a special
+            // semantic meaning: trigger only when the application is idle and
+            // event queue is empty -- which is not what we want to do here.
+            //
+            // So we clamp it, to a small positive value:
+            if (interval.getValue() <= 0.0) { interval.setValue(1.0 / 5000.0); }
 
-    SbTime t;
-    if (sm->isTimerSensorPending(t)) {
-        SbTime interval = t - SbTime::getTimeOfDay();
+            if (SOWW_DEBUG && 0) { // debug
+                SoDebugError::postInfo("SoWwP::sensorQueueChanged",
+                    "timersensor pending, interval %f",
+                    interval.getValue());
+            }
 
-        // We also want to avoid setting it to 0.0, as that has a special
-        // semantic meaning: trigger only when the application is idle and
-        // event queue is empty -- which is not what we want to do here.
-        //
-        // So we clamp it, to a small positive value:
-        if (interval.getValue() <= 0.0) { interval.setValue(1.0/5000.0); }
-
-        if (SOWW_DEBUG && 0) { // debug
-            SoDebugError::postInfo("SoWwP::sensorQueueChanged",
-                                   "timersensor pending, interval %f",
-                                   interval.getValue());
+            // Change interval of timerqueuetimer when head node of the
+            // timer-sensor queue of SoSensorManager changes.
+            SoWwP::timerqueuetimer->Start((int)interval.getMsecValue(), true);
         }
-
-        // Change interval of timerqueuetimer when head node of the
-        // timer-sensor queue of SoSensorManager changes.
-        SoWwP::timerqueuetimer->Start((int)interval.getMsecValue(), true);
-    }
         // Stop timerqueuetimer if queue is completely empty.
-    else if (SoWwP::timerqueuetimer->IsRunning()) {
-        SoWwP::timerqueuetimer->Stop();
+        else if (SoWwP::timerqueuetimer->IsRunning()) {
+            SoWwP::timerqueuetimer->Stop();
+        }
     }
 
 
     // Set up idle notification for delay queue processing if necessary.
+    if (SoWwP::delaytimeouttimer) {
+        if (sm->isDelaySensorPending()) {
+            if (SOWW_DEBUG && 0) { // debug
+                SoDebugError::postInfo("SoWwP::sensorQueueChanged",
+                    "delaysensor pending");
+            }
 
-    if (sm->isDelaySensorPending()) {
-        if (SOWW_DEBUG && 0) { // debug
-            SoDebugError::postInfo("SoWwP::sensorQueueChanged",
-                                   "delaysensor pending");
-        }
-
-        if (!SoWwP::delaytimeouttimer->IsRunning()) {
-            const SbTime & delaySensorTimeout = SoDB::getDelaySensorTimeout();
-            if (delaySensorTimeout != SbTime::zero()) {
-                unsigned long timeout = delaySensorTimeout.getMsecValue();
-                SoWwP::delaytimeouttimer->Start((int)timeout, true);
+            if (!SoWwP::delaytimeouttimer->IsRunning()) {
+                const SbTime& delaySensorTimeout = SoDB::getDelaySensorTimeout();
+                if (delaySensorTimeout != SbTime::zero()) {
+                    unsigned long timeout = delaySensorTimeout.getMsecValue();
+                    SoWwP::delaytimeouttimer->Start((int)timeout, true);
+                }
             }
         }
-    }
-    else {
-        if (SoWwP::delaytimeouttimer->IsRunning())
-            SoWwP::delaytimeouttimer->Stop();
+        else {
+            if (SoWwP::delaytimeouttimer->IsRunning())
+                SoWwP::delaytimeouttimer->Stop();
+        }
     }
 }
 
@@ -266,7 +267,9 @@ SoWwP::initTimers() {
 void
 SoWwP::stopTimers() {
     STOP_TIMER(SoWwP::timerqueuetimer);
+    wxDELETE(SoWwP::timerqueuetimer);
     STOP_TIMER(SoWwP::delaytimeouttimer);
+    wxDELETE(SoWwP::delaytimeouttimer);
 }
 
 #undef STOP_TIMER
@@ -376,14 +379,15 @@ SoWwP::onIdle(wxIdleEvent& WXUNUSED(event)) {
 void
 SoWwP::onClose(wxCloseEvent& event) {
     std::cerr<<"ADASDADASDASD ACLESO"<<std::endl;
+    // turn off timers
+    SoWwP::instance()->finish();
+
     // To avoid getting any further invocations of
     // SoGuiP::sensorQueueChanged() (which would re-allocate the timers
     // we destruct below). This could for instance happen when
     // de-coupling the scenegraph camera, triggering a notification
     // chain through the scenegraph.
     SoDB::getSensorManager()->setChangedCallback(NULL, NULL);
-    // turn off timers
-    SoWwP::instance()->finish();
 
     event.Skip(); // perform destroy
 }

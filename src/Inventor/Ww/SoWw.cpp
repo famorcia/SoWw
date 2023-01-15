@@ -146,6 +146,9 @@ void
 SoWw::mainLoop(void) {
     wxTheApp->OnRun();
 
+    SoWwP::instance()->getWxApp()->Unbind(wxEVT_IDLE, &SoWwP::onIdle, SoWwP::instance());
+    SoWwP::instance()->finish();
+
     // only if app is built by SoWw perform exit and cleanup
     if(SoWwP::instance()->getWxApp()) {
         wxTheApp->OnExit();
