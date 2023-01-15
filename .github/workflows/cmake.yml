@@ -42,7 +42,7 @@ jobs:
       run: tar zxvf coin-4.0.0-src.tar.gz
       
     - name: Compile Coin
-      run: mkdir build_me && cd build_me && . ../coin/configure && sudo make install
+      run: sh ./coin/configure && sudo make install
 
 #      run: sudo apt-get install coin
 
