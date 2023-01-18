@@ -29,71 +29,29 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
-#ifndef SOWW_SOWWGLWIDGETP_H
-#define SOWW_SOWWGLWIDGETP_H
 
-#include "Inventor/Ww/SoGuiGLWidgetP.h"
-#include "Inventor/Ww/SoWwGLWidget.h"
+#ifndef SOWW_SOWWKEYBOARDP_H
+#define SOWW_SOWWKEYBOARDP_H
 
-#include <Inventor/SbVec2s.h>
+#ifndef SOWW_INTERNAL
+#error this is a private header file
+#endif /* !SOWW_INTERNAL */
 
-#include <wx/glcanvas.h>
-#include <wx/wx.h>
-#include <wx/timer.h>
+#include "Inventor/Ww/devices/SoGuiKeyboardP.h"
+#include <Inventor/events/SoKeyboardEvent.h>
+#include <wx/event.h>
 
-#include <set>
-
-class SoWwGLArea;
-
-class SoWwGLWidgetP :  public SoGuiGLWidgetP
-{
+class SoWwKeyboardP : public SoGuiKeyboardP {
 public:
+    struct key1map {
+        wxKeyCode from;                // Wx val
+        SoKeyboardEvent::Key to; // So val
+        char printable;
+    };
 
-    explicit SoWwGLWidgetP(SoWwGLWidget * publ);
-
-    virtual ~SoWwGLWidgetP();
-
-    void initGLModes(int);
-
-    std::vector<int> gl_attributes;
-    SoWwGLArea* buildGLWidget();
-
-    SbVec2s glSize;
-    SbVec2s glSizeUnscaled;
-    SbBool wasresized;
-
-    wxWindow * currentglwidget;
-    wxWindow * previousglwidget;
-    SoWwGLArea * currentglarea;
-    SoWwGLArea * previousglarea;
-    wxWindow * glparent;
-
-    int borderthickness;
-
-    const wxGLContext * oldcontext;
-    wxGLAttributes glformat;
-
-    void gl_init(wxCommandEvent&);
-    void gl_reshape(wxSizeEvent&);
-    void gl_exposed(wxCommandEvent&);
-    void onMouse(wxMouseEvent&);
-    void onKey(wxKeyEvent&);
-
-    static bool isAPanel(wxWindow*);
-    void addSizer();
-
-    bool hasZBuffer() const;
-    bool hasOverlay() const;
-
-    // Required by the common code
-    static void eventHandler(wxWindow*, void*, wxEvent&, bool*);
-
-protected:
-    virtual SbBool isDirectRendering(void);
-
-    const wxGLContext *getOverlayContext(void);
-    const wxGLContext *getNormalContext(void);
+    static struct key1map wxToSoMapping[];
+    static SbDict * translatetable;
+    static void make_translation_table(void);
 };
 
-
-#endif //SOWW_SOWWGLWIDGETP_H
+#endif //SOWW_SOWWKEYBOARDP_H

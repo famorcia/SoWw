@@ -131,8 +131,14 @@ SoWwGLWidget::getGLAspectRatio(void) const{
 
 SbBool
 SoWwGLWidget::isRGBMode(void){
-    SOWW_STUB();
-    return (TRUE);
+    const bool rgb_mode = SoWwGLArea::isGLFeatureAvailable(PRIVATE(this)->gl_attributes,
+                                                                WX_GL_RGBA);
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("SoWwGLWidget::isRGBMode",
+                           ": %d",
+                           rgb_mode);
+#endif
+    return (rgb_mode);
 }
 
 void
@@ -184,8 +190,14 @@ SoWwGLWidget::setDoubleBuffer(const SbBool enable){
 
 SbBool
 SoWwGLWidget::isDoubleBuffer(void) const{
-    SbBool res = PRIVATE(this)->currentglarea->isDoubleBuffer();
-    return (res);
+    const bool double_buffer = SoWwGLArea::isGLFeatureAvailable(PRIVATE(this)->gl_attributes,
+                                                                WX_GL_DOUBLEBUFFER);
+#if SOWW_DEBUG && 0
+    SoDebugError::postInfo("SoWwGLWidget::isDoubleBuffer",
+                           ": %d",
+                           double_buffer);
+#endif
+    return (double_buffer);
 }
 
 void
@@ -289,7 +301,7 @@ SoWwGLWidget::getOverlayTransparentPixel(void){
 }
 
 void
-SoWwGLWidget::processEvent(wxEvent& event){
+SoWwGLWidget::processEvent(wxEvent& WXUNUSED(event)){
     // Nothing is done here for the SoWwGLWidget, as realize, resize and
     // expose events are caught by explicitly attaching signal callbacks
     // to the widget.

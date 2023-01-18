@@ -53,6 +53,8 @@
 
 SOWW_OBJECT_ABSTRACT_SOURCE(SoWwFullViewer);
 
+const int XPM_BUTTON_SIZE = 24;
+
 SoWwFullViewer::SoWwFullViewer(wxWindow* parent,
                                const char * name,
                                SbBool embed,
@@ -380,8 +382,8 @@ SoWwFullViewer::buildRightTrim(wxWindow* parent) {
 #if SOWW_DEBUG && 0
     p->SetBackgroundColour(wxColour(255,0,0));
 #endif
-    p->SetMinSize(wxSize(36,100));
-    p->SetMaxSize(wxSize(36,-1));
+    p->SetMinSize(wxSize(XPM_BUTTON_SIZE+12, 100));
+    p->SetMaxSize(wxSize(XPM_BUTTON_SIZE+12, -1));
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     SoWwThumbWheel * t = new SoWwThumbWheel(SoWwThumbWheel::Vertical, p);
     t->SetName("right thumb wheel");
@@ -479,7 +481,8 @@ SoWwFullViewer::createViewerButtons(wxWindow* parent,
                 break;
         }
 
-        // p->SetWindowStyle( wxBU_EXACTFIT);
+        p->SetWindowStyle( wxBU_EXACTFIT | wxBU_NOTEXT);
+        p->SetSize(XPM_BUTTON_SIZE, XPM_BUTTON_SIZE);
         buttonlist->append(p);
     }
 }

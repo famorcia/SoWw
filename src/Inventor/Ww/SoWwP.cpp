@@ -53,7 +53,10 @@ public:
 
     virtual void
     CleanUp() wxOVERRIDE {
-        std::cerr<<"CleanUp: ADASDADASDASD ACLESO"<<std::endl;
+#if SOWW_DEBUG
+        SoDebugError::postInfo("SoWxApp::CleanUp",
+                               "done!");
+#endif
     }
 };
 
@@ -378,7 +381,11 @@ SoWwP::onIdle(wxIdleEvent& WXUNUSED(event)) {
 
 void
 SoWwP::onClose(wxCloseEvent& event) {
-    std::cerr<<"ADASDADASDASD ACLESO"<<std::endl;
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwP::onClose",
+                           "clean up in progress!");
+#endif
+
     // turn off timers
     SoWwP::instance()->finish();
 

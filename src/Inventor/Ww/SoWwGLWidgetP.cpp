@@ -89,7 +89,7 @@ SoWwGLWidgetP::gl_reshape(wxSizeEvent& event) {
 void
 SoWwGLWidgetP::gl_exposed(wxCommandEvent&) {
 #if SOWW_DEBUG
-        SoDebugError::postInfo("SoWwGLWidgetP::gl_exposed", "%f", SbTime::getTimeOfDay().getValue());
+    SoDebugError::postInfo("SoWwGLWidgetP::gl_exposed", "%f", SbTime::getTimeOfDay().getValue());
 #endif
 
     if (PUBLIC(this)->waitForExpose) {
@@ -303,14 +303,12 @@ SoWwGLWidgetP::buildGLWidget(void) {
     try {
 #if SOWW_DEBUG
         SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
-                // TODO "%s, %s, %s, %s, %s",
-                               "%s, %s, %s",
+                "%s, %s, %s, %s, %s",
                                PUBLIC(this)->isDoubleBuffer() ? "double" : "single",
-                // TODO: this->glformat->depth() ? "z-buffer" : "no z-buffer",
+                               this->hasZBuffer() ? "z-buffer" : "no z-buffer",
                                PUBLIC(this)->isRGBMode() ? "RGBA" : "colorindex",
-                               PUBLIC(this)->isQuadBufferStereo() ? "stereo" : "mono"
-                // TODO: ,QGLFormat_hasOverlay(this->glformat) ? "overlay" : "no overlay"
-        );
+                               PUBLIC(this)->isQuadBufferStereo() ? "stereo" : "mono",
+                               this->hasOverlay() ? "overlay" : "no overlay");
 #endif
 
         wxWindow *wascurrent = this->currentglwidget;
@@ -342,17 +340,17 @@ SoWwGLWidgetP::buildGLWidget(void) {
             this->currentglwidget = wasprevious;
             this->currentglarea = waspreviousarea;
             SoAny::si()->registerGLContext((void *) PUBLIC(this), display, screen);
-            if (SOWW_DEBUG) { // debug
+#if SOWW_DEBUG
                 SoDebugError::postInfo("SoWwGLWidgetP::buildGLWidget",
                                        "reused previously used GL widget");
-            }
+#endif
         } else {
             if (this->currentglwidget)
                 SoAny::si()->unregisterGLContext((void *) PUBLIC(this));
 
             this->currentglarea = new SoWwGLArea(
                     glparent, //sharewidget ? (wxWindow*) sharewidget->getGLWidget() : NULL,
-                    glAttributes);
+                    gl_attributes);
 
             // a wxPanel need a sizer, look at: https://forums.wxwidgets.org/viewtopic.php?t=44252
             if( SoWwGLWidgetP::isAPanel(glparent)) {
@@ -435,19 +433,17 @@ SoWwGLWidgetP::buildGLWidget(void) {
             // rebuild, the call below doesn't do any harm, as the glwidget
             // still won't become visible until all parents are visible.)
             this->currentglwidget->Show();
-            // TODO: this->currentglwidget->raise();
         }
     }
     catch (std::exception& e) {
         SoDebugError::postWarning("SoWwGLWidgetP::buildGLWidget",
-                               "exception: %s",
-                               e.what());
+                                  "exception: %s",
+                                  e.what());
     }
     catch(...) {
         SoDebugError::postWarning("SoWwGLWidgetP::buildGLWidget",
-                               "unknown exception");
+                                  "unknown exception");
     }
-    // TODO: this->currentglwidget->setFocus();
     return (this->currentglarea);
 }
 
@@ -477,28 +473,25 @@ SoWwGLWidgetP::isDirectRendering(void) {
 
 void SoWwGLWidgetP::initGLModes(int glmodes) {
 
-    glAttributes.PlatformDefaults();
+    gl_attributes.clear();
     if(glmodes & SO_GL_DOUBLE) {
-        glAttributes.DoubleBuffer();
-        supported_gl_modes.insert(WX_GL_DOUBLEBUFFER);
+        gl_attributes.push_back(WX_GL_DOUBLEBUFFER);
     }
     if(glmodes & SO_GL_ZBUFFER) {
         // 24 bit seems to be ok also on Windows
-        glAttributes.Depth(24);
-        supported_gl_modes.insert(WX_GL_DEPTH_SIZE);
+        gl_attributes.push_back(WX_GL_DEPTH_SIZE);
+        gl_attributes.push_back(24);
     }
     if(glmodes & SO_GL_RGB) {
-        glAttributes.RGBA();
-        supported_gl_modes.insert(WX_GL_RGBA);
+        gl_attributes.push_back(WX_GL_RGBA);
     }
     if(glmodes & SO_GL_STEREO) {
-        glAttributes.Stereo();
-        supported_gl_modes.insert(WX_GL_STEREO);
+        gl_attributes.push_back(WX_GL_STEREO);
     }
-    glAttributes.EndList();
+    gl_attributes.push_back(0);
 
     /*
-    if(!SoWwGLArea::IsDisplaySupported(glAttributes)) {
+    if(!SoWwGLArea::IsDisplaySupported(&gl_attributes[0])) {
         SoDebugError::postInfo("SoWwGLWidget::SoWwGLWidget",
                                "required GL modes are not supported!");
     }
@@ -508,7 +501,8 @@ void SoWwGLWidgetP::initGLModes(int glmodes) {
 void
 SoWwGLWidgetP::eventHandler(wxWindow * /*widget*/ , void *closure, wxEvent &event, bool *) {
 #if SOWW_DEBUG
-    SoDebugError::postInfo("SoWwGLWidgetP::eventHandler","");
+    SoDebugError::postInfo("SoWwGLWidgetP::eventHandler",
+                           "");
 #endif
     assert(closure != NULL);
     SoWwGLWidget * component = ((SoWwGLWidgetP *) closure)->pub;
@@ -518,15 +512,17 @@ SoWwGLWidgetP::eventHandler(wxWindow * /*widget*/ , void *closure, wxEvent &even
 void
 SoWwGLWidgetP::onMouse(wxMouseEvent &event) {
 #if SOWW_DEBUG && 0
-    SoDebugError::postInfo("SoWwGLWidgetP::onMouse","");
+    SoDebugError::postInfo("SoWwGLWidgetP::onMouse",
+                           "mouse event");
 #endif
     PUBLIC(this)->processEvent(event);
 }
 
 void
 SoWwGLWidgetP::onKey(wxKeyEvent &event) {
-#if SOWW_DEBUG && 0
-    SoDebugError::postInfo("SoWwGLWidgetP::onKey","");
+#if SOWW_DEBUG
+    SoDebugError::postInfo("SoWwGLWidgetP::onKey",
+                           "key event");
 #endif
     PUBLIC(this)->processEvent(event);
 }
@@ -541,7 +537,7 @@ SoWwGLWidgetP::addSizer() {
 
     if(glparent->GetSizer()) {
         SoDebugError::postWarning("SoWwGLWidgetP::addSizer",
-                                "panel holds a sizer, the old one will be removed");
+                                  "panel holds a sizer, the old one will be removed");
     }
 
     wxFlexGridSizer* sizer = new wxFlexGridSizer(0);
@@ -550,6 +546,17 @@ SoWwGLWidgetP::addSizer() {
     glparent->SetSizer(sizer);
     sizer->Add(this->currentglarea, 0, wxEXPAND | wxALL, 0);
     sizer->Layout();
+}
+
+bool SoWwGLWidgetP::hasZBuffer() const {
+    const bool z_buffer = SoWwGLArea::isGLFeatureAvailable(gl_attributes,
+                                                           WX_GL_DEPTH_SIZE);
+    return (z_buffer);
+}
+
+bool SoWwGLWidgetP::hasOverlay() const {
+    SOWW_STUB();
+    return (false);
 }
 
 #undef PRIVATE

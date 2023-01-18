@@ -95,6 +95,7 @@ option(HAVE_SPACENAV_SUPPORT "Enable Space Navigator support" ON)
 option(SO${GUI}_USE_CPACK "If enabled the cpack subrepo is mandatory" OFF)
 option(SO${GUI}_BUILD_DOCUMENTATION "Build and install API documentation (requires Doxygen)." OFF)
 option(SO${GUI}_BUILD_TESTS "Build small test programs." ON)
+
 cmake_dependent_option(SO${GUI}_BUILD_INTERNAL_DOCUMENTATION "Document internal code not part of the API." OFF "SO${GUI}_BUILD_DOCUMENTATION" OFF)
 cmake_dependent_option(SO${GUI}_BUILD_DOC_MAN "Build So${Gui} man pages." OFF "SO${GUI}_BUILD_DOCUMENTATION" OFF)
 cmake_dependent_option(SO${GUI}_BUILD_DOC_QTHELP "Build QtHelp documentation." OFF "SO${GUI}_BUILD_DOCUMENTATION" OFF)
@@ -419,6 +420,7 @@ add_subdirectory(src)
 ##### small test programs (to be run interactively)
 if (SO${GUI}_BUILD_TESTS)
   add_subdirectory(test-code)
+  add_subdirectory(testsuite)
 endif()
 
 ############################################################################
@@ -426,3 +428,5 @@ endif()
 if (SO${GUI}_USE_CPACK)
   add_subdirectory(cpack.d)
 endif()
+
+

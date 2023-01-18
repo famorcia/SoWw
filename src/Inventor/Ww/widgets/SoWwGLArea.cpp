@@ -51,28 +51,19 @@ wxDEFINE_EVENT(SO_WW_GL_DRAW, wxCommandEvent);
 
 
 SoWwGLArea::SoWwGLArea(wxWindow *parent,
-                       wxGLAttributes& attributes)
-
-#ifdef __WXQT__
-: wxGLCanvas(parent,
-                     wxID_ANY,
-                     0,
-                     wxDefaultPosition,
-                     parent->GetClientSize())
-#else
+                       const std::vector<int>& attributes)
         : wxGLCanvas(parent,
-                     attributes,
                      wxID_ANY,
+                     &attributes[0],
                      wxDefaultPosition,
-                     parent->GetClientSize())
-#endif
-{
+                     parent->GetClientSize()) {
     this->SetName("SoWwGLArea");
 
     gl_real_context = new wxGLContext(this);
     is_gl_initialized = false;
-    gl_attributes = attributes;
+    gl_format = attributes;
 }
+
 
 SoWwGLArea::~SoWwGLArea() {
     delete gl_real_context;
@@ -123,22 +114,58 @@ void SoWwGLArea::makeCurrent() {
         SetCurrent(*gl_real_context);
 }
 
-const wxGLContext *SoWwGLArea::context() {
+const wxGLContext *
+SoWwGLArea::context() {
     return gl_real_context;
 }
 
-// TODO: should be used glattributes, otherwise is not related to current glArea attributes
 bool
-SoWwGLArea::isDoubleBuffer() const {
-    SOWW_STUB();
-    return (true);
+isBoolean(int value) {
+    bool res = false;
+    switch(value ) {
+        case WX_GL_RGBA:
+        case WX_GL_DOUBLEBUFFER:
+        case WX_GL_STEREO:
+            res = true;
+            break;
+        default:
+            break;
+    }
+    return (res);
 }
 
 bool
-SoWwGLArea::isStereo() const {
-    SOWW_STUB();
-    return (false);
+SoWwGLArea::isGLFeatureAvailable(const SoWwGLArea::GLFormat& format,
+                                 int feature) {
+    bool res = false;
+
+    if(format.empty())
+        return (res);
+    if(format[0] == 0)
+        return (res);
+
+    assert(format.size()>1);
+
+    for ( int arg = 0; format[arg] != 0; arg++ ) {
+
+        // get the value for parameters that have a value or 0 for the last one
+        int v = format[arg + 1];
+
+        if (format[arg] == feature) {
+            res = true;
+            break;
+        } else if (!isBoolean(format[arg])) {
+            ++arg;
+        } else {
+            if (!v) {
+                res = false;
+                break;
+            }
+        }
+    }
+    return (res);
 }
+
 
 
 bool ConvertWXAttrsWwGLFormat(const int *wxattrs,
@@ -146,14 +173,6 @@ bool ConvertWXAttrsWwGLFormat(const int *wxattrs,
 {
     if (!wxattrs)
         return true;
-
-    // set default parameters to false
-    /* if missing are not presents
-    format[WX_GL_DOUBLEBUFFER] = -1;
-    format[WX_GL_DEPTH_SIZE] = -1;
-    format[WX_GL_MIN_ALPHA] = -1;
-    format[WX_GL_STENCIL_SIZE] = -1;
-     */
 
     for ( int arg = 0; wxattrs[arg] != 0; arg++ )
     {
@@ -165,13 +184,14 @@ bool ConvertWXAttrsWwGLFormat(const int *wxattrs,
         {
             case WX_GL_BUFFER_SIZE:
                 //format.setRgba(false);
-                format[WX_GL_BUFFER_SIZE] = 1;
+                format.push_back(WX_GL_BUFFER_SIZE);
                 // I do not know how to set the buffer size, so fail
                 return false;
 
             case WX_GL_LEVEL:
                 // format.setPlane(v);
-                format[WX_GL_LEVEL] = v;
+                format.push_back(WX_GL_LEVEL);
+                format.push_back(v);
                 break;
 
             case WX_GL_RGBA:

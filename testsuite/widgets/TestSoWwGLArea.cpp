@@ -29,71 +29,47 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
-#ifndef SOWW_SOWWGLWIDGETP_H
-#define SOWW_SOWWGLWIDGETP_H
 
-#include "Inventor/Ww/SoGuiGLWidgetP.h"
-#include "Inventor/Ww/SoWwGLWidget.h"
+#define BOOST_TEST_NO_LIB 1
+#include <boost/test/unit_test.hpp>
+#include "Inventor/Ww/widgets/SoWwGLArea.h"
 
-#include <Inventor/SbVec2s.h>
+BOOST_AUTO_TEST_SUITE(TestSoWwGLArea);
 
-#include <wx/glcanvas.h>
-#include <wx/wx.h>
-#include <wx/timer.h>
+BOOST_AUTO_TEST_CASE(shouldFailIf_isGLFeatureAvailable_Empty) {
+    SoWwGLArea::GLFormat format;
+    BOOST_CHECK(!SoWwGLArea::isGLFeatureAvailable(format,
+                                                  WX_GL_DOUBLEBUFFER));
+    format.push_back(0);
+    BOOST_CHECK(!SoWwGLArea::isGLFeatureAvailable(format,
+                                                  WX_GL_DOUBLEBUFFER));
+}
 
-#include <set>
+BOOST_AUTO_TEST_CASE(isGLFeatureAvailable) {
+    SoWwGLArea::GLFormat format;
+    format.push_back(WX_GL_DOUBLEBUFFER);
+    format.push_back(0);
+    BOOST_CHECK(SoWwGLArea::isGLFeatureAvailable(format,
+                                     WX_GL_DOUBLEBUFFER));
 
-class SoWwGLArea;
+    BOOST_CHECK(!SoWwGLArea::isGLFeatureAvailable(format,
+                                                WX_GL_STEREO));
+}
 
-class SoWwGLWidgetP :  public SoGuiGLWidgetP
-{
-public:
+BOOST_AUTO_TEST_CASE(shouldFindFormatWithParameter) {
+    SoWwGLArea::GLFormat format;
+    format.push_back(WX_GL_DOUBLEBUFFER);
+    format.push_back(WX_GL_BUFFER_SIZE);
+    // Wrong I'm adding GL_STEREO as parameter for format BUFFER_SIZE
+    // this is just for checking that does not confuse format with parameters
+    format.push_back(WX_GL_STEREO);
+    format.push_back(0);
+    BOOST_CHECK(!SoWwGLArea::isGLFeatureAvailable(format,
+                                                  WX_GL_STEREO));
+    BOOST_CHECK(SoWwGLArea::isGLFeatureAvailable(format,
+                                                  WX_GL_DOUBLEBUFFER));
+    BOOST_CHECK(SoWwGLArea::isGLFeatureAvailable(format,
+                                                  WX_GL_BUFFER_SIZE));
+}
 
-    explicit SoWwGLWidgetP(SoWwGLWidget * publ);
-
-    virtual ~SoWwGLWidgetP();
-
-    void initGLModes(int);
-
-    std::vector<int> gl_attributes;
-    SoWwGLArea* buildGLWidget();
-
-    SbVec2s glSize;
-    SbVec2s glSizeUnscaled;
-    SbBool wasresized;
-
-    wxWindow * currentglwidget;
-    wxWindow * previousglwidget;
-    SoWwGLArea * currentglarea;
-    SoWwGLArea * previousglarea;
-    wxWindow * glparent;
-
-    int borderthickness;
-
-    const wxGLContext * oldcontext;
-    wxGLAttributes glformat;
-
-    void gl_init(wxCommandEvent&);
-    void gl_reshape(wxSizeEvent&);
-    void gl_exposed(wxCommandEvent&);
-    void onMouse(wxMouseEvent&);
-    void onKey(wxKeyEvent&);
-
-    static bool isAPanel(wxWindow*);
-    void addSizer();
-
-    bool hasZBuffer() const;
-    bool hasOverlay() const;
-
-    // Required by the common code
-    static void eventHandler(wxWindow*, void*, wxEvent&, bool*);
-
-protected:
-    virtual SbBool isDirectRendering(void);
-
-    const wxGLContext *getOverlayContext(void);
-    const wxGLContext *getNormalContext(void);
-};
-
-
-#endif //SOWW_SOWWGLWIDGETP_H
+BOOST_AUTO_TEST_SUITE_END();

@@ -76,9 +76,10 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
 
     wxMouseEvent* mouse_event = dynamic_cast<wxMouseEvent*>(&event);
     if(!mouse_event) {
+#if SOWW_DEBUG && 0
         SoDebugError::postWarning("SoWwMouse::translateEvent",
-                               "is not a mouse event!");
-
+                                  "is not a mouse event!");
+#endif
         return (conv);
     }
 
@@ -110,7 +111,7 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
          (mouse_event->ButtonUp())) &&
         (PRIVATE(this)->eventmask & (BUTTON_PRESS | BUTTON_RELEASE))) {
 
-// Which button?
+        // Which button?
         switch (mouse_event->GetButton()) {
             case wxMOUSE_BTN_LEFT:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON1);
@@ -121,14 +122,14 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
             case wxMOUSE_BTN_MIDDLE:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::BUTTON3);
                 break;
-// Not sure if this can actually happen.
+            // Not sure if this can actually happen.
             case wxMOUSE_BTN_ANY:
             default:
                 PRIVATE(this)->buttonevent->setButton(SoMouseButtonEvent::ANY);
                 break;
         }
 
-// Press or release?
+        // Press or release?
         if (mouse_event->ButtonUp())
             PRIVATE(this)->buttonevent->setState(SoButtonEvent::UP);
         else
@@ -137,12 +138,12 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
         conv = PRIVATE(this)->buttonevent;
     }
 
-// Check for mouse movement.
+    // Check for mouse movement.
     if (mouse_event->Dragging() || mouse_event->Moving()) {
         conv = PRIVATE(this)->locationevent;
     }
 
-// Common settings for SoEvent superclass.
+    // Common settings for SoEvent superclass.
     if (conv) {
         conv->setShiftDown(mouse_event->ShiftDown());
         conv->setCtrlDown(mouse_event->ControlDown());
@@ -152,5 +153,6 @@ const SoEvent * SoWwMouse::translateEvent(wxEvent& event) {
                                mouse_event->GetY());
         conv->setTime(SbTime::getTimeOfDay());
     }
-    return conv;
+
+    return (conv);
 }

@@ -36,17 +36,18 @@
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 #include <wx/timer.h>
-#include <map>
+#include <vector>
 
 class SoWwGLWidgetP;
 
 class SoWwGLArea : public wxGLCanvas
 {
 public:
-    typedef std::map<long, int> GLFormat;
+
+    typedef std::vector<int> GLFormat;
 
     SoWwGLArea(wxWindow *parent,
-               wxGLAttributes&);
+               const GLFormat& );
 
     virtual ~SoWwGLArea();
 
@@ -54,8 +55,8 @@ public:
 
     void makeCurrent();
 
-    bool isDoubleBuffer() const;
-    bool isStereo() const;
+    static bool isGLFeatureAvailable(const GLFormat& ,
+                                     int feature);
 
 protected:
     void OnPaint(wxPaintEvent& event);
@@ -66,7 +67,8 @@ private:
 
     bool is_gl_initialized;
     wxGLContext* gl_real_context;
-    wxGLAttributes  gl_attributes;
+    GLFormat gl_format;
+    //wxGLAttributes  gl_attributes;
 
 wxDECLARE_NO_COPY_CLASS(SoWwGLArea);
 wxDECLARE_EVENT_TABLE();

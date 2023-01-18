@@ -59,6 +59,7 @@ set(SRCS
   Inventor/${Gui}/devices/So${Gui}Device.cpp
   Inventor/${Gui}/devices/So${Gui}InputFocus.cpp
   Inventor/${Gui}/devices/So${Gui}Keyboard.cpp
+  Inventor/${Gui}/devices/So${Gui}KeyboardP.cpp # added
   Inventor/${Gui}/devices/So${Gui}Mouse.cpp
   Inventor/${Gui}/devices/So${Gui}SpacenavDevice.cpp
   Inventor/${Gui}/viewers/ExaminerViewer.cpp

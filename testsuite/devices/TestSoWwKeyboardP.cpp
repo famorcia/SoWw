@@ -29,71 +29,25 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
-#ifndef SOWW_SOWWGLWIDGETP_H
-#define SOWW_SOWWGLWIDGETP_H
 
-#include "Inventor/Ww/SoGuiGLWidgetP.h"
-#include "Inventor/Ww/SoWwGLWidget.h"
+#define BOOST_TEST_NO_LIB 1
+#include <boost/test/unit_test.hpp>
+#include "Inventor/Ww/devices/SoWwKeyboardP.h"
 
-#include <Inventor/SbVec2s.h>
+BOOST_AUTO_TEST_SUITE(TestSoWwKeyboardP);
 
-#include <wx/glcanvas.h>
-#include <wx/wx.h>
-#include <wx/timer.h>
+static int counter = 0;
+void myData(SbDictKeyType key, void * value) {
+    ++counter ;
+    // std::clog<<"code::"<<(wxKeyCode)(key)<<std::endl;
+}
 
-#include <set>
+BOOST_AUTO_TEST_CASE(keyMapTest) {
+    BOOST_CHECK_EQUAL(0,counter);
+    SoWwKeyboardP::make_translation_table();
+    SoWwKeyboardP::translatetable->applyToAll(myData);
+    BOOST_CHECK(counter>0);
 
-class SoWwGLArea;
+}
 
-class SoWwGLWidgetP :  public SoGuiGLWidgetP
-{
-public:
-
-    explicit SoWwGLWidgetP(SoWwGLWidget * publ);
-
-    virtual ~SoWwGLWidgetP();
-
-    void initGLModes(int);
-
-    std::vector<int> gl_attributes;
-    SoWwGLArea* buildGLWidget();
-
-    SbVec2s glSize;
-    SbVec2s glSizeUnscaled;
-    SbBool wasresized;
-
-    wxWindow * currentglwidget;
-    wxWindow * previousglwidget;
-    SoWwGLArea * currentglarea;
-    SoWwGLArea * previousglarea;
-    wxWindow * glparent;
-
-    int borderthickness;
-
-    const wxGLContext * oldcontext;
-    wxGLAttributes glformat;
-
-    void gl_init(wxCommandEvent&);
-    void gl_reshape(wxSizeEvent&);
-    void gl_exposed(wxCommandEvent&);
-    void onMouse(wxMouseEvent&);
-    void onKey(wxKeyEvent&);
-
-    static bool isAPanel(wxWindow*);
-    void addSizer();
-
-    bool hasZBuffer() const;
-    bool hasOverlay() const;
-
-    // Required by the common code
-    static void eventHandler(wxWindow*, void*, wxEvent&, bool*);
-
-protected:
-    virtual SbBool isDirectRendering(void);
-
-    const wxGLContext *getOverlayContext(void);
-    const wxGLContext *getNormalContext(void);
-};
-
-
-#endif //SOWW_SOWWGLWIDGETP_H
+BOOST_AUTO_TEST_SUITE_END();

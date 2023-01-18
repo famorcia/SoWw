@@ -29,9 +29,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
-#include "Inventor/Ww/devices/SoWwKeyboard.h"
-#include "Inventor/Ww/devices/SoGuiKeyboardP.h"
 
+#include <Inventor/SbTime.h>
+#include <Inventor/events/SoKeyboardEvent.h>
+
+#include "Inventor/Ww/devices/SoWwKeyboard.h"
+#include "SoWwKeyboardP.h"
 #include "sowwdefs.h"
 
 #define PRIVATE(p) (p->pimpl)
@@ -39,29 +42,83 @@
 
 // *************************************************************************
 
-class SoWwKeyboardP : public SoGuiKeyboardP {
-};
 
 SoWwKeyboard::SoWwKeyboard(int eventmask ) {
     PRIVATE(this) = new SoWwKeyboardP;
+    PRIVATE(this)->eventmask = eventmask;
 }
 
 SoWwKeyboard::~SoWwKeyboard(void) {
     delete PRIVATE(this);
 }
 
-void 
+void
 SoWwKeyboard::enable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
     SOWW_STUB();
 }
 
-void 
+void
 SoWwKeyboard::disable(wxWindow* widget, SoWwEventHandler * handler, void * closure) {
     SOWW_STUB();
 }
 
-const SoEvent * 
+const SoEvent *
 SoWwKeyboard::translateEvent(wxEvent& event) {
-    SOWW_STUB();
-    return (0);
+
+    wxKeyEvent* key_event = dynamic_cast<wxKeyEvent*>(&event);
+
+    if(!key_event) {
+#ifdef SOWW_DEBUG
+        SoDebugError::postWarning("SoWwKeyboard::translateEvent",
+                                  "is not a key event!");
+#endif
+        return (0);
+    }
+
+    SbBool keypress = key_event->GetEventType() == wxEVT_KEY_DOWN;
+    SbBool keyrelease = key_event->GetEventType() == wxEVT_KEY_UP;
+
+    SbBool keyevent = keypress || keyrelease;
+
+    if (keyevent && (PRIVATE(this)->eventmask & (KEY_PRESS | KEY_RELEASE))) {
+
+        if (!SoWwKeyboardP::translatetable)
+            SoWwKeyboardP::make_translation_table();
+
+        int key = key_event->GetKeyCode();
+        // Key code / sequence unknown.
+        if (key == 0) return NULL;
+
+        // Allocate system-neutral event object once and reuse.
+        if (!PRIVATE(this)->kbdevent) PRIVATE(this)->kbdevent = new SoKeyboardEvent;
+
+        PRIVATE(this)->kbdevent->setPrintableCharacter( key );
+
+        // Translate keycode wx -> So
+        void *table;
+        if (SoWwKeyboardP::translatetable->find(key, table)) {
+            struct SoWwKeyboardP::key1map *map = (struct SoWwKeyboardP::key1map *) table;
+            PRIVATE(this)->kbdevent->setKey(map->to);
+        } else {
+            return NULL;
+        }
+
+        // Press or release?
+        if (keyrelease) PRIVATE(this)->kbdevent->setState(SoButtonEvent::UP);
+        else
+            PRIVATE(this)->kbdevent->setState(SoButtonEvent::DOWN);
+
+        PRIVATE(this)->kbdevent->setShiftDown( key_event->ShiftDown());
+        PRIVATE(this)->kbdevent->setCtrlDown( key_event->ControlDown());
+        PRIVATE(this)->kbdevent->setAltDown( key_event->AltDown());
+
+        this->setEventPosition(PRIVATE(this)->kbdevent,
+                               key_event->GetX(),
+                               key_event->GetY());
+
+        PRIVATE(this)->kbdevent->setTime(SbTime::getTimeOfDay());
+        return PRIVATE(this)->kbdevent;
+    }
+
+    return (NULL);
 }
