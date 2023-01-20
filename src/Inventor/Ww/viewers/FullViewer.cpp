@@ -33,6 +33,7 @@
 #include <Inventor/Ww/viewers/SoWwFullViewer.h>
 #include "Inventor/Ww/viewers/SoWwFullViewerP.h"
 #include "Inventor/Ww/widgets/SoWwThumbWheel.h"
+#include <Inventor/Ww/widgets/SoWwPopupMenu.h>
 #include "sowwdefs.h"
 #include "Inventor/Ww/SoWwP.h"
 #include "ButtonIndexValues.h"
@@ -202,7 +203,7 @@ void SoWwFullViewer::setPopupMenuEnabled(const SbBool enable){
                               enable ? "on" : "off");
     return;
   }
-#endif // SOQT_DEBUG
+#endif
     PRIVATE(this)->menuenabled = enable;
 }
 
@@ -489,12 +490,19 @@ SoWwFullViewer::createViewerButtons(wxWindow* parent,
 
 void
 SoWwFullViewer::buildPopupMenu(void) {
-    SOWW_STUB();
+    this->prefmenu = PRIVATE(this)->setupStandardPopupMenu();
 }
 
 void
 SoWwFullViewer::openPopupMenu(const SbVec2s position) {
-    SOWW_STUB();
+    if (! this->isPopupMenuEnabled()) return;
+    if (this->prefmenu == NULL)
+        this->buildPopupMenu();
+    int x = 2 + position[0];
+    int y = 2 + this->getGLSize()[1] - position[1] - 1;
+
+    PRIVATE(this)->prepareMenu(this->prefmenu);
+    this->prefmenu->popUp(this->getGLWidget(), x, y);
 }
 
 void

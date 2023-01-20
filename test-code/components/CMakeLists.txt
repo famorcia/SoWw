@@ -1,5 +1,6 @@
 executable(coloreditor SOURCES coloreditor.cpp LIBS SoWw)
 
+executable(materialeditor  SOURCES materialeditor.cpp LIBS SoWw)
 
 executable(renderarea SOURCES renderarea.cpp LIBS SoWw)
 

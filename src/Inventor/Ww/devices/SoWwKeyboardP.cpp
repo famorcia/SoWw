@@ -61,11 +61,6 @@ struct SoWwKeyboardP::key1map SoWwKeyboardP::wxToSoMapping[] = {
 
         {WXK_SHIFT, SoKeyboardEvent::LEFT_SHIFT, '.'},
         {WXK_CONTROL, SoKeyboardEvent::LEFT_CONTROL, '.'},
-#if !(defined QT_ON_MAC && QT_VERSION >= 0x030100)
-// Since Qt/Mac 3.1.x, the "ctrl" key is mapped to Qt::MetaButton (not
-// Qt::ControlButton) => We must not handle META as ALT on Mac OS X.
-        {WXK_ALT, SoKeyboardEvent::LEFT_ALT, '.'},
-#endif
         {WXK_ALT, SoKeyboardEvent::LEFT_ALT, '.'},
         // TODO: {WXK_CapsLock, SoKeyboardEvent::CAPS_LOCK, '.'},
         {WXK_NUMLOCK, SoKeyboardEvent::NUM_LOCK, '.'},

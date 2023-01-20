@@ -44,16 +44,18 @@
 
 class SoWwP : public SoGuiP {
 
+public:
+
     bool init;
     wxWindow* main_frame;
     SoWwP();
+    bool is_a_sowwp_app;
     wxAppConsole*  main_app;
     static wxTimer *timerqueuetimer;
     static wxTimer *delaytimeouttimer;
 
     static void initTimers();
     static void stopTimers();
-public:
 
     static SoWwP* instance();
     bool isInitialized() const;

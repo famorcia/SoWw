@@ -67,16 +67,17 @@ SoWwP::SoWwP() {
     init = false;
     main_frame = 0;
     main_app = 0;
+    is_a_sowwp_app = false;
 }
 
 void
 SoWwP::buildWxApp() {
     if(!main_app) {
+        is_a_sowwp_app = true;
         setWxApp( new SoWxApp);
-    } else if (SOWW_DEBUG && 0){
+    } else if (SOWW_DEBUG){
         SoDebugError::postWarning("SoWwP::buildWxApp",
                                "wxApp already built");
-
     }
 }
 
@@ -102,14 +103,14 @@ class TimerQueueTimer : public wxTimer {
 public:
     virtual void
     Notify() {
-        if (SOWW_DEBUG && 0) { // debug
+#if SOWW_DEBUG && 0
             SoDebugError::postInfo("TimerQueueTimer::Notify",
                                    "processing timer queue");
             SoDebugError::postInfo("TimerQueueTimer::Notify",
                                    "is %s",
                                    this->IsRunning() ?
                                    "active" : "inactive");
-        }
+#endif
 
         SoDB::getSensorManager()->processTimerQueue();
 
@@ -127,13 +128,13 @@ class DelayTimeoutTimer : public wxTimer {
 public:
     virtual void
     Notify() {
-        if (SOWW_DEBUG && 0) { // debug
+#if SOWW_DEBUG && 0
             SoDebugError::postInfo("DelayTimeoutTimer::Notify",
                                    "processing delay queue");
             SoDebugError::postInfo("DelayTimeoutTimer::Notify", "is %s",
                                    this->IsRunning() ?
                                    "active" : "inactive");
-        }
+#endif
 
         SoDB::getSensorManager()->processTimerQueue();
         SoDB::getSensorManager()->processDelayQueue(false);
@@ -148,7 +149,7 @@ public:
 void
 SoWwP::sensorQueueChanged(void) {
     // We need three different mechanisms to interface Coin sensor
-    // handling with Qt event handling, which are:
+    // handling with wxWidgets event handling, which are:
     //
     // 1. Detect when the application is idle and then empty the
     // delay-queue completely for delay-sensors -- handled by
@@ -180,11 +181,11 @@ SoWwP::sensorQueueChanged(void) {
             // So we clamp it, to a small positive value:
             if (interval.getValue() <= 0.0) { interval.setValue(1.0 / 5000.0); }
 
-            if (SOWW_DEBUG && 0) { // debug
+#if SOWW_DEBUG && 0
                 SoDebugError::postInfo("SoWwP::sensorQueueChanged",
                     "timersensor pending, interval %f",
                     interval.getValue());
-            }
+#endif
 
             // Change interval of timerqueuetimer when head node of the
             // timer-sensor queue of SoSensorManager changes.
@@ -279,7 +280,19 @@ SoWwP::stopTimers() {
 
 void
 SoWwP::finish() {
+#ifdef SOWW_DEBUG
+    SoDebugError::postInfo("SoWwP::finish",
+                           "remove all internal resources");
+#endif
+    SoWwP::instance()->getWxApp()->Unbind(wxEVT_IDLE, &SoWwP::onIdle, SoWwP::instance());
+
     stopTimers();
+
+    // only if app is built by SoWw perform exit and cleanup
+    if(SoWwP::instance()->is_a_sowwp_app) {
+        wxTheApp->OnExit();
+        wxEntryCleanup();
+    }
 }
 
 std::string
@@ -387,7 +400,7 @@ SoWwP::onClose(wxCloseEvent& event) {
 #endif
 
     // turn off timers
-    SoWwP::instance()->finish();
+    SoWwP::instance()->stopTimers();
 
     // To avoid getting any further invocations of
     // SoGuiP::sensorQueueChanged() (which would re-allocate the timers

@@ -25,13 +25,13 @@ makescene(void)
 int
 main(int argc, char ** argv)
 {
-  wxWindow* w = SoWw::init(argc, argv, "SoWwColorEditor");
+  wxWindow* w = SoWw::init(argc, argv, "SoWwMaterialEditor");
   SoWwExaminerViewer * viewer = new SoWwExaminerViewer(w);
   SoSeparator * root;
   viewer->setSceneGraph(root = makescene());
   viewer->show();
 
-#if WANT_INTEGRATED
+#if 0 // WANT_INTEGRATED
   SoSeparator * editorscene = new SoSeparator;
   SoTranslation * trans = new SoTranslation;
   trans->translation.setValue(SbVec3f(2.0f, 0.0f, 0.0f));

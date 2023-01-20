@@ -162,127 +162,6 @@ static const char eventnaming[][50] = {
         "DeactivateControl"
 };
 
-#if 0
-bool
-SoWwGLWidgetP::eventFilter(QObject * obj, QEvent * e)
-{
-    if (SOWW_DEBUG) { // debug
-#if QT_VERSION >= 0x040000
-        SbString w = obj->objectName().toLatin1().constData();
-#else
-        SbString w = obj->name();
-#endif
-        SbBool istoplevel = obj == this->currentglwidget->topLevelWidget();
-
-        if (obj == this->glparent) { w = "glparent"; }
-        else if (obj == this->currentglwidget) { w = "currentglwidget"; }
-        else if (obj == this->borderwidget) { w = "borderwidget"; }
-        else if (istoplevel) { w = "top-level"; }
-
-        SoDebugError::postInfo("SoWwGLWidgetP::eventFilter",
-                               "[invoked] QEvent==%p obj==%p==\"%s\"==%s (%s) %s (typecode==%d)",
-                               e, obj, w.getString(), obj->metaObject()->className(),
-                               istoplevel ? "TOPLEVEL" : "",
-                               eventnaming[e->type()], e->type());
-    }
-
-    QEvent::Type etype = e->type();
-
-    // FIXME: Under Qt 3.0.0 we got buggy mouse event handling, since
-    // mouse events were routed to the gl widget, even if it was
-    // supposed to go somewhere else. I'm not sure if this is the
-    // correct fix though. pederb, 2001-10-16
-
-    if ((etype == QEvent::MouseButtonPress ||
-         etype == QEvent::MouseButtonRelease ||
-         etype == QEvent::MouseButtonDblClick ||
-         etype == QEvent::MouseMove) &&
-        (obj != this->currentglarea)) {
-        return false;
-    }
-
-    bool kbdevent = false;
-    if ( QEvent::KeyPress == etype ) kbdevent = true;
-    if ( QEvent::KeyRelease == etype ) kbdevent = true;
-
-    if (kbdevent) {
-        // Ignore keyboard-events, as they are caught directly by the
-        // SoWwGLArea widget and forwarded through the
-        // SoWwGLWidgetP::GLAreaKeyEvent() callback.
-        return false;
-    }
-
-    if (obj == (QObject *) this->glparent) {
-        // If this hits, the this->glparent wxFrame is a toplevelshell, so
-        // we resize the GL widget along with it.
-        if (e->type() == QEvent::Resize) {
-            QResizeEvent * r = (QResizeEvent *)e;
-            if (SOWW_DEBUG) {  // debug
-                SoDebugError::postInfo("SoWwGLWidgetP::eventFilter",
-                                       "resize parent %p: (%d, %d)",
-                                       this->glparent,
-                                       r->size().width(), r->size().height());
-            }
-
-            this->borderwidget->resize(r->size());
-//      int newwidth = r->size().width() - 2 * this->borderthickness;
-//      int newheight = r->size().height() - 2 * this->borderthickness;
-
-//      PUBLIC(this)->glwidget->setGeometry(this->borderthickness,
-//                                   this->borderthickness,
-//                                   newwidth - 1, newheight -1);
-//      QRect glarea = this->borderwidget->contentsRect();
-//      glarea =
-//      PUBLIC(this)->glwidget->setGeometry(this->borderwidget->contentsRect());
-
-/*
-      int newwidth = r->size().width();
-      int newheight = r->size().height();
-      PUBLIC(this)->sizeChanged(SbVec2s(newwidth - 1, newheight - 1));
-*/
-#if 0 // debug
-            SoDebugError::postInfo("SoWwGLWidgetP::eventFilter", "resize done");
-#endif // debug
-        }
-    }
-    else if (obj == (QObject *) this->currentglarea) {
-        // We used to return ``true'' here if the event was a
-        // QResizeEvent. The reason why we'd want to stop resize events
-        // being passed on to the native Qt handler was not commented, and
-        // I can't see why this should be necessary. Also, kyrah found out
-        // that it causes a nasty problem with Qt/Mac, so it has been
-        // removed.  <mortene@sim.no>.
-    }
-
-    // OBSOLETED: SoWwGLWidget does no longer inherit QObject
-    // (indirectly through SoQtObject). I'm not sure whether or not
-    // leaving this out causes any trouble..  If no problems are
-    // detected, remove eventually. 20020613 mortene.
-#if 0
-    else {
-    // Handle in superclass.
-    bool stop = PUBLIC(this)->eventFilter(obj, e);
-    if (stop) { return true; }
-  }
-#endif // OBSOLETED
-
-    PUBLIC(this)->processEvent(e);
-    return false;
-}
-
-// Registered callback on device events, set up by the
-// So@Gui@RenderArea.
-void
-SoWwGLWidgetP::eventHandler(wxFrame * widget, void * closure, QEvent * event,
-                            bool *)
-{
-    assert(closure != NULL);
-    SoWwGLWidget * component = (SoWwGLWidget *) closure;
-    component->processEvent(event);
-}
-
-#endif
-
 // The GL widget rebuilding has been written to remember the previous
 // GL widget, which might be swapped back in if it fits the wanted
 // format.
@@ -296,7 +175,7 @@ SoWwGLWidgetP::eventHandler(wxFrame * widget, void * closure, QEvent * event,
 //
 //  2) robustness; killing off the previous widget in the build-method
 //  below has nasty sideeffects (like "random" coredumps), since the
-//  Qt event loop might be using it
+//  event loop might be using it
 SoWwGLArea*
 SoWwGLWidgetP::buildGLWidget(void) {
 

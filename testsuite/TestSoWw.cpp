@@ -29,4 +29,38 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
-#include "SoGuiColorEditor.h"
+
+#define BOOST_TEST_NO_LIB 1
+#include <boost/test/unit_test.hpp>
+#include "Inventor/Ww/SoWw.h"
+#include <wx/version.h>
+
+BOOST_AUTO_TEST_SUITE(TestSoWw);
+
+std::string 
+buildVersion(int major, 
+             int minor,
+             int release) {
+    std::ostringstream oss;
+    oss<<major<<'.'<<minor<<'.'<<release;
+    return (oss.str());
+}
+
+BOOST_AUTO_TEST_CASE(shouldVerifyVersion) {
+    int major,minor,release;
+    SoWw::getVersionInfo(&major,&minor,&release);
+    BOOST_CHECK_EQUAL(major, 0);
+    BOOST_CHECK_EQUAL(minor, 1);
+    BOOST_CHECK_EQUAL(release, 1);
+
+    std::string oracle = buildVersion(major,minor,release);
+    std::string s1 = SoWw::getVersionString();
+    BOOST_CHECK_EQUAL(s1, oracle);
+
+    oracle = buildVersion(wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER);
+    s1 = SoWw::getVersionToolkitString();
+    BOOST_CHECK_EQUAL(s1, oracle);
+}
+
+
+BOOST_AUTO_TEST_SUITE_END();

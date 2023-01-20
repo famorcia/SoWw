@@ -108,8 +108,6 @@ SoWw::init(wxWindow* toplevelwidget) {
 
     // if wxApp is not already created
     if (wxApp::GetInstance() == NULL) {
-        // Set up the QApplication instance which we have derived into a
-        // subclass to catch spaceball events.
         SoWwP::instance()->buildWxApp();
         wxApp::SetInstance(SoWwP::instance()->getWxApp() );
         static const char * dummyargv[1];
@@ -145,15 +143,7 @@ SoWw::init(wxWindow* toplevelwidget) {
 void
 SoWw::mainLoop(void) {
     wxTheApp->OnRun();
-
-    SoWwP::instance()->getWxApp()->Unbind(wxEVT_IDLE, &SoWwP::onIdle, SoWwP::instance());
     SoWwP::instance()->finish();
-
-    // only if app is built by SoWw perform exit and cleanup
-    if(SoWwP::instance()->getWxApp()) {
-        wxTheApp->OnExit();
-        wxEntryCleanup();
-    }
 }
 
 void

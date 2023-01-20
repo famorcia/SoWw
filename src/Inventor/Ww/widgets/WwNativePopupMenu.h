@@ -34,8 +34,13 @@
 
 #include <Inventor/Ww/widgets/SoWwPopupMenu.h>
 
+struct MenuRecord;
+struct ItemRecord;
+
 class WwNativePopupMenu : public SoWwPopupMenu {
 public:
+    WwNativePopupMenu(void);
+    virtual ~WwNativePopupMenu();
     virtual int newMenu(const char * name, int menuid = -1) ;
     virtual int getMenu(const char * name) ;
     virtual void setMenuTitle(int id, const char * title) ;
@@ -61,6 +66,19 @@ public:
 protected:
     virtual void _setMenuItemMarked(int itemid, SbBool marked) ;
 
+  MenuRecord * getMenuRecord(int menuid);
+  ItemRecord * getItemRecord(int itemid);
+//  ItemRecord * getItemRecordFromAction(QAction * action);
+  MenuRecord * createMenuRecord(const char * name);
+  ItemRecord * createItemRecord(const char * name);
+
+//private slots:
+//  void itemActivation(QAction *);
+//  void itemActivation(int itemid);
+
+private:
+  SbPList * menus;
+  SbPList * items;
 };
 
 

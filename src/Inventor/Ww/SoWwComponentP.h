@@ -42,8 +42,6 @@ public:
     SoWwComponentP(SoWwComponent * publ);
     ~SoWwComponentP();
 
-    // static class QCursor * getNativeCursor(const SoQtCursor::CustomCursor * cc);
-
     static void fatalerrorHandler(void * userdata);
     static void atexit_cleanup();
 

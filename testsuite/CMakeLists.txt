@@ -12,3 +12,9 @@ include_directories(
 
 add_subdirectory(devices)
 add_subdirectory(widgets)
+
+set(TEST_NAME test_soww)
+add_executable(${TEST_NAME} TestSuiteMain.cpp TestSoWw.cpp)
+target_link_libraries(${TEST_NAME}  SoWw )
+
+add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})

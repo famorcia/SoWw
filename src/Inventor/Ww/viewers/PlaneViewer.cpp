@@ -123,7 +123,7 @@ void SoWwPlaneViewerP::constructor(SbBool buildnow) {
     this->pixmaps.orthogonal = new wxImage((const char **) ortho_xpm);
     this->pixmaps.perspective = new wxImage((const char **) perspective_xpm);
 
-    PUBLIC(this)->setClassName("SoQtPlaneViewer");
+    PUBLIC(this)->setClassName("SoWwPlaneViewer");
     PUBLIC(this)->setLeftWheelString("transY");
     PUBLIC(this)->setBottomWheelString("transX");
 

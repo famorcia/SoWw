@@ -95,6 +95,7 @@ option(HAVE_SPACENAV_SUPPORT "Enable Space Navigator support" ON)
 option(SO${GUI}_USE_CPACK "If enabled the cpack subrepo is mandatory" OFF)
 option(SO${GUI}_BUILD_DOCUMENTATION "Build and install API documentation (requires Doxygen)." OFF)
 option(SO${GUI}_BUILD_TESTS "Build small test programs." ON)
+option(SO${GUI}_SANITIZE_ADDRES "Add sanitize address options." OFF)
 
 cmake_dependent_option(SO${GUI}_BUILD_INTERNAL_DOCUMENTATION "Document internal code not part of the API." OFF "SO${GUI}_BUILD_DOCUMENTATION" OFF)
 cmake_dependent_option(SO${GUI}_BUILD_DOC_MAN "Build So${Gui} man pages." OFF "SO${GUI}_BUILD_DOCUMENTATION" OFF)
@@ -161,6 +162,11 @@ set(SO${GUI}_PKG_DEPS "Coin wxWidgets OpenGL")
 # Setup build environment
 # ##########################################################################
 
+if (SO${GUI}_SANITIZE_ADDRES)
+  add_compile_options(-fsanitize=address)
+  add_link_options(-fsanitize=address)
+endif()
+
 if(NOT CMAKE_BUILD_TYPE)
   # Has no effect for multi configuration generators (VisualStudio, Xcode).
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose type of build, options are Debug, Release, RelWithDebInfo, MinSizeRel." FORCE)
@@ -178,14 +184,7 @@ foreach (_config ${CMAKE_CONFIGURATION_TYPES})
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${_config} "${CMAKE_BINARY_DIR}/bin")
 endforeach()
 
-# gets the wxWidgets toolkit version
-#file(STRINGS "${MOTIF_INCLUDE_DIR}/Xm/Xm.h" _motif REGEX "#define XmVERSION_STRING")
-#string(REGEX MATCH "Motif Version ([0-9]+)\\.([0-9]+)\\.([0-9]+)" dummy ${_motif})
-#set(MOTIF_VERSION_MAJOR ${CMAKE_MATCH_1})
-#set(MOTIF_VERSION_MINOR ${CMAKE_MATCH_2})
-#set(MOTIF_VERSION_PATCH ${CMAKE_MATCH_3})
-
-set(GUI_TOOLKIT_VERSION ${MOTIF_VERSION_MAJOR}${MOTIF_VERSION_MINOR}${MOTIF_VERSION_PATCH})
+set(GUI_TOOLKIT_VERSION ${wxWidgets_VERSION_MAJOR}.${wxWidgets_VERSION_MINOR}.${wxWidgets_VERSION_PATCH})
 
 if(WIN32)
   if(MINGW)
