@@ -34,6 +34,7 @@
 
 #include "Inventor/Ww/SoGuiComponentP.h"
 #include "Inventor/Ww/SoWwComponent.h"
+#include <Inventor/Ww/SoWwCursor.h>
 #include <wx/window.h>
 #include <wx/frame.h>
 
@@ -44,6 +45,8 @@ public:
 
     static void fatalerrorHandler(void * userdata);
     static void atexit_cleanup();
+
+    static class wxCursor * getNativeCursor(const SoWwCursor::CustomCursor * cc);
 
     // Variables.
 

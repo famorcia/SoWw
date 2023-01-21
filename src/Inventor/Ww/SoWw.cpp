@@ -172,8 +172,9 @@ SoWw::createSimpleErrorDialog(wxWindow* widget,
 
 wxWindow*
 SoWw::getShellWidget(const wxWindow* w) {
-    return (wxGetTopLevelParent((wxWindowBase *) w));
 #if 0
+    return (wxGetTopLevelParent((wxWindowBase *) w));
+#else
     wxWindow* p = const_cast<wxWindow*>(w);
     while (p !=  NULL) {
         wxFrame* top_frame = dynamic_cast<wxFrame*>(p);

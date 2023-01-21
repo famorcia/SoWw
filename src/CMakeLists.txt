@@ -12,13 +12,10 @@ set(HDRS
   Inventor/${Gui}/So${Gui}ComponentP.h
   Inventor/${Gui}/So${Gui}DirectionalLightEditor.h  # added
   Inventor/${Gui}/So${Gui}GLWidgetP.h
-  Inventor/${Gui}/So${Gui}Icons.h                   # added
   #Inventor/${Gui}/So${Gui}ImageReader.h            # missing
   Inventor/${Gui}/So${Gui}Internal.h
   Inventor/${Gui}/So${Gui}LightSliderSet.h          # added
   Inventor/${Gui}/So${Gui}MaterialSliderSet.h       # added
-  Inventor/${Gui}/So${Gui}PrintDialog.h             # added
-  Inventor/${Gui}/So${Gui}Resource.h                # added
   #Inventor/${Gui}/So${Gui}SignalThread.h           # missing
   Inventor/${Gui}/So${Gui}SliderSetBase.h           # added
   Inventor/${Gui}/So${Gui}SliderSet.h               # added
@@ -45,13 +42,10 @@ set(SRCS
   Inventor/${Gui}/So${Gui}DirectionalLightEditor.cpp #added
   Inventor/${Gui}/So${Gui}GLWidget.cpp
   Inventor/${Gui}/So${Gui}GLWidgetP.cpp #added
-  Inventor/${Gui}/So${Gui}Icons.cpp #added
   Inventor/${Gui}/So${Gui}Internal.cpp #added
   Inventor/${Gui}/So${Gui}LightSliderSet.cpp #added
   #Inventor/${Gui}/So${Gui}MaterialList.cpp           # FIXME why not?!
   Inventor/${Gui}/So${Gui}MaterialSliderSet.cpp #added
-  Inventor/${Gui}/So${Gui}PrintDialog.cpp #added
-  Inventor/${Gui}/So${Gui}Resource.cpp #added
   Inventor/${Gui}/So${Gui}SliderSetBase.cpp #added
   Inventor/${Gui}/So${Gui}SliderSet.cpp #added
   Inventor/${Gui}/So${Gui}TransformSliderSet.cpp #added
@@ -262,7 +256,7 @@ set(INST_HDRS
   # Inventor/${Gui}/So${Gui}DirectionalLightEditor.h # it's just a STUB
   Inventor/${Gui}/So${Gui}LightSliderSet.h
   Inventor/${Gui}/So${Gui}MaterialSliderSet.h
-  Inventor/${Gui}/So${Gui}PrintDialog.h
+  # Inventor/${Gui}/So${Gui}PrintDialog.h
   Inventor/${Gui}/So${Gui}Resource.h
   Inventor/${Gui}/So${Gui}SliderSet.h
   Inventor/${Gui}/So${Gui}SliderSetBase.h

@@ -32,9 +32,17 @@
 
 #include "Inventor/Ww/SoWwComponentP.h"
 #include "sowwdefs.h"
+#include "Inventor/Ww/SoAny.h"
+
+#define PRIVATE(obj) (obj)
+#define PUBLIC(obj) ((obj)->pub)
+
+SbDict * SoWwComponentP::cursordict = NULL;
 
 SoWwComponentP::SoWwComponentP(SoWwComponent *o)
-        : SoGuiComponentP(o), classname(""), widgetname(""){
+        : SoGuiComponentP(o)
+        , classname("")
+        , widgetname("") {
 
 }
 
@@ -42,14 +50,91 @@ SoWwComponentP::~SoWwComponentP() {
 
 }
 
-void SoWwComponentP::atexit_cleanup() {
-    SOWW_STUB();
+static void
+delete_dict_value(SbDict::Key key, void * value) {
+    delete (wxCursor*)value;
 }
 
-void SoWwComponentP::fatalerrorHandler(void *userdata) {
+void
+SoWwComponentP::atexit_cleanup() {
     SOWW_STUB();
+    if (SoWwComponentP::cursordict) {
+        SoWwComponentP::cursordict->applyToAll(delete_dict_value);
+        delete SoWwComponentP::cursordict;
+        SoWwComponentP::cursordict = NULL;
+    }
 }
 
-void SoWwComponentP::widgetClosed(void) {
+void
+SoWwComponentP::fatalerrorHandler(void *userdata) {
     SOWW_STUB();
+    SoWwComponentP * that = (SoWwComponentP *)userdata;
+    (void*)(that); // unused for the time being
 }
+
+void
+SoWwComponentP::widgetClosed(void) {
+    SOWW_STUB();
+    if (this->closeCB) { this->closeCB(this->closeCBdata, PUBLIC(this)); }
+}
+
+wxCursor *
+SoWwComponentP::getNativeCursor(const SoWwCursor::CustomCursor *cc) {
+    if (SoWwComponentP::cursordict == NULL) { // first call, initialize
+        SoWwComponentP::cursordict = new SbDict;
+        SoAny::atexit((SoAny::atexit_f*)SoWwComponentP::atexit_cleanup, 0);
+    }
+
+    void * qc;
+    SbBool b = SoWwComponentP::cursordict->find((uintptr_t)cc, qc);
+    if (b) {
+        return (wxCursor *)qc;
+    }
+
+#define MAXBITMAPWIDTH 32
+#define MAXBITMAPHEIGHT 32
+#define MAXBITMAPBYTES (((MAXBITMAPWIDTH + 7) / 8) * MAXBITMAPHEIGHT)
+
+    uint8_t cursorbitmap[MAXBITMAPBYTES];
+    uint8_t cursormask[MAXBITMAPBYTES];
+    (void)memset(cursorbitmap, 0x00, MAXBITMAPBYTES);
+    (void)memset(cursormask, 0x00, MAXBITMAPBYTES);
+
+    if ( !(cc->dim[0] <= MAXBITMAPWIDTH) )
+        printf("cursor bitmap width too large: %d\n", cc->dim[0]);
+    if ( !(cc->dim[1] <= MAXBITMAPHEIGHT) )
+        printf("cursor bitmap height too large: %d\n", cc->dim[1]);
+    assert(cc->dim[0] <= MAXBITMAPWIDTH && "internal bitmap too large");
+    assert(cc->dim[1] <= MAXBITMAPHEIGHT && "internal bitmap too large");
+
+    const int BYTEWIDTH = (cc->dim[0] + 7) / 8;
+    for (int h=0; h < cc->dim[1]; h++) {
+        for (int w=0; w < BYTEWIDTH; w++) {
+            const int cursorpos = h * ((MAXBITMAPWIDTH + 7) / 8) + w;
+            const int nativepos = h * BYTEWIDTH + w;
+            cursorbitmap[cursorpos] = cc->bitmap[nativepos];
+            cursormask[cursorpos] = cc->mask[nativepos];
+        }
+    }
+
+#ifdef __WXMSW__
+    wxBitmap down_bitmap(down_bits, 32, 32);
+    wxBitmap down_mask_bitmap(down_mask, 32, 32);
+    down_bitmap.SetMask(new wxMask(down_mask_bitmap));
+    wxImage down_image = down_bitmap.ConvertToImage();
+    down_image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, 6);
+    down_image.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, 14);
+    wxCursor down_cursor = wxCursor(down_image);
+#elif defined(__WXGTK__) or defined(__WXMOTIF__) or defined(__WXQT__)
+    wxCursor * c = new wxCursor(reinterpret_cast<const char *>(cursorbitmap), 32, 32, 6, 14,
+                                    reinterpret_cast<const char *>(cursormask), wxWHITE, wxBLACK);
+#else
+#error "To be tested"
+#endif
+    SoWwComponentP::cursordict->enter((uintptr_t)cc, c);
+    return c;
+}
+
+#undef PRIVATE
+#undef PUBLIC
+

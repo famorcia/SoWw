@@ -29,20 +29,23 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
+
 #include "Inventor/Ww/SoWwComponent.h"
 #include "Inventor/Ww/SoWwComponentP.h"
 #include "Inventor/Ww/SoAny.h"
 #include "Inventor/Ww/SoWwGLWidget.h"
 #include "Inventor/Ww/SoWwRenderArea.h"
+#include "Inventor/Ww/SoWwCursor.h"
 
-#include "sowwdefs.h"
 #include "Inventor/Ww/viewers/SoWwViewer.h"
 #include "Inventor/Ww/viewers/SoWwFullViewer.h"
 #include "Inventor/Ww/viewers/SoWwExaminerViewer.h"
-#include "SoWwP.h"
 #include "Inventor/Ww/viewers/SoWwPlaneViewer.h"
 #include "Inventor/Ww/viewers/SoWwConstrainedViewer.h"
 #include "Inventor/Ww/viewers/SoWwFlyViewer.h"
+
+#include "sowwdefs.h"
+#include "SoWwP.h"
 
 #define SOWWCOMP_RESIZE_DEBUG 1
 
@@ -218,28 +221,78 @@ SoWwComponent::show(void) {
 void
 SoWwComponent::hide(void) {
     SOWW_STUB();
+    PRIVATE(this)->widget->Hide();
 }
 
 void
 SoWwComponent::setComponentCursor(const SoWwCursor & cursor) {
     SOWW_STUB();
+    SoWwComponent::setWidgetCursor(this->getWidget(), cursor);
 }
 
 void
 SoWwComponent::setWidgetCursor(wxWindow* w, const SoWwCursor & cursor) {
-    SOWW_STUB();
+
+    if(!w) {
+        return;
+    }
+    // FIXME: as this function is called all the time when the cursor is
+    // grabbed by the window under X11, we should really compare with
+    // the previous cursor before doing anything, to avoid spending
+    // unnecessary clockcycles during animation. 20011203 mortene.
+
+    if (cursor.getShape() == SoWwCursor::CUSTOM_BITMAP) {
+        const SoWwCursor::CustomCursor * cc = &cursor.getCustomCursor();
+        w->SetCursor(*SoWwComponentP::getNativeCursor(cc));
+    }
+    else {
+        switch (cursor.getShape()) {
+            case SoWwCursor::DEFAULT:
+                w->SetCursor(*wxSTANDARD_CURSOR);
+                break;
+
+            case SoWwCursor::BUSY:
+                w->SetCursor(*wxHOURGLASS_CURSOR);
+                break;
+
+            case SoWwCursor::CROSSHAIR:
+                w->SetCursor(*wxCROSS_CURSOR);
+                break;
+
+            case SoWwCursor::UPARROW:
+                w->SetCursor(*wxCROSS_CURSOR);
+                break;
+
+            default:
+                assert(false && "unsupported cursor shape type");
+                break;
+        }
+    }
 }
 
 SbBool
 SoWwComponent::isFullScreen(void) const {
-    SOWW_STUB();
-    return (FALSE);
+    return (PRIVATE(this)->fullscreen);
 }
 
 SbBool
 SoWwComponent::setFullScreen(const SbBool onoff) {
-    SOWW_STUB();
-    return (FALSE);
+    wxWindow * w = this->getShellWidget();
+    wxFrame* frame =  dynamic_cast<wxFrame*>(w);
+    if(frame) {
+        frame->ShowFullScreen(onoff);
+    }
+    else {
+        return (false);
+    }
+    /*
+    if (w == NULL) w = this->getParentWidget();
+    if (w == NULL) w = this->getWidget();
+    if (!w) { return false; }
+     */
+
+    PRIVATE(this)->fullscreen = onoff;
+    return (PRIVATE(this)->fullscreen);
 }
 
 SbBool

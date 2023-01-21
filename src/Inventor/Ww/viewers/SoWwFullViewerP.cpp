@@ -75,15 +75,16 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
 
     assert(PUBLIC(this)->leftDecoration && PUBLIC(this)->bottomDecoration && PUBLIC(this)->rightDecoration);
     const int border_size = 0;
+
+    wxGridBagSizer* sizer = new wxGridBagSizer( 0, 0 );
+    sizer->SetFlexibleDirection( wxBOTH );
+    sizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
+    sizer->SetEmptyCellSize(wxSize(0,0));
+
     if (onOff) {
         PUBLIC(this)->leftDecoration->Show();
         PUBLIC(this)->bottomDecoration->Show();
         PUBLIC(this)->rightDecoration->Show();
-
-        wxGridBagSizer* sizer = new wxGridBagSizer( 0, 0 );
-        sizer->SetFlexibleDirection( wxBOTH );
-        sizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
-        sizer->SetEmptyCellSize(wxSize(0,0));
 
         sizer->Add( PUBLIC(this)->leftDecoration, wxGBPosition( 0, 0 ), wxGBSpan(1,1), wxEXPAND | wxALL, 0 );
 
@@ -102,16 +103,17 @@ SoWwFullViewerP::showDecorationWidgets(SbBool onOff) {
         SoWwP::dumpWindowData(PUBLIC(this)->bottomDecoration);
 #endif
 
-        this->mainlayout = sizer;
     } else {
-        wxBoxSizer * g = new wxBoxSizer(wxVERTICAL);
-        g->Add(this->canvas,  0,  wxEXPAND | wxALL, border_size );
-        this->mainlayout = g;
+        sizer->Add(this->canvas, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 0 );
+        //sizer->Add(this->canvas,  0,  wxEXPAND | wxALL, border_size );
+        sizer->AddGrowableCol( 0 );
+        sizer->AddGrowableRow( 0 );
         PUBLIC(this)->leftDecoration->Hide();
         PUBLIC(this)->bottomDecoration->Hide();
         PUBLIC(this)->rightDecoration->Hide();
     }
 
+    this->mainlayout = sizer;
     this->viewerwidget->SetSizer(this->mainlayout);
     this->viewerwidget->Layout();
 

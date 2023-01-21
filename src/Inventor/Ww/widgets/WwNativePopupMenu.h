@@ -29,6 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \**************************************************************************/
+
 #ifndef SOWW_WWNATIVEPOPUPMENU_H
 #define SOWW_WWNATIVEPOPUPMENU_H
 
@@ -37,7 +38,10 @@
 struct MenuRecord;
 struct ItemRecord;
 
-class WwNativePopupMenu : public SoWwPopupMenu {
+class WwNativePopupMenu
+        : public SoWwPopupMenu
+        , public  wxEvtHandler{
+    typedef SoWwPopupMenu inherited;
 public:
     WwNativePopupMenu(void);
     virtual ~WwNativePopupMenu();
@@ -64,21 +68,20 @@ public:
     virtual void popUp(wxWindow* inside, int x, int y) ;
 
 protected:
+
     virtual void _setMenuItemMarked(int itemid, SbBool marked) ;
 
-  MenuRecord * getMenuRecord(int menuid);
-  ItemRecord * getItemRecord(int itemid);
-//  ItemRecord * getItemRecordFromAction(QAction * action);
-  MenuRecord * createMenuRecord(const char * name);
-  ItemRecord * createItemRecord(const char * name);
+    MenuRecord * getMenuRecord(int menuid);
+    ItemRecord * getItemRecord(int itemid);
+    ItemRecord * getItemRecordFromId(int itemid);
+    MenuRecord * createMenuRecord(const char * name);
+    ItemRecord * createItemRecord(const char * name);
 
-//private slots:
-//  void itemActivation(QAction *);
-//  void itemActivation(int itemid);
+    void itemActivation(wxCommandEvent&);
 
 private:
-  SbPList * menus;
-  SbPList * items;
+    SbPList * menus;
+    SbPList * items;
 };
 
 
