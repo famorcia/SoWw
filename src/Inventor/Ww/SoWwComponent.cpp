@@ -278,6 +278,9 @@ SoWwComponent::isFullScreen(void) const {
 SbBool
 SoWwComponent::setFullScreen(const SbBool onoff) {
     wxWindow * w = this->getShellWidget();
+    if (w == NULL) w = this->getParentWidget();
+    if (w == NULL) w = this->getWidget();
+    if (!w) { return false; }
     wxFrame* frame =  dynamic_cast<wxFrame*>(w);
     if(frame) {
         frame->ShowFullScreen(onoff);
@@ -285,11 +288,6 @@ SoWwComponent::setFullScreen(const SbBool onoff) {
     else {
         return (false);
     }
-    /*
-    if (w == NULL) w = this->getParentWidget();
-    if (w == NULL) w = this->getWidget();
-    if (!w) { return false; }
-     */
 
     PRIVATE(this)->fullscreen = onoff;
     return (PRIVATE(this)->fullscreen);
