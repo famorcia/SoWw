@@ -206,8 +206,6 @@ SoWwComponent::show(void) {
                                PRIVATE(this)->widget->GetSize().GetY());
     }
 
-    // TODO: PRIVATE(this)->widget->raise();
-
     if (SOWWCOMP_RESIZE_DEBUG) {  // debug
         SoDebugError::postInfo("SoWwComponent::show-4",
                                "raised %p: (%d, %d)",

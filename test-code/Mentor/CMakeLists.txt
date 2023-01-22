@@ -5,3 +5,5 @@ executable(09.4.PickAction  SOURCES 09.4.PickAction.cpp LIBS SoWw)
 
 executable(10.1.addEventCB SOURCES 10.1.addEventCB.cpp LIBS SoWw)
 
+executable(16.1.Overlay SOURCES 16.1.Overlay.cpp LIBS SoWw)
+

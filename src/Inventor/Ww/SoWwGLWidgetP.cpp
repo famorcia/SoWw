@@ -228,11 +228,12 @@ SoWwGLWidgetP::buildGLWidget(void) {
                 SoAny::si()->unregisterGLContext((void *) PUBLIC(this));
 
             this->currentglarea = new SoWwGLArea(
-                    glparent, //sharewidget ? (wxWindow*) sharewidget->getGLWidget() : NULL,
+                    glparent,
                     gl_attributes);
 
             // a wxPanel need a sizer, look at: https://forums.wxwidgets.org/viewtopic.php?t=44252
             if( SoWwGLWidgetP::isAPanel(glparent)) {
+                // new sizer remove the previous one (I'm sorry)
                 addSizer();
             }
 
@@ -427,13 +428,15 @@ SoWwGLWidgetP::addSizer() {
     sizer->Layout();
 }
 
-bool SoWwGLWidgetP::hasZBuffer() const {
+bool
+SoWwGLWidgetP::hasZBuffer() const {
     const bool z_buffer = SoWwGLArea::isGLFeatureAvailable(gl_attributes,
                                                            WX_GL_DEPTH_SIZE);
     return (z_buffer);
 }
 
-bool SoWwGLWidgetP::hasOverlay() const {
+bool
+SoWwGLWidgetP::hasOverlay() const {
     SOWW_STUB();
     return (false);
 }

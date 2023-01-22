@@ -133,7 +133,6 @@ WwNativePopupMenu::getMenu(const char * name) {
 void
 WwNativePopupMenu::setMenuTitle(int menuid,
                                 const char * title) {
-    SOWW_STUB();
     MenuRecord * rec = this->getMenuRecord(menuid);
     assert(rec && "no such menu");
     rec->title = title;
@@ -148,7 +147,6 @@ WwNativePopupMenu::setMenuTitle(int menuid,
 */
 const char *
 WwNativePopupMenu::getMenuTitle(int menuid) {
-    SOWW_STUB();
     MenuRecord * rec = this->getMenuRecord(menuid);
     assert(rec && "no such menu");
     return rec->title.c_str();
@@ -159,7 +157,6 @@ WwNativePopupMenu::getMenuTitle(int menuid) {
 int
 WwNativePopupMenu::newMenuItem(const char * name,
                                int itemid) {
-    SOWW_STUB();
     int id = itemid;
     if (id == -1) {
         id = 1;
@@ -178,7 +175,6 @@ WwNativePopupMenu::newMenuItem(const char * name,
 */
 int
 WwNativePopupMenu::getMenuItem(const char * name) {
-    SOWW_STUB();
     const int numItems = this->items->getLength();
     int i;
     for (i = 0; i < numItems; i++) {
@@ -194,7 +190,6 @@ WwNativePopupMenu::getMenuItem(const char * name) {
 void
 WwNativePopupMenu::setMenuItemTitle(int itemid,
                                     const char * title) {
-    SOWW_STUB();
     ItemRecord * rec = this->getItemRecord(itemid);
     assert(rec && "no such menu");
     rec->title = title;
@@ -207,7 +202,6 @@ WwNativePopupMenu::setMenuItemTitle(int itemid,
 */
 const char *
 WwNativePopupMenu::getMenuItemTitle(int itemid) {
-    SOWW_STUB();
     ItemRecord * rec = this->getItemRecord(itemid);
     assert(rec && "no such menu");
     return rec->title.c_str();
@@ -218,7 +212,6 @@ WwNativePopupMenu::getMenuItemTitle(int itemid) {
 void
 WwNativePopupMenu::setMenuItemEnabled(int itemid,
                                       SbBool enabled) {
-    SOWW_STUB();
     ItemRecord * rec = this->getItemRecord(itemid);
     if (rec) {
         rec->action->Check(enabled ? true : false);
@@ -230,7 +223,6 @@ WwNativePopupMenu::setMenuItemEnabled(int itemid,
 */
 SbBool
 WwNativePopupMenu::getMenuItemEnabled(int itemid) {
-    SOWW_STUB();
     ItemRecord * rec = this->getItemRecord(itemid);
 
     if (rec) {
@@ -274,7 +266,6 @@ void
 WwNativePopupMenu::addMenu(int menuid,
                            int submenuid,
                            int pos) {
-    SOWW_STUB();
     MenuRecord * super = this->getMenuRecord(menuid);
     MenuRecord * sub = this->getMenuRecord(submenuid);
     assert(super && sub && "no such menu");
@@ -319,7 +310,6 @@ WwNativePopupMenu::addMenuItem(int menuid,
 void
 WwNativePopupMenu::addSeparator(int menuid,
                                 int pos) {
-    SOWW_STUB();
     MenuRecord * menu = this->getMenuRecord(menuid);
     assert(menu && "no such menu");
 
@@ -337,25 +327,24 @@ WwNativePopupMenu::addSeparator(int menuid,
 */
 void
 WwNativePopupMenu::removeMenu(int menuid) {
-    SOWW_STUB();
     MenuRecord * rec = this->getMenuRecord(menuid);
     assert(rec && "no such menu");
 
     if (rec->menuid == 0) {
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
         SoDebugError::postInfo("WwNativePopupMenu::RemoveMenu", "can't remove root");
-#endif // SOWW_DEBUG
+#endif
         return;
     }
     if (rec->parent == NULL) {
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
         SoDebugError::postInfo("WwNativePopupMenu::RemoveMenu", "menu not attached");
-#endif // SOWW_DEBUG
+#endif
         return;
     }
     rec->parent->Delete(rec->menuid);
     rec->parent = NULL;
-} // removeMenu()
+}
 
 /*!
   This method removes the menu item with the given \a itemid.
@@ -365,14 +354,13 @@ WwNativePopupMenu::removeMenu(int menuid) {
 */
 void
 WwNativePopupMenu::removeMenuItem(int itemid) {
-    SOWW_STUB();
     ItemRecord * rec = this->getItemRecord(itemid);
     assert(rec && "no such item");
 
     if (rec->parent == NULL) {
-#if SOWW_DEBUG
+#if SOWW_DEBUG && 0
         SoDebugError::postInfo("WwNativePopupMenu::RemoveMenu", "item not attached");
-#endif // SOWW_DEBUG
+#endif
         return;
     }
     rec->parent->Remove(rec->itemid);
@@ -435,7 +423,6 @@ WwNativePopupMenu::createMenuRecord(const char * name) {
 */
 ItemRecord *
 WwNativePopupMenu::createItemRecord(const char * name) {
-    SOWW_STUB();
     ItemRecord * rec = new ItemRecord;
     rec->itemid = -1;
     rec->flags = 0;

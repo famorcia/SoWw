@@ -1,3 +1,7 @@
+#WARNING 
+This repo has been archived, please move on sowx (SoWx)
+
+
 # SoWw
 Coin GUI binding for wxWidgets
 
